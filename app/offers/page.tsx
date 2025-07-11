@@ -154,7 +154,7 @@ export default function OffersPage() {
         </div>
       </div>
 
-      <div className="container mx-auto px-4 py-16">
+      <div className="container mx-auto px-4 py-16 mt-12">
         {/* Introduction */}
         <div className="max-w-3xl mx-auto text-center mb-12">
           <p className="text-slate-600 font-alegreya text-lg">

@@ -717,7 +717,7 @@ export default function BookingsPage() {
         </div>
       </div>
 
-      <div className="relative -mt-20 z-20">
+      <div className="relative -mt-20 z-20 mt-12">
         <div className="container mx-auto px-4">
           <div className="bg-white rounded-lg shadow-2xl p-8 max-w-6xl mx-auto">
             <div className="grid grid-cols-1 md:grid-cols-5 gap-6 items-end">

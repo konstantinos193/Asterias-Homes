@@ -1,23 +1,28 @@
 import { NextResponse } from "next/server"
 import Stripe from "stripe"
-import { roomsData } from "@/data/rooms" // Assuming this path is correct
+import { allRoomsData } from "@/data/rooms"
 import { differenceInDays } from "date-fns"
 
 // Initialize Stripe with your secret key
 // Ensure STRIPE_SECRET_KEY is set in your environment variables
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "", {
   apiVersion: "2024-04-10", // Use the latest API version
 })
 
 export async function POST(request: Request) {
   try {
+    // Check if Stripe is properly configured
+    if (!process.env.STRIPE_SECRET_KEY) {
+      return NextResponse.json({ error: "Stripe configuration missing" }, { status: 500 })
+    }
+
     const { roomId, checkIn, checkOut, currency = "eur" } = await request.json()
 
     if (!roomId || !checkIn || !checkOut) {
       return NextResponse.json({ error: "Missing booking details" }, { status: 400 })
     }
 
-    const room = roomsData[roomId]
+    const room = allRoomsData.find(room => room.id === roomId)
     if (!room) {
       return NextResponse.json({ error: "Room not found" }, { status: 404 })
     }
@@ -27,7 +32,13 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Invalid date range" }, { status: 400 })
     }
 
-    const basePrice = nights * room.price
+    if (!room.price) {
+      return NextResponse.json({ error: "Room price not available" }, { status: 400 })
+    }
+    
+    // Extract numeric price from string (e.g., "€90" -> 90)
+    const priceValue = parseFloat(room.price.replace(/[^\d.]/g, ""))
+    const basePrice = nights * priceValue
     const taxAmount = basePrice * 0.13 // Assuming 13% tax
     const amountInCents = Math.round((basePrice + taxAmount) * 100) // Stripe expects amount in cents
 

@@ -34,7 +34,7 @@ export default function RoomsClientPage() {
       </header>
 
       {/* Rooms Grid Section */}
-      <main className="py-12 md:py-16">
+      <main className="py-12 md:py-16 mt-12">
         <div className="container mx-auto px-6">
           {/* Optional: Filters section can be added here */}
           {/* <div className="mb-8 p-6 bg-white shadow rounded-lg">

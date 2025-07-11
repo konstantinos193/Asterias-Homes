@@ -67,7 +67,7 @@ export default function ContactPage() {
         </div>
       </div>
 
-      <section className="py-16 bg-white">
+      <section className="py-16 bg-white mt-12">
         <div className="container mx-auto px-4">
           <div className="max-w-5xl mx-auto">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-12">

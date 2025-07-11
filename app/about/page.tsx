@@ -23,7 +23,7 @@ const AboutPage = () => {
       </section>
 
       {/* Main Content Section */}
-      <div className="container mx-auto py-12 md:py-20 px-4">
+      <div className="container mx-auto py-12 md:py-20 px-4 mt-12">
         {/* Our Story Section */}
         <section className="mb-12 md:mb-20">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-center">

@@ -50,7 +50,7 @@ export default function Home() {
       <Hero />
       <WelcomeSection />
 
-      <section className="py-20 bg-slate-50 overflow-hidden">
+      <section className="py-20 bg-slate-50 overflow-hidden mt-12">
         <div className="container mx-auto px-4">
           <div className="text-center max-w-3xl mx-auto mb-16">
             <h2 className="text-[#0A4A4A] font-alegreya uppercase tracking-wider text-sm mb-3">

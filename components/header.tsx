@@ -75,13 +75,7 @@ export default function Header() {
 
   return (
     <header
-      className={`fixed w-full z-50 transition-all duration-300 ${
-        scrolled
-          ? "bg-[#ddddd3]/95 backdrop-blur-sm shadow-md py-2" // Scrolled state
-          : pathname === "/"
-            ? "bg-[#F0F0E0] py-4" // Not scrolled, on homepage
-            : "bg-transparent py-4" // Not scrolled, on other pages (transparent)
-      }`}
+      className={`fixed w-full z-50 transition-all duration-300 bg-[#F0F0E0] py-4${scrolled ? ' shadow-md' : ''}`}
     >
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-full">
@@ -108,9 +102,7 @@ export default function Header() {
                 <Link
                   key={item.name}
                   href={item.href}
-                  className={`text-lg font-cormorant font-medium tracking-wide transition-colors hover:scale-105 transform duration-200 ${
-                    useLightHeaderBg ? "text-slate-800 hover:text-[#8B4B5C]" : "text-white hover:text-[#E8E2D5]"
-                  }`}
+                  className={`text-lg font-cormorant font-medium tracking-wide transition-colors hover:scale-105 transform duration-200 text-slate-800 hover:text-[#8B4B5C]`}
                 >
                   {t(item.name)}
                 </Link>

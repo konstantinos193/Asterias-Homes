@@ -57,7 +57,7 @@ export default function BookingPage({ params }: BookingPageProps) {
         </div>
       </div>
 
-      <section className="pb-16 bg-white">
+      <section className="pb-16 bg-white mt-12">
         <div className="container mx-auto px-4">
           {/* Wrap BookingWizard with Elements provider */}
           <Elements stripe={stripePromise} options={options}>
