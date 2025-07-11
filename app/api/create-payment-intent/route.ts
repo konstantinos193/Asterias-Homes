@@ -3,18 +3,17 @@ import Stripe from "stripe"
 import { allRoomsData } from "@/data/rooms"
 import { differenceInDays } from "date-fns"
 
-// Initialize Stripe with your secret key
-// Ensure STRIPE_SECRET_KEY is set in your environment variables
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "", {
-  apiVersion: "2024-04-10", // Use the latest API version
-})
-
 export async function POST(request: Request) {
   try {
     // Check if Stripe is properly configured
     if (!process.env.STRIPE_SECRET_KEY) {
       return NextResponse.json({ error: "Stripe configuration missing" }, { status: 500 })
     }
+
+    // Initialize Stripe with your secret key
+    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
+      apiVersion: "2025-06-30.basil", // Use the latest API version
+    })
 
     const { roomId, checkIn, checkOut, currency = "eur" } = await request.json()
 
