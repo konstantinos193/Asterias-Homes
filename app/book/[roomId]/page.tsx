@@ -7,7 +7,9 @@ import { Elements } from "@stripe/react-stripe-js"
 import { useLanguage } from "@/contexts/language-context" // Assuming you have this for translations
 
 // Make sure to set NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY in your environment variables
-const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!)
+const stripePromise = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY 
+  ? loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY)
+  : null
 
 interface BookingPageProps {
   params: { roomId: string }
@@ -21,8 +23,8 @@ export default function BookingPage({ params }: BookingPageProps) {
     // passing the client secret obtained from the server
     // clientSecret: '{{CLIENT_SECRET}}', // This will be set dynamically later if needed for appearance
     appearance: {
-      theme: "stripe",
-      labels: "floating",
+      theme: "stripe" as const,
+      labels: "floating" as const,
       variables: {
         colorPrimary: "#0A4A4A", // Your primary color
         colorBackground: "#ffffff",
@@ -32,8 +34,26 @@ export default function BookingPage({ params }: BookingPageProps) {
         spacingUnit: "4px",
         borderRadius: "4px",
         // See all possible variables below
-      } as any, // Cast to any to allow custom CSS properties if Stripe types are too strict
+      },
     },
+  }
+
+  // If Stripe is not configured, show an error or fallback
+  if (!stripePromise) {
+    return (
+      <div className="pt-24 pb-8 bg-white">
+        <div className="container mx-auto px-4">
+          <div className="text-center py-12">
+            <h1 className="text-2xl font-cormorant font-semibold text-slate-800 mb-4">
+              Payment System Unavailable
+            </h1>
+            <p className="text-slate-600 font-alegreya">
+              The payment system is currently being configured. Please try again later.
+            </p>
+          </div>
+        </div>
+      </div>
+    )
   }
 
   return (

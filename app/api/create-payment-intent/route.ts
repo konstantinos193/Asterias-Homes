@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server"
-import Stripe from "stripe"
 import { allRoomsData } from "@/data/rooms"
 import { differenceInDays } from "date-fns"
 
@@ -10,7 +9,10 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Stripe configuration missing" }, { status: 500 })
     }
 
-    // Initialize Stripe with your secret key
+    // Import Stripe only when needed
+    const { default: Stripe } = await import("stripe")
+    
+    // Initialize Stripe with your secret key - only when the route is called
     const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
       apiVersion: "2025-06-30.basil", // Use the latest API version
     })
