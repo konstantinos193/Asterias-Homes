@@ -1,11 +1,12 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Search, Filter, Mail, Phone, Calendar, User } from "lucide-react"
+import { adminAPI } from "@/lib/api"
 
 // Mock data - in a real app, this would come from your database
 const guests = [
@@ -82,23 +83,53 @@ const guests = [
 ]
 
 export default function GuestsPage() {
+  const [guests, setGuests] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState("")
   const [searchTerm, setSearchTerm] = useState("")
   const [statusFilter, setStatusFilter] = useState("all")
-  const [countryFilter, setCountryFilter] = useState("all")
+
+  useEffect(() => {
+    const fetchGuests = async () => {
+      try {
+        const response = await adminAPI.getAllUsers()
+        setGuests(response.users || [])
+      } catch (err: any) {
+        setError(err.message || "Failed to load guests")
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchGuests()
+  }, [])
 
   const filteredGuests = guests.filter((guest) => {
     const matchesSearch =
-      guest.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      guest.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      guest.phone.includes(searchTerm)
+      guest.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      guest.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      guest.phone?.includes(searchTerm)
 
-    const matchesStatus = statusFilter === "all" || guest.status === statusFilter
-    const matchesCountry = countryFilter === "all" || guest.country === countryFilter
+    const matchesStatus = statusFilter === "all" || guest.isActive === (statusFilter === "active")
 
-    return matchesSearch && matchesStatus && matchesCountry
+    return matchesSearch && matchesStatus
   })
 
-  const countries = Array.from(new Set(guests.map((guest) => guest.country)))
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="text-slate-600 font-alegreya">Loading guests...</div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="p-4 bg-red-50 text-red-700 rounded-sm font-alegreya">
+        {error}
+      </div>
+    )
+  }
 
   return (
     <div className="space-y-8">
@@ -137,26 +168,7 @@ export default function GuestsPage() {
                 <SelectContent>
                   <SelectItem value="all">Όλες οι καταστάσεις</SelectItem>
                   <SelectItem value="active">Ενεργοί</SelectItem>
-                  <SelectItem value="pending">Εκκρεμείς</SelectItem>
                   <SelectItem value="inactive">Ανενεργοί</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="w-48">
-              <Select value={countryFilter} onValueChange={setCountryFilter}>
-                <SelectTrigger className="font-alegreya">
-                  <div className="flex items-center">
-                    <Filter className="h-4 w-4 mr-2 text-slate-400" />
-                    <SelectValue placeholder="Χώρα" />
-                  </div>
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Όλες οι χώρες</SelectItem>
-                  {countries.map((country) => (
-                    <SelectItem key={country} value={country}>
-                      {country}
-                    </SelectItem>
-                  ))}
                 </SelectContent>
               </Select>
             </div>
@@ -186,19 +198,19 @@ export default function GuestsPage() {
                   scope="col"
                   className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider font-alegreya"
                 >
-                  Χώρα
+                  Ρόλος
                 </th>
                 <th
                   scope="col"
                   className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider font-alegreya"
                 >
-                  Επισκέψεις
+                  Κρατήσεις
                 </th>
                 <th
                   scope="col"
                   className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider font-alegreya"
                 >
-                  Τελευταία Επίσκεψη
+                  Τελευταία Σύνδεση
                 </th>
                 <th
                   scope="col"
@@ -216,7 +228,7 @@ export default function GuestsPage() {
             </thead>
             <tbody className="bg-white divide-y divide-slate-200">
               {filteredGuests.map((guest) => (
-                <tr key={guest.id} className="hover:bg-slate-50">
+                <tr key={guest._id} className="hover:bg-slate-50">
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center">
                       <div className="flex-shrink-0 h-10 w-10 bg-[#0A4A4A]/10 rounded-full flex items-center justify-center">
@@ -224,7 +236,7 @@ export default function GuestsPage() {
                       </div>
                       <div className="ml-4">
                         <div className="text-sm font-medium text-slate-900 font-alegreya">{guest.name}</div>
-                        <div className="text-sm text-slate-500 font-alegreya">ID: {guest.id}</div>
+                        <div className="text-sm text-slate-500 font-alegreya">ID: {guest._id}</div>
                       </div>
                     </div>
                   </td>
@@ -233,18 +245,24 @@ export default function GuestsPage() {
                       <Mail className="h-4 w-4 mr-1 text-slate-400" />
                       {guest.email}
                     </div>
-                    <div className="text-sm text-slate-700 font-alegreya flex items-center">
-                      <Phone className="h-4 w-4 mr-1 text-slate-400" />
-                      {guest.phone}
-                    </div>
+                    {guest.phone && (
+                      <div className="text-sm text-slate-700 font-alegreya flex items-center">
+                        <Phone className="h-4 w-4 mr-1 text-slate-400" />
+                        {guest.phone}
+                      </div>
+                    )}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-700 font-alegreya">{guest.country}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-700 font-alegreya">{guest.visits}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-700 font-alegreya">
-                    {guest.lastVisit ? (
+                    {guest.role === 'ADMIN' ? 'Admin' : 'User'}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-700 font-alegreya">
+                    {guest.bookings?.length || 0}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-700 font-alegreya">
+                    {guest.lastLogin ? (
                       <div className="flex items-center">
                         <Calendar className="h-4 w-4 mr-1 text-slate-400" />
-                        {guest.lastVisit}
+                        {new Date(guest.lastLogin).toLocaleDateString()}
                       </div>
                     ) : (
                       <span className="text-slate-400">-</span>
@@ -253,19 +271,17 @@ export default function GuestsPage() {
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span
                       className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                        guest.status === "active"
+                        guest.isActive
                           ? "bg-green-50 text-green-700"
-                          : guest.status === "pending"
-                            ? "bg-yellow-50 text-yellow-700"
-                            : "bg-slate-50 text-slate-700"
+                          : "bg-red-50 text-red-700"
                       }`}
                     >
-                      {guest.status === "active" ? "Ενεργός" : guest.status === "pending" ? "Εκκρεμής" : "Ανενεργός"}
+                      {guest.isActive ? "Ενεργός" : "Ανενεργός"}
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                     <Link
-                      href={`/admin/guests/${guest.id}`}
+                      href={`/admin/guests/${guest._id}`}
                       className="text-[#0A4A4A] hover:text-[#083a3a] font-alegreya"
                     >
                       Λεπτομέρειες

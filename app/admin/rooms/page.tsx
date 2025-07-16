@@ -1,12 +1,13 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Search, Filter, Plus, Edit, Trash2, Eye } from "lucide-react"
+import { adminAPI } from "@/lib/api"
 
 // Mock data - in a real app, this would come from your database
 const rooms = [
@@ -97,20 +98,67 @@ const getStatusClass = (status: string) => {
 }
 
 export default function RoomsPage() {
+  const [rooms, setRooms] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState("")
   const [searchTerm, setSearchTerm] = useState("")
   const [statusFilter, setStatusFilter] = useState("all")
   const [typeFilter, setTypeFilter] = useState("all")
 
+  useEffect(() => {
+    const fetchRooms = async () => {
+      try {
+        const response = await adminAPI.getAllRooms()
+        setRooms(response.rooms || [])
+      } catch (err: any) {
+        setError(err.message || "Failed to load rooms")
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchRooms()
+  }, [])
+
   const filteredRooms = rooms.filter((room) => {
     const matchesSearch =
-      room.number.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      room.name.toLowerCase().includes(searchTerm.toLowerCase())
+      room.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      room.description?.toLowerCase().includes(searchTerm.toLowerCase())
 
-    const matchesStatus = statusFilter === "all" || room.status === statusFilter
+    const matchesStatus = statusFilter === "all" || room.available === (statusFilter === "available")
     const matchesType = typeFilter === "all" || room.name === typeFilter
 
     return matchesSearch && matchesStatus && matchesType
   })
+
+  const handleDeleteRoom = async (roomId: string) => {
+    if (confirm("Are you sure you want to delete this room?")) {
+      try {
+        await adminAPI.deleteRoom(roomId)
+        // Refresh rooms after deletion
+        const response = await adminAPI.getAllRooms()
+        setRooms(response.rooms || [])
+      } catch (err: any) {
+        setError(err.message || "Failed to delete room")
+      }
+    }
+  }
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="text-slate-600 font-alegreya">Loading rooms...</div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="p-4 bg-red-50 text-red-700 rounded-sm font-alegreya">
+        {error}
+      </div>
+    )
+  }
 
   return (
     <div className="space-y-8">
@@ -183,42 +231,43 @@ export default function RoomsPage() {
       {/* Rooms Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {filteredRooms.map((room) => (
-          <div key={room.id} className="bg-white rounded-sm border border-slate-200 overflow-hidden">
+          <div key={room._id} className="bg-white rounded-sm border border-slate-200 overflow-hidden">
             <div className="relative h-48">
               <Image src={room.image || "/placeholder.svg"} alt={room.name} fill className="object-cover" />
               <div className="absolute top-2 right-2">
                 <span
                   className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${getStatusClass(
-                    room.status,
+                    room.available ? "available" : "occupied",
                   )}`}
                 >
-                  {getStatusText(room.status)}
+                  {getStatusText(room.available ? "available" : "occupied")}
                 </span>
               </div>
             </div>
             <div className="p-4">
               <div className="flex justify-between items-start mb-2">
                 <div>
-                  <h3 className="text-lg font-cormorant font-semibold text-slate-800">Δωμάτιο {room.number}</h3>
-                  <p className="text-sm text-slate-600 font-alegreya">{room.name}</p>
+                  <h3 className="text-lg font-cormorant font-semibold text-slate-800">{room.name}</h3>
+                  <p className="text-sm text-slate-600 font-alegreya">{room.description}</p>
                 </div>
                 <div className="text-right">
-                  <p className="text-lg font-cormorant font-semibold text-[#0A4A4A]">{room.price}€</p>
+                  <p className="text-lg font-cormorant font-semibold text-[#0A4A4A]">€{room.price}</p>
                   <p className="text-xs text-slate-500 font-alegreya">ανά διανυκτέρευση</p>
                 </div>
               </div>
               <div className="flex items-center gap-2 text-sm text-slate-600 font-alegreya mb-4">
                 <span>Χωρητικότητα: {room.capacity} άτομα</span>
+                {room.size && <span>• {room.size}</span>}
               </div>
               <div className="flex justify-between">
-                <Link href={`/rooms/${room.id}`}>
+                <Link href={`/rooms/${room._id}`}>
                   <Button variant="outline" size="sm" className="font-alegreya">
                     <Eye className="h-4 w-4 mr-1" />
                     Προβολή
                   </Button>
                 </Link>
                 <div className="flex gap-2">
-                  <Link href={`/admin/rooms/${room.id}`}>
+                  <Link href={`/admin/rooms/${room._id}`}>
                     <Button variant="outline" size="sm" className="font-alegreya">
                       <Edit className="h-4 w-4 mr-1" />
                       Επεξεργασία
@@ -228,6 +277,7 @@ export default function RoomsPage() {
                     variant="outline"
                     size="sm"
                     className="text-red-600 hover:text-red-700 hover:bg-red-50 font-alegreya"
+                    onClick={() => handleDeleteRoom(room._id)}
                   >
                     <Trash2 className="h-4 w-4" />
                   </Button>

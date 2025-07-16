@@ -31,11 +31,22 @@ import {
 } from "lucide-react"
 import { useState, useEffect } from "react"
 import { cn } from "@/lib/utils"
+import { useAuth } from "@/hooks/use-auth"
+import { useRouter } from "next/navigation"
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const { t } = useLanguage()
   const pathname = usePathname()
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
+  const { user, logout } = useAuth()
+  const router = useRouter()
+
+  // Redirect to login if not authenticated
+  useEffect(() => {
+    if (!user) {
+      router.push('/admin/login')
+    }
+  }, [user, router])
 
   const navItems = [
     { href: "/admin", labelKey: "admin.sidebar.dashboard", icon: LayoutDashboard },
@@ -98,12 +109,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               {t("admin.sidebar.viewSite")}
             </Link>
             <button
-              onClick={() => {
-                console.log(
-                  "Client-side logout: Redirecting to homepage. Server-side session invalidation would be required in a real application.",
-                )
-                // In a real app, you'd also clear any client-side auth tokens/state here.
-                window.location.href = "/" // Redirect to homepage
+              onClick={async () => {
+                await logout()
+                router.push('/admin/login')
               }}
               className="w-full flex items-center px-3 py-2.5 rounded-md text-sm font-alegreya text-slate-700 hover:bg-[#c9c9bf] hover:text-slate-900 transition-colors"
             >
@@ -146,8 +154,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               <DropdownMenuContent className="w-56" align="end" forceMount>
                 <DropdownMenuLabel className="font-normal">
                   <div className="flex flex-col space-y-1">
-                    <p className="text-sm font-medium leading-none font-alegreya">Admin User</p>
-                    <p className="text-xs leading-none text-slate-500 font-alegreya">admin@example.com</p>
+                    <p className="text-sm font-medium leading-none font-alegreya">{user?.name || 'Admin User'}</p>
+                    <p className="text-xs leading-none text-slate-500 font-alegreya">{user?.email || 'admin@example.com'}</p>
                   </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
@@ -162,12 +170,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
                   className="font-alegreya"
-                  onClick={() => {
-                    console.log(
-                      "Client-side logout: Redirecting to homepage. Server-side session invalidation would be required in a real application.",
-                    )
-                    // In a real app, you'd also clear any client-side auth tokens/state here.
-                    window.location.href = "/" // Redirect to homepage
+                  onClick={async () => {
+                    await logout()
+                    router.push('/admin/login')
                   }}
                 >
                   <LogOut className="mr-2 h-4 w-4" />

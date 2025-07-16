@@ -10,6 +10,7 @@ import StepPayment from "./booking-steps/step-payment"
 import StepConfirmation from "./booking-steps/step-confirmation"
 import type { BookingData } from "@/types/booking"
 import { useLanguage } from "@/contexts/language-context"
+import { paymentsAPI } from "@/lib/api"
 
 import { useStripe, useElements, CardElement } from "@stripe/react-stripe-js" // Import Stripe hooks
 
@@ -141,21 +142,17 @@ export default function BookingWizard({ initialRoomId }: BookingWizardProps) {
 
     try {
       // 1. Create PaymentIntent on the server
-      const response = await fetch("/api/create-payment-intent", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          roomId: bookingData.roomId,
-          checkIn: bookingData.checkIn,
-          checkOut: bookingData.checkOut,
-          currency: "eur", // Or get from bookingData/settings
-        }),
+      const paymentIntentResult = await paymentsAPI.createPaymentIntent({
+        roomId: bookingData.roomId,
+        checkIn: bookingData.checkIn!.toISOString(),
+        checkOut: bookingData.checkOut!.toISOString(),
+        adults: bookingData.adults,
+        children: bookingData.children,
+        currency: "eur",
       })
 
-      const paymentIntentResult = await response.json()
-
-      if (response.status !== 200 || paymentIntentResult.error || !paymentIntentResult.clientSecret) {
-        setPaymentError(paymentIntentResult.error || t("bookingWizard.errors.paymentIntentCreationFailed"))
+      if (!paymentIntentResult.clientSecret) {
+        setPaymentError(t("bookingWizard.errors.paymentIntentCreationFailed"))
         setIsProcessingPayment(false)
         return
       }

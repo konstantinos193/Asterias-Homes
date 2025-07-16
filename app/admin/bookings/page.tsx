@@ -1,11 +1,12 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { CheckCircle, XCircle, Clock, AlertCircle, Search, Filter, Download } from "lucide-react"
+import { adminAPI } from "@/lib/api"
 
 // Mock data - in a real app, this would come from your database
 const bookings = [
@@ -97,13 +98,15 @@ const bookings = [
 
 const getStatusIcon = (status: string) => {
   switch (status) {
-    case "confirmed":
+    case "CONFIRMED":
       return <CheckCircle className="h-4 w-4 text-green-500" />
-    case "checked-in":
+    case "CHECKED_IN":
       return <CheckCircle className="h-4 w-4 text-blue-500" />
-    case "pending":
+    case "CHECKED_OUT":
+      return <CheckCircle className="h-4 w-4 text-gray-500" />
+    case "PENDING":
       return <Clock className="h-4 w-4 text-yellow-500" />
-    case "cancelled":
+    case "CANCELLED":
       return <XCircle className="h-4 w-4 text-red-500" />
     default:
       return <AlertCircle className="h-4 w-4 text-slate-500" />
@@ -112,14 +115,16 @@ const getStatusIcon = (status: string) => {
 
 const getStatusText = (status: string) => {
   switch (status) {
-    case "confirmed":
+    case "CONFIRMED":
       return "Επιβεβαιωμένη"
-    case "pending":
+    case "PENDING":
       return "Εκκρεμής"
-    case "cancelled":
+    case "CANCELLED":
       return "Ακυρωμένη"
-    case "checked-in":
+    case "CHECKED_IN":
       return "Check-in"
+    case "CHECKED_OUT":
+      return "Check-out"
     default:
       return status
   }
@@ -127,13 +132,15 @@ const getStatusText = (status: string) => {
 
 const getStatusClass = (status: string) => {
   switch (status) {
-    case "confirmed":
+    case "CONFIRMED":
       return "bg-green-50 text-green-700 border-green-200"
-    case "checked-in":
+    case "CHECKED_IN":
       return "bg-blue-50 text-blue-700 border-blue-200"
-    case "pending":
+    case "CHECKED_OUT":
+      return "bg-gray-50 text-gray-700 border-gray-200"
+    case "PENDING":
       return "bg-yellow-50 text-yellow-700 border-yellow-200"
-    case "cancelled":
+    case "CANCELLED":
       return "bg-red-50 text-red-700 border-red-200"
     default:
       return "bg-slate-50 text-slate-700 border-slate-200"
@@ -141,19 +148,64 @@ const getStatusClass = (status: string) => {
 }
 
 export default function BookingsPage() {
+  const [bookings, setBookings] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState("")
   const [searchTerm, setSearchTerm] = useState("")
   const [statusFilter, setStatusFilter] = useState("all")
 
+  useEffect(() => {
+    const fetchBookings = async () => {
+      try {
+        const response = await adminAPI.getAllBookings()
+        setBookings(response.bookings || [])
+      } catch (err: any) {
+        setError(err.message || "Failed to load bookings")
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchBookings()
+  }, [])
+
   const filteredBookings = bookings.filter((booking) => {
     const matchesSearch =
-      booking.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      booking.guest.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      booking.email.toLowerCase().includes(searchTerm.toLowerCase())
+      booking.bookingNumber?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      `${booking.guestInfo?.firstName} ${booking.guestInfo?.lastName}`.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      booking.guestInfo?.email?.toLowerCase().includes(searchTerm.toLowerCase())
 
-    const matchesStatus = statusFilter === "all" || booking.status === statusFilter
+    const matchesStatus = statusFilter === "all" || booking.bookingStatus === statusFilter
 
     return matchesSearch && matchesStatus
   })
+
+  const handleStatusUpdate = async (bookingId: string, newStatus: string) => {
+    try {
+      await adminAPI.updateBookingStatus(bookingId, newStatus)
+      // Refresh bookings after update
+      const response = await adminAPI.getAllBookings()
+      setBookings(response.bookings || [])
+    } catch (err: any) {
+      setError(err.message || "Failed to update booking status")
+    }
+  }
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="text-slate-600 font-alegreya">Loading bookings...</div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="p-4 bg-red-50 text-red-700 rounded-sm font-alegreya">
+        {error}
+      </div>
+    )
+  }
 
   return (
     <div className="space-y-8">
@@ -194,10 +246,11 @@ export default function BookingsPage() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">Όλες οι κρατήσεις</SelectItem>
-                  <SelectItem value="confirmed">Επιβεβαιωμένες</SelectItem>
-                  <SelectItem value="pending">Εκκρεμείς</SelectItem>
-                  <SelectItem value="checked-in">Check-in</SelectItem>
-                  <SelectItem value="cancelled">Ακυρωμένες</SelectItem>
+                  <SelectItem value="CONFIRMED">Επιβεβαιωμένες</SelectItem>
+                  <SelectItem value="PENDING">Εκκρεμείς</SelectItem>
+                  <SelectItem value="CHECKED_IN">Check-in</SelectItem>
+                  <SelectItem value="CHECKED_OUT">Check-out</SelectItem>
+                  <SelectItem value="CANCELLED">Ακυρωμένες</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -257,35 +310,47 @@ export default function BookingsPage() {
             </thead>
             <tbody className="bg-white divide-y divide-slate-200">
               {filteredBookings.map((booking) => (
-                <tr key={booking.id} className="hover:bg-slate-50">
+                <tr key={booking._id} className="hover:bg-slate-50">
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-900 font-alegreya">
-                    <Link href={`/admin/bookings/${booking.id}`} className="hover:text-[#0A4A4A] hover:underline">
-                      {booking.id}
+                    <Link href={`/admin/bookings/${booking._id}`} className="hover:text-[#0A4A4A] hover:underline">
+                      {booking.bookingNumber}
                     </Link>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-700 font-alegreya">
-                    <div>{booking.guest}</div>
-                    <div className="text-xs text-slate-500">{booking.email}</div>
+                    <div>{booking.guestInfo?.firstName} {booking.guestInfo?.lastName}</div>
+                    <div className="text-xs text-slate-500">{booking.guestInfo?.email}</div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-700 font-alegreya">{booking.room}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-700 font-alegreya">
-                    <div>{booking.checkIn}</div>
-                    <div className="text-xs text-slate-500">έως {booking.checkOut}</div>
+                    {booking.room?.name || 'N/A'}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-700 font-alegreya">
+                    <div>{new Date(booking.checkIn).toLocaleDateString()}</div>
+                    <div className="text-xs text-slate-500">έως {new Date(booking.checkOut).toLocaleDateString()}</div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-alegreya">
-                    <span
-                      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${getStatusClass(
-                        booking.status,
-                      )}`}
+                    <Select
+                      value={booking.bookingStatus}
+                      onValueChange={(value) => handleStatusUpdate(booking._id, value)}
                     >
-                      {getStatusIcon(booking.status)}
-                      <span className="ml-1">{getStatusText(booking.status)}</span>
-                    </span>
+                      <SelectTrigger className="w-32">
+                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${getStatusClass(booking.bookingStatus)}`}>
+                          {getStatusIcon(booking.bookingStatus)}
+                          <span className="ml-1">{getStatusText(booking.bookingStatus)}</span>
+                        </span>
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="CONFIRMED">Επιβεβαιωμένη</SelectItem>
+                        <SelectItem value="PENDING">Εκκρεμής</SelectItem>
+                        <SelectItem value="CHECKED_IN">Check-in</SelectItem>
+                        <SelectItem value="CHECKED_OUT">Check-out</SelectItem>
+                        <SelectItem value="CANCELLED">Ακυρωμένη</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-700 font-alegreya">{booking.total}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-700 font-alegreya">€{booking.totalAmount}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                     <Link
-                      href={`/admin/bookings/${booking.id}`}
+                      href={`/admin/bookings/${booking._id}`}
                       className="text-[#0A4A4A] hover:text-[#083a3a] font-alegreya"
                     >
                       Λεπτομέρειες

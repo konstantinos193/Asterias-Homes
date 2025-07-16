@@ -12,12 +12,6 @@ export interface BookingData {
     specialRequests: string
   }
   paymentMethod: "card" | "cash"
-  cardDetails: {
-    number: string
-    expiry: string
-    cvv: string
-    name: string
-  }
 }
 
 export interface Room {

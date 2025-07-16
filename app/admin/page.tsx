@@ -1,11 +1,13 @@
 "use client"
 
+import { useEffect, useState } from "react"
 import { Calendar, Bed, Users, TrendingUp, Clock, CheckCircle, XCircle, AlertCircle } from "lucide-react"
 import { useLanguage } from "@/contexts/language-context"
 import Link from "next/link"
+import { adminAPI } from "@/lib/api"
 
-// Mock data - in a real app, this would come from your database
-const statsData = [
+// Mock data fallback
+const mockStatsData = [
   {
     nameKey: "admin.dashboard.stats.todayArrivals",
     value: "8",
@@ -103,6 +105,43 @@ const getStatusIcon = (status: string) => {
 
 export default function AdminDashboard() {
   const { t } = useLanguage()
+  const [dashboardData, setDashboardData] = useState<any>(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState("")
+
+  useEffect(() => {
+    const fetchDashboardData = async () => {
+      try {
+        const data = await adminAPI.getDashboard()
+        setDashboardData(data)
+      } catch (err: any) {
+        setError(err.message || "Failed to load dashboard data")
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchDashboardData()
+  }, [])
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="text-slate-600 font-alegreya">Loading dashboard...</div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="p-4 bg-red-50 text-red-700 rounded-sm font-alegreya">
+        {error}
+      </div>
+    )
+  }
+
+  // Use real data from backend or fallback to mock data
+  const statsData = dashboardData?.stats || mockStatsData
 
   const getStatusText = (status: string) => {
     switch (status) {
@@ -135,7 +174,7 @@ export default function AdminDashboard() {
 
       {/* Stats */}
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-        {statsData.map((stat) => (
+        {statsData.map((stat: any) => (
           <div key={stat.nameKey} className="bg-white p-6 rounded-sm border border-slate-200">
             <div className="flex items-center">
               <div className="flex-shrink-0">

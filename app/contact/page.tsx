@@ -5,6 +5,7 @@ import { useState } from "react"
 import Image from "next/image"
 import { Phone, Mail, MapPin, Instagram, Facebook } from "lucide-react"
 import { useLanguage } from "@/contexts/language-context"
+import { contactAPI } from "@/lib/api"
 
 export default function ContactPage() {
   const { t, language } = useLanguage()
@@ -12,28 +13,38 @@ export default function ContactPage() {
     name: "",
     email: "",
     phone: "",
+    subject: "",
     message: "",
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitSuccess, setSubmitSuccess] = useState(false)
+  const [submitError, setSubmitError] = useState("")
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
     setFormData((prev) => ({ ...prev, [name]: value }))
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsSubmitting(true)
+    setSubmitError("")
 
-    // Simulate form submission
-    setTimeout(() => {
-      setIsSubmitting(false)
+    try {
+      await contactAPI.submit({
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        subject: formData.subject,
+        message: formData.message,
+      })
+
       setSubmitSuccess(true)
       setFormData({
         name: "",
         email: "",
         phone: "",
+        subject: "",
         message: "",
       })
 
@@ -41,7 +52,11 @@ export default function ContactPage() {
       setTimeout(() => {
         setSubmitSuccess(false)
       }, 5000)
-    }, 1500)
+    } catch (error: any) {
+      setSubmitError(error.message || "Failed to submit contact form")
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   const mapEmbedSrc = `https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3048.5!2d20.9188782!3d39.013693!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x135c22c7aecd7b97%3A0xa531da7850f7780a!2z4JKB4JOD4JOX4JOV4JOg4JOV4JKw4JKw!5e0!3m2!1s${language === "el" ? "el" : "en"}!2s${language === "el" ? "GR" : "US"}!4v1717350000000!5m2!1s${language === "el" ? "el" : "en"}!2s${language === "el" ? "GR" : "US"}`
@@ -122,6 +137,21 @@ export default function ContactPage() {
                   </div>
 
                   <div>
+                    <label htmlFor="subject" className="block text-sm font-medium text-slate-700 font-alegreya mb-1">
+                      {t("contactPage.form.label.subject")}
+                    </label>
+                    <input
+                      id="subject"
+                      name="subject"
+                      type="text"
+                      value={formData.subject}
+                      onChange={handleChange}
+                      required
+                      className="w-full px-3 py-2 border border-slate-300 rounded-sm focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 font-alegreya"
+                    />
+                  </div>
+
+                  <div>
                     <label htmlFor="message" className="block text-sm font-medium text-slate-700 font-alegreya mb-1">
                       {t("contactPage.form.label.message")}
                     </label>
@@ -147,6 +177,12 @@ export default function ContactPage() {
                   {submitSuccess && (
                     <div className="p-4 bg-green-50 text-green-700 rounded-sm font-alegreya">
                       {t("contactPage.form.successMessage")}
+                    </div>
+                  )}
+
+                  {submitError && (
+                    <div className="p-4 bg-red-50 text-red-700 rounded-sm font-alegreya">
+                      {submitError}
                     </div>
                   )}
                 </form>
