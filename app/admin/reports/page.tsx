@@ -120,14 +120,16 @@ export default function AdminReportsPage() {
     }
   }
 
-  const formatCurrency = (amount: number) => {
+  const formatCurrency = (amount: number | undefined | null) => {
+    if (!amount || isNaN(amount)) return '0,00 €'
     return new Intl.NumberFormat('el-GR', {
       style: 'currency',
       currency: 'EUR'
     }).format(amount)
   }
 
-  const formatPercentage = (value: number) => {
+  const formatPercentage = (value: number | undefined | null) => {
+    if (!value || isNaN(value)) return '0%'
     return `${Math.round(value)}%`
   }
 
@@ -140,11 +142,12 @@ export default function AdminReportsPage() {
   }
 
   const calculateOccupancyRate = () => {
-    if (!analyticsData || !analyticsData.bookingStatistics.totalNights || !analyticsData.totalRooms) {
+    if (!analyticsData || !analyticsData.bookingStatistics?.totalNights || !analyticsData.totalRooms) {
       return 0
     }
     const periodDays = parseInt(period)
     const availableRoomNights = analyticsData.totalRooms * periodDays
+    if (availableRoomNights === 0) return 0
     return Math.round((analyticsData.bookingStatistics.totalNights / availableRoomNights) * 100)
   }
 
@@ -262,20 +265,25 @@ export default function AdminReportsPage() {
     <div className="space-y-6">
       {/* Header */}
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-        <div>
+      <div>
           <h1 className="text-2xl md:text-3xl font-cormorant font-semibold text-slate-800">
             Αναφορές Ακινήτου
-          </h1>
-          <p className="text-slate-600 mt-1 font-alegreya">
+        </h1>
+        <p className="text-slate-600 mt-1 font-alegreya">
             Αναλύστε τάσεις και απόδοση των κρατήσεων δωματίων
           </p>
         </div>
         <div className="flex flex-col sm:flex-row gap-3">
           <Select value={period} onValueChange={setPeriod}>
-            <SelectTrigger className="w-full sm:w-48 font-alegreya">
-              <SelectValue />
+            <SelectTrigger className="w-full sm:w-48 font-alegreya text-sm bg-white">
+              <SelectValue placeholder="Επιλέξτε περίοδο">
+                {period === "7" && "Τελευταίες 7 μέρες"}
+                {period === "30" && "Τελευταίες 30 μέρες"}
+                {period === "90" && "Τελευταίες 90 μέρες"}
+                {period === "365" && "Τελευταίος χρόνος"}
+              </SelectValue>
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className="z-[9999]">
               <SelectItem value="7">Τελευταίες 7 μέρες</SelectItem>
               <SelectItem value="30">Τελευταίες 30 μέρες</SelectItem>
               <SelectItem value="90">Τελευταίες 90 μέρες</SelectItem>
@@ -303,10 +311,10 @@ export default function AdminReportsPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold font-cormorant">
-              {analyticsData.bookingStatistics.totalBookings}
+              {analyticsData.bookingStatistics?.totalBookings || 0}
             </div>
             <p className="text-xs text-slate-600 font-alegreya">
-              {analyticsData.bookingStatistics.confirmedBookings} επιβεβαιωμένες
+              {analyticsData.bookingStatistics?.confirmedBookings || 0} επιβεβαιωμένες
             </p>
           </CardContent>
         </Card>
@@ -320,10 +328,10 @@ export default function AdminReportsPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold font-cormorant">
-              {formatCurrency(analyticsData.bookingStatistics.totalRevenue)}
+              {formatCurrency(analyticsData.bookingStatistics?.totalRevenue)}
             </div>
             <p className="text-xs text-slate-600 font-alegreya">
-              Μέση αξία: {formatCurrency(analyticsData.bookingStatistics.averageBookingValue)}
+              Μέση αξία: {formatCurrency(analyticsData.bookingStatistics?.averageBookingValue)}
             </p>
           </CardContent>
         </Card>
@@ -340,27 +348,27 @@ export default function AdminReportsPage() {
               {formatPercentage(calculateOccupancyRate())}
             </div>
             <p className="text-xs text-slate-600 font-alegreya">
-              {Math.round(analyticsData.bookingStatistics.totalNights)} συνολικές νύχτες
+              {Math.round(analyticsData.bookingStatistics?.totalNights || 0)} συνολικές νύχτες
             </p>
           </CardContent>
         </Card>
 
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium font-alegreya text-slate-600">
               Ποσοστό Ακυρώσεων
-            </CardTitle>
+              </CardTitle>
             <TrendingDown className="h-4 w-4 text-slate-400" />
-          </CardHeader>
-          <CardContent>
+            </CardHeader>
+            <CardContent>
             <div className="text-2xl font-bold font-cormorant">
               {formatPercentage(analyticsData.cancellationRate)}
             </div>
-            <p className="text-xs text-slate-600 font-alegreya">
-              {analyticsData.bookingStatistics.cancelledBookings} ακυρώσεις
+                        <p className="text-xs text-slate-600 font-alegreya">
+              {analyticsData.bookingStatistics?.cancelledBookings || 0} ακυρώσεις
             </p>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
       </div>
 
       {/* Charts Section */}
@@ -422,13 +430,13 @@ export default function AdminReportsPage() {
               <div className="grid grid-cols-2 gap-4">
                 <div className="text-center p-4 bg-slate-50 rounded-lg">
                   <div className="text-2xl font-bold font-cormorant">
-                    {analyticsData.guestDemographics.totalAdults}
+                    {analyticsData.guestDemographics?.totalAdults || 0}
                   </div>
                   <div className="text-sm text-slate-600 font-alegreya">Ενήλικες</div>
                 </div>
                 <div className="text-center p-4 bg-slate-50 rounded-lg">
                   <div className="text-2xl font-bold font-cormorant">
-                    {analyticsData.guestDemographics.totalChildren}
+                    {analyticsData.guestDemographics?.totalChildren || 0}
                   </div>
                   <div className="text-sm text-slate-600 font-alegreya">Παιδιά</div>
                 </div>
@@ -437,15 +445,15 @@ export default function AdminReportsPage() {
               <div className="space-y-3">
                 <div className="flex justify-between items-center">
                   <span className="text-sm font-alegreya">Οικογένειες</span>
-                  <span className="text-sm font-medium font-alegreya">{analyticsData.guestDemographics.familyBookings}</span>
+                  <span className="text-sm font-medium font-alegreya">{analyticsData.guestDemographics?.familyBookings || 0}</span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-sm font-alegreya">Ζευγάρια</span>
-                  <span className="text-sm font-medium font-alegreya">{analyticsData.guestDemographics.coupleBookings}</span>
+                  <span className="text-sm font-medium font-alegreya">{analyticsData.guestDemographics?.coupleBookings || 0}</span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-sm font-alegreya">Μόνοι/ες</span>
-                  <span className="text-sm font-medium font-alegreya">{analyticsData.guestDemographics.soloBookings}</span>
+                  <span className="text-sm font-medium font-alegreya">{analyticsData.guestDemographics?.soloBookings || 0}</span>
                 </div>
               </div>
               
@@ -453,7 +461,7 @@ export default function AdminReportsPage() {
                 <div className="flex justify-between items-center">
                   <span className="text-sm font-alegreya">Μέσο μέγεθος ομάδας</span>
                   <span className="text-sm font-medium font-alegreya">
-                    {Math.round(analyticsData.guestDemographics.averageGroupSize * 10) / 10}
+                    {Math.round((analyticsData.guestDemographics?.averageGroupSize || 0) * 10) / 10}
                   </span>
                 </div>
               </div>
@@ -470,16 +478,20 @@ export default function AdminReportsPage() {
               <CardTitle className="flex items-center gap-2 font-cormorant">
                 <LineChart className="h-5 w-5 text-[#0A4A4A]" />
                 Μηνιαία Έσοδα
-              </CardTitle>
+          </CardTitle>
               <CardDescription className="font-alegreya">
                 Παρακολούθηση εσόδων ανά μήνα
-              </CardDescription>
+          </CardDescription>
             </div>
             <Select value={revenuePeriod} onValueChange={setRevenuePeriod}>
-              <SelectTrigger className="w-32 font-alegreya">
-                <SelectValue />
+              <SelectTrigger className="w-36 font-alegreya text-sm bg-white">
+                <SelectValue placeholder="Περίοδος">
+                  {revenuePeriod === "6" && "6 μήνες"}
+                  {revenuePeriod === "12" && "12 μήνες"}
+                  {revenuePeriod === "24" && "24 μήνες"}
+                </SelectValue>
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="z-[9999]">
                 <SelectItem value="6">6 μήνες</SelectItem>
                 <SelectItem value="12">12 μήνες</SelectItem>
                 <SelectItem value="24">24 μήνες</SelectItem>
@@ -533,19 +545,19 @@ export default function AdminReportsPage() {
               <div className="flex justify-between">
                 <span className="text-sm font-alegreya">Μέσος χρόνος</span>
                 <span className="text-sm font-medium font-alegreya">
-                  {Math.round(analyticsData.leadTimeAnalysis.averageLeadTime)} μέρες
+                  {Math.round(analyticsData.leadTimeAnalysis?.averageLeadTime || 0)} μέρες
                 </span>
               </div>
               <div className="flex justify-between">
                 <span className="text-sm font-alegreya">Ελάχιστος</span>
                 <span className="text-sm font-medium font-alegreya">
-                  {Math.round(analyticsData.leadTimeAnalysis.minLeadTime)} μέρες
+                  {Math.round(analyticsData.leadTimeAnalysis?.minLeadTime || 0)} μέρες
                 </span>
               </div>
               <div className="flex justify-between">
                 <span className="text-sm font-alegreya">Μέγιστος</span>
                 <span className="text-sm font-medium font-alegreya">
-                  {Math.round(analyticsData.leadTimeAnalysis.maxLeadTime)} μέρες
+                  {Math.round(analyticsData.leadTimeAnalysis?.maxLeadTime || 0)} μέρες
                 </span>
               </div>
             </div>
@@ -593,7 +605,7 @@ export default function AdminReportsPage() {
               <div className="flex justify-between">
                 <span className="text-sm font-alegreya">Συνολικές νύχτες</span>
                 <span className="text-sm font-medium font-alegreya">
-                  {Math.round(analyticsData.bookingStatistics.totalNights)}
+                  {Math.round(analyticsData.bookingStatistics?.totalNights || 0)}
                 </span>
               </div>
             </div>

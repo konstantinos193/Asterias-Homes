@@ -27,7 +27,7 @@ interface BookingWizardProps {
 }
 
 export default function BookingWizard({ initialRoomId }: BookingWizardProps) {
-  const { t } = useLanguage()
+  const { t, language } = useLanguage()
   const steps = stepsConfig(t)
   const [currentStep, setCurrentStep] = useState(1)
   const [bookingData, setBookingData] = useState<BookingData>({
@@ -174,8 +174,26 @@ export default function BookingWizard({ initialRoomId }: BookingWizardProps) {
         setIsProcessingPayment(false)
       } else if (paymentIntent?.status === "succeeded") {
         console.log("Payment succeeded:", paymentIntent)
-        // Here you would typically save the booking to your database with 'paid' status
-        window.location.href = `/success?payment_intent=${paymentIntent.id}&payment_method=card` // Redirect to success page
+        
+        // 3. Confirm payment and create booking on the backend
+        try {
+          const confirmationResult = await paymentsAPI.confirmPayment({
+            paymentIntentId: paymentIntent.id,
+            guestInfo: {
+              ...bookingData.guestInfo,
+              language: language // Include the customer's language
+            },
+            specialRequests: bookingData.guestInfo.specialRequests
+          });
+          
+          console.log("Booking created:", confirmationResult);
+          window.location.href = `/success?payment_intent=${paymentIntent.id}&payment_method=card&booking_id=${confirmationResult.booking?.bookingNumber}`; // Redirect to success page
+        } catch (confirmError: any) {
+          console.error("Booking creation failed:", confirmError);
+          setPaymentError(confirmError.message || t("bookingWizard.errors.bookingCreationFailed"));
+          setIsProcessingPayment(false);
+          return;
+        }
       } else {
         setPaymentError(t("bookingWizard.errors.paymentNotSucceeded") + ` ${paymentIntent?.status}`)
         setIsProcessingPayment(false)

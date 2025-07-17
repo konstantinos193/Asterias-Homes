@@ -35,6 +35,40 @@ export const authAPI = {
   },
 };
 
+export const paymentsAPI = {
+  createPaymentIntent: async (bookingData: {
+    roomId: string;
+    checkIn: string;
+    checkOut: string;
+    adults: number;
+    children?: number;
+    currency?: string;
+  }) => {
+    return apiRequest('/api/create-payment-intent', {
+      method: 'POST',
+      body: JSON.stringify(bookingData),
+    });
+  },
+  confirmPayment: async (paymentData: {
+    paymentIntentId: string;
+    guestInfo: any;
+    specialRequests?: string;
+  }) => {
+    // Determine language from URL or use default
+    const urlPath = window.location.pathname;
+    const pathLang = urlPath.startsWith('/en') ? 'en' : urlPath.startsWith('/de') ? 'de' : 'el';
+    
+    return apiRequest('/api/confirm-payment', {
+      method: 'POST',
+      body: JSON.stringify(paymentData),
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept-Language': `${pathLang},${navigator.language || 'el'},el;q=0.9`
+      }
+    });
+  }
+};
+
 export const adminAPI = {
   getDashboard: async () => {
     return apiRequest('/api/admin/dashboard');

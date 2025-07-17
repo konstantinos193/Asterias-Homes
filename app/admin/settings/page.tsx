@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
@@ -8,760 +8,628 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Switch } from "@/components/ui/switch"
 import { Label } from "@/components/ui/label"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
 import {
-  Building,
-  Mail,
-  Phone,
-  Globe,
   Clock,
   Calendar,
   Bell,
-  Users,
   Settings,
   Database,
   Save,
-  Plus,
-  Trash2,
+  Shield,
+  CreditCard,
+  Moon,
+  Sun,
+  Palette,
+  Zap,
+  AlertTriangle,
+  CheckCircle,
+  FileText,
+  Printer,
+  DollarSign,
+  Mail,
+  Smartphone,
+  Globe,
+  Key,
+  RefreshCw
 } from "lucide-react"
+import { toast } from "sonner"
 
-// Mock settings data
-const settingsData = {
-  general: {
-    hotelName: "Asterias Hotel",
-    address: "Κορωνησία, Άρτα, Ελλάδα",
-    postalCode: "48100",
-    email: "info@hotelkoronisia.gr",
-    phone: "+30 XXX XXX XXXX",
-    website: "www.hotelkoronisia.gr",
-    description:
-      "Παραδοσιακά δωμάτια στην Κορωνησία Άρτας, στην καρδιά του Αμβρακικού Κόλπου. Βρείτε γαλήνη και επαφή με τη φύση.",
-  },
-  booking: {
+interface AdminSettings {
+  // Booking Rules
+  checkInTime: string
+  checkOutTime: string
+  minAdvanceBooking: number
+  maxAdvanceBooking: number
+  cancellationPolicy: number // hours before free cancellation
+  overbookingAllowed: boolean
+  
+  // Pricing & Payments
+  currency: string
+  taxRate: number
+  automaticPricing: boolean
+  directBookingDiscount: number
+  
+  // System Preferences
+  itemsPerPage: number
+  
+  // Notifications
+  emailNotifications: boolean
+  smsNotifications: boolean
+  bookingConfirmations: boolean
+  reminderNotifications: boolean
+  reminderHours: number
+  lowInventoryAlerts: boolean
+  newBookingAlerts: boolean
+  
+  // Security & Backup
+  sessionTimeout: number // minutes
+  requireTwoFA: boolean
+  autoBackup: boolean
+  backupFrequency: 'daily' | 'weekly' | 'monthly'
+  maintenanceMode: boolean
+  
+  // Channel Management
+  bookingComIntegration: boolean
+  airbnbIntegration: boolean
+  expediaIntegration: boolean
+  
+  // Staff Management
+  maxConcurrentSessions: number
+  passwordComplexity: boolean
+  auditLogging: boolean
+}
+
+export default function AdminSettingsPage() {
+  const [settings, setSettings] = useState<AdminSettings>({
+    // Booking Rules
     checkInTime: "15:00",
     checkOutTime: "11:00",
-    minAdvanceBooking: "1",
-    maxAdvanceBooking: "365",
-    cancellationPeriod: "48",
-    depositRequired: true,
-    depositAmount: "30",
-    taxRate: "13",
+    minAdvanceBooking: 1,
+    maxAdvanceBooking: 365,
+    cancellationPolicy: 48,
+    overbookingAllowed: false,
+    
+    // Pricing & Payments
     currency: "EUR",
-  },
-  notifications: {
-    bookingConfirmation: true,
-    bookingReminder: true,
-    reminderHours: "24",
-    checkInNotification: true,
-    reviewRequest: true,
-    reviewRequestDelay: "2",
-    adminNewBooking: true,
-    adminCancellation: true,
-  },
-  users: [
-    {
-      id: "1",
-      name: "Διαχειριστής",
-      email: "admin@hotelkoronisia.gr",
-      role: "admin",
-      lastLogin: "2024-01-20 14:30",
-    },
-    {
-      id: "2",
-      name: "Μαρία Παπαδοπούλου",
-      email: "maria@hotelkoronisia.gr",
-      role: "manager",
-      lastLogin: "2024-01-19 09:15",
-    },
-    {
-      id: "3",
-      name: "Γιώργος Δημητρίου",
-      email: "giorgos@hotelkoronisia.gr",
-      role: "staff",
-      lastLogin: "2024-01-20 08:45",
-    },
-  ],
-  system: {
-    language: "el",
-    timezone: "Europe/Athens",
-    dateFormat: "DD/MM/YYYY",
-    timeFormat: "24",
+    taxRate: 13,
+    automaticPricing: false,
+    directBookingDiscount: 5,
+    
+    // System Preferences
+    itemsPerPage: 20,
+    
+    // Notifications
+    emailNotifications: true,
+    smsNotifications: false,
+    bookingConfirmations: true,
+    reminderNotifications: true,
+    reminderHours: 24,
+    lowInventoryAlerts: true,
+    newBookingAlerts: true,
+    
+    // Security & Backup
+    sessionTimeout: 120,
+    requireTwoFA: false,
     autoBackup: true,
     backupFrequency: "daily",
     maintenanceMode: false,
-  },
-}
+    
+    // Channel Management
+    bookingComIntegration: false,
+    airbnbIntegration: false,
+    expediaIntegration: false,
+    
+    // Staff Management
+    maxConcurrentSessions: 3,
+    passwordComplexity: true,
+    auditLogging: true
+  })
 
-export default function SettingsPage() {
-  const [settings, setSettings] = useState({ ...settingsData })
-  const [newUser, setNewUser] = useState({ name: "", email: "", role: "staff" })
-  const [activeTab, setActiveTab] = useState("general")
+  const [loading, setLoading] = useState(false)
+  const [hasChanges, setHasChanges] = useState(false)
+  const [initialLoading, setInitialLoading] = useState(true)
 
-  const handleGeneralChange = (field: string, value: string) => {
-    setSettings((prev) => ({
+  // Load settings from API on mount
+  useEffect(() => {
+    const loadSettings = async () => {
+      try {
+        const response = await fetch('/api/admin/settings', {
+          credentials: 'include'
+        })
+
+        if (response.ok) {
+          const data = await response.json()
+          if (data.success && data.data) {
+            setSettings(data.data)
+          }
+        }
+      } catch (error) {
+        console.error('Error loading settings:', error)
+        toast.error("Σφάλμα κατά τη φόρτωση των ρυθμίσεων")
+      } finally {
+        setInitialLoading(false)
+      }
+    }
+
+    loadSettings()
+  }, [])
+
+  const updateSetting = (key: keyof AdminSettings, value: any) => {
+    setSettings(prev => ({
       ...prev,
-      general: {
-        ...prev.general,
-        [field]: value,
-      },
+      [key]: value
     }))
+    setHasChanges(true)
   }
 
-  const handleBookingChange = (field: string, value: string | boolean) => {
-    setSettings((prev) => ({
-      ...prev,
-      booking: {
-        ...prev.booking,
-        [field]: value,
-      },
-    }))
-  }
+  const saveSettings = async () => {
+    try {
+      setLoading(true)
+      
+      const response = await fetch('/api/admin/settings', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify(settings)
+      })
 
-  const handleNotificationsChange = (field: string, value: string | boolean) => {
-    setSettings((prev) => ({
-      ...prev,
-      notifications: {
-        ...prev.notifications,
-        [field]: value,
-      },
-    }))
-  }
+      const data = await response.json()
 
-  const handleSystemChange = (field: string, value: string | boolean) => {
-    setSettings((prev) => ({
-      ...prev,
-      system: {
-        ...prev.system,
-        [field]: value,
-      },
-    }))
-  }
-
-  const handleNewUserChange = (field: string, value: string) => {
-    setNewUser((prev) => ({
-      ...prev,
-      [field]: value,
-    }))
-  }
-
-  const handleAddUser = () => {
-    if (newUser.name && newUser.email) {
-      const newId = (Math.max(...settings.users.map((user) => Number.parseInt(user.id))) + 1).toString()
-      setSettings((prev) => ({
-        ...prev,
-        users: [
-          ...prev.users,
-          {
-            id: newId,
-            name: newUser.name,
-            email: newUser.email,
-            role: newUser.role,
-            lastLogin: "-",
-          },
-        ],
-      }))
-      setNewUser({ name: "", email: "", role: "staff" })
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to save settings')
+      }
+      
+      // Update local state with saved data to ensure consistency
+      if (data.success && data.data) {
+        setSettings(data.data)
+      }
+      
+      toast.success("Οι ρυθμίσεις αποθηκεύτηκαν επιτυχώς!")
+      setHasChanges(false)
+    } catch (error) {
+      console.error('Settings save error:', error)
+      toast.error("Σφάλμα κατά την αποθήκευση των ρυθμίσεων")
+    } finally {
+      setLoading(false)
     }
   }
 
-  const handleRemoveUser = (id: string) => {
-    setSettings((prev) => ({
-      ...prev,
-      users: prev.users.filter((user) => user.id !== id),
-    }))
+  const resetToDefaults = () => {
+    if (confirm("Είστε σίγουρος ότι θέλετε να επαναφέρετε τις προεπιλεγμένες ρυθμίσεις;")) {
+      // Reset to safe defaults
+      setSettings(prev => ({
+        ...prev,
+        reminderHours: 24,
+        sessionTimeout: 120,
+        itemsPerPage: 20
+      }))
+      setHasChanges(true)
+      toast.info("Οι ρυθμίσεις επαναφέρθηκαν στις προεπιλογές")
+    }
   }
 
-  const handleSaveSettings = () => {
-    // In a real app, you would save the settings to the database
-    console.log("Saving settings:", settings)
-    alert("Οι ρυθμίσεις αποθηκεύτηκαν με επιτυχία!")
+  if (initialLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#0A4A4A] mx-auto"></div>
+          <p className="mt-2 text-slate-600 font-alegreya">Φόρτωση ρυθμίσεων...</p>
+        </div>
+      </div>
+    )
   }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-cormorant font-light text-slate-800">Ρυθμίσεις</h1>
-          <p className="text-slate-600 font-alegreya">Διαχείριση ρυθμίσεων συστήματος</p>
+          <h1 className="text-2xl md:text-3xl font-cormorant font-semibold text-slate-800">
+            Ρυθμίσεις Συστήματος
+          </h1>
+          <p className="text-slate-600 mt-1 font-alegreya">
+            Διαχείριση λειτουργικών ρυθμίσεων και προτιμήσεων
+          </p>
         </div>
-        <div>
-          <Button className="bg-[#0A4A4A] hover:bg-[#083a3a] text-white font-alegreya" onClick={handleSaveSettings}>
+        <div className="flex gap-3">
+          <Button
+            variant="outline"
+            onClick={resetToDefaults}
+            className="font-alegreya"
+          >
+            <RefreshCw className="h-4 w-4 mr-2" />
+            Επαναφορά
+          </Button>
+          <Button
+            onClick={saveSettings}
+            disabled={!hasChanges || loading}
+            className="bg-[#0A4A4A] hover:bg-[#083a3a] text-white font-alegreya"
+          >
             <Save className="h-4 w-4 mr-2" />
-            Αποθήκευση Ρυθμίσεων
+            {loading ? "Αποθήκευση..." : "Αποθήκευση"}
           </Button>
         </div>
       </div>
 
+      {/* Status Banner */}
+      {hasChanges && (
+        <Card className="border-amber-200 bg-amber-50">
+          <CardContent className="flex items-center gap-3 pt-6">
+            <AlertTriangle className="h-5 w-5 text-amber-600" />
+            <span className="font-alegreya text-amber-800">
+              Έχετε μη αποθηκευμένες αλλαγές. Μην ξεχάσετε να τις αποθηκεύσετε!
+            </span>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Maintenance Mode Warning */}
+      {settings.maintenanceMode && (
+        <Card className="border-red-200 bg-red-50">
+          <CardContent className="flex items-center gap-3 pt-6">
+            <AlertTriangle className="h-5 w-5 text-red-600" />
+            <span className="font-alegreya text-red-800">
+              <strong>Λειτουργία Συντήρησης Ενεργή:</strong> Οι νέες κρατήσεις είναι απενεργοποιημένες
+            </span>
+          </CardContent>
+        </Card>
+      )}
+
       {/* Settings Tabs */}
-      <Tabs defaultValue="general" value={activeTab} onValueChange={setActiveTab} className="space-y-4">
-        <TabsList className="grid grid-cols-2 md:grid-cols-5 gap-2">
-          <TabsTrigger value="general" className="font-alegreya">
-            <Building className="h-4 w-4 mr-2" />
-            <span className="hidden md:inline">Γενικές</span>
-          </TabsTrigger>
+      <Tabs defaultValue="booking" className="space-y-6">
+        <TabsList className="grid grid-cols-2 lg:grid-cols-6 gap-2">
           <TabsTrigger value="booking" className="font-alegreya">
             <Calendar className="h-4 w-4 mr-2" />
-            <span className="hidden md:inline">Κρατήσεις</span>
+            <span className="hidden sm:inline">Κρατήσεις</span>
+          </TabsTrigger>
+          <TabsTrigger value="pricing" className="font-alegreya">
+            <DollarSign className="h-4 w-4 mr-2" />
+            <span className="hidden sm:inline">Τιμές</span>
           </TabsTrigger>
           <TabsTrigger value="notifications" className="font-alegreya">
             <Bell className="h-4 w-4 mr-2" />
-            <span className="hidden md:inline">Ειδοποιήσεις</span>
-          </TabsTrigger>
-          <TabsTrigger value="users" className="font-alegreya">
-            <Users className="h-4 w-4 mr-2" />
-            <span className="hidden md:inline">Χρήστες</span>
+            <span className="hidden sm:inline">Ειδοποιήσεις</span>
           </TabsTrigger>
           <TabsTrigger value="system" className="font-alegreya">
             <Settings className="h-4 w-4 mr-2" />
-            <span className="hidden md:inline">Σύστημα</span>
+            <span className="hidden sm:inline">Σύστημα</span>
+          </TabsTrigger>
+          <TabsTrigger value="channels" className="font-alegreya">
+            <Globe className="h-4 w-4 mr-2" />
+            <span className="hidden sm:inline">Κανάλια</span>
+          </TabsTrigger>
+          <TabsTrigger value="security" className="font-alegreya">
+            <Shield className="h-4 w-4 mr-2" />
+            <span className="hidden sm:inline">Ασφάλεια</span>
           </TabsTrigger>
         </TabsList>
 
-        {/* General Settings */}
-        <TabsContent value="general" className="space-y-4">
-          <div className="bg-white rounded-sm border border-slate-200 overflow-hidden">
-            <div className="px-6 py-4 border-b border-slate-200">
-              <h2 className="text-lg font-cormorant font-semibold text-slate-800">Γενικές Πληροφορίες</h2>
-            </div>
-            <div className="p-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 font-alegreya mb-1">
-                    Όνομα Ξενοδοχείου
-                  </label>
-                  <Input
-                    value={settings.general.hotelName}
-                    onChange={(e) => handleGeneralChange("hotelName", e.target.value)}
-                    className="font-alegreya"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 font-alegreya mb-1">Διεύθυνση</label>
-                  <Input
-                    value={settings.general.address}
-                    onChange={(e) => handleGeneralChange("address", e.target.value)}
-                    className="font-alegreya"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 font-alegreya mb-1">
-                    Ταχυδρομικός Κώδικας
-                  </label>
-                  <Input
-                    value={settings.general.postalCode}
-                    onChange={(e) => handleGeneralChange("postalCode", e.target.value)}
-                    className="font-alegreya"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 font-alegreya mb-1">Email</label>
-                  <div className="flex items-center">
-                    <Mail className="h-4 w-4 mr-2 text-slate-400" />
-                    <Input
-                      value={settings.general.email}
-                      onChange={(e) => handleGeneralChange("email", e.target.value)}
-                      className="font-alegreya"
-                    />
-                  </div>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 font-alegreya mb-1">Τηλέφωνο</label>
-                  <div className="flex items-center">
-                    <Phone className="h-4 w-4 mr-2 text-slate-400" />
-                    <Input
-                      value={settings.general.phone}
-                      onChange={(e) => handleGeneralChange("phone", e.target.value)}
-                      className="font-alegreya"
-                    />
-                  </div>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 font-alegreya mb-1">Ιστοσελίδα</label>
-                  <div className="flex items-center">
-                    <Globe className="h-4 w-4 mr-2 text-slate-400" />
-                    <Input
-                      value={settings.general.website}
-                      onChange={(e) => handleGeneralChange("website", e.target.value)}
-                      className="font-alegreya"
-                    />
-                  </div>
-                </div>
-                <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-slate-700 font-alegreya mb-1">Περιγραφή</label>
-                  <Textarea
-                    value={settings.general.description}
-                    onChange={(e) => handleGeneralChange("description", e.target.value)}
-                    className="font-alegreya"
-                    rows={4}
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-        </TabsContent>
-
-        {/* Booking Settings */}
-        <TabsContent value="booking" className="space-y-4">
-          <div className="bg-white rounded-sm border border-slate-200 overflow-hidden">
-            <div className="px-6 py-4 border-b border-slate-200">
-              <h2 className="text-lg font-cormorant font-semibold text-slate-800">Ρυθμίσεις Κρατήσεων</h2>
-            </div>
-            <div className="p-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 font-alegreya mb-1">Ώρα Check-in</label>
-                  <div className="flex items-center">
-                    <Clock className="h-4 w-4 mr-2 text-slate-400" />
-                    <Input
-                      type="time"
-                      value={settings.booking.checkInTime}
-                      onChange={(e) => handleBookingChange("checkInTime", e.target.value)}
-                      className="font-alegreya"
-                    />
-                  </div>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 font-alegreya mb-1">Ώρα Check-out</label>
-                  <div className="flex items-center">
-                    <Clock className="h-4 w-4 mr-2 text-slate-400" />
-                    <Input
-                      type="time"
-                      value={settings.booking.checkOutTime}
-                      onChange={(e) => handleBookingChange("checkOutTime", e.target.value)}
-                      className="font-alegreya"
-                    />
-                  </div>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 font-alegreya mb-1">
-                    Ελάχιστες Ημέρες Προκράτησης
-                  </label>
-                  <Input
-                    type="number"
-                    min="0"
-                    value={settings.booking.minAdvanceBooking}
-                    onChange={(e) => handleBookingChange("minAdvanceBooking", e.target.value)}
-                    className="font-alegreya"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 font-alegreya mb-1">
-                    Μέγιστες Ημέρες Προκράτησης
-                  </label>
-                  <Input
-                    type="number"
-                    min="1"
-                    value={settings.booking.maxAdvanceBooking}
-                    onChange={(e) => handleBookingChange("maxAdvanceBooking", e.target.value)}
-                    className="font-alegreya"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 font-alegreya mb-1">
-                    Περίοδος Δωρεάν Ακύρωσης (ώρες)
-                  </label>
-                  <Input
-                    type="number"
-                    min="0"
-                    value={settings.booking.cancellationPeriod}
-                    onChange={(e) => handleBookingChange("cancellationPeriod", e.target.value)}
-                    className="font-alegreya"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 font-alegreya mb-1">Νόμισμα</label>
-                  <Select
-                    value={settings.booking.currency}
-                    onValueChange={(value) => handleBookingChange("currency", value)}
-                  >
-                    <SelectTrigger className="font-alegreya">
-                      <SelectValue placeholder="Επιλέξτε νόμισμα" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="EUR">Ευρώ (€)</SelectItem>
-                      <SelectItem value="USD">Δολάριο ΗΠΑ ($)</SelectItem>
-                      <SelectItem value="GBP">Λίρα Αγγλίας (£)</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 font-alegreya mb-1">
-                    Ποσοστό Φόρου (%)
-                  </label>
-                  <Input
-                    type="number"
-                    min="0"
-                    max="100"
-                    value={settings.booking.taxRate}
-                    onChange={(e) => handleBookingChange("taxRate", e.target.value)}
-                    className="font-alegreya"
-                  />
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Switch
-                    id="deposit-required"
-                    checked={settings.booking.depositRequired}
-                    onCheckedChange={(checked) => handleBookingChange("depositRequired", checked)}
-                  />
-                  <Label htmlFor="deposit-required" className="font-alegreya">
-                    Απαιτείται Προκαταβολή
-                  </Label>
-                </div>
-                {settings.booking.depositRequired && (
+        {/* Booking Rules */}
+        <TabsContent value="booking">
+          <div className="grid gap-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 font-cormorant">
+                  <Clock className="h-5 w-5 text-[#0A4A4A]" />
+                  Ώρες Check-in/Check-out
+                </CardTitle>
+                <CardDescription className="font-alegreya">
+                  Προεπιλεγμένες ώρες άφιξης και αναχώρησης
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <label className="block text-sm font-medium text-slate-700 font-alegreya mb-1">
-                      Ποσοστό Προκαταβολής (%)
-                    </label>
+                    <Label htmlFor="checkInTime" className="font-alegreya">Ώρα Check-in</Label>
                     <Input
+                      id="checkInTime"
+                      type="time"
+                      value={settings.checkInTime}
+                      onChange={(e) => updateSetting("checkInTime", e.target.value)}
+                      className="font-alegreya"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="checkOutTime" className="font-alegreya">Ώρα Check-out</Label>
+                    <Input
+                      id="checkOutTime"
+                      type="time"
+                      value={settings.checkOutTime}
+                      onChange={(e) => updateSetting("checkOutTime", e.target.value)}
+                      className="font-alegreya"
+                    />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 font-cormorant">
+                  <Calendar className="h-5 w-5 text-[#0A4A4A]" />
+                  Πολιτικές Κράτησης
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <Label htmlFor="minAdvanceBooking" className="font-alegreya">
+                      Ελάχιστες μέρες προκράτησης
+                    </Label>
+                    <Input
+                      id="minAdvanceBooking"
                       type="number"
                       min="0"
-                      max="100"
-                      value={settings.booking.depositAmount}
-                      onChange={(e) => handleBookingChange("depositAmount", e.target.value)}
+                      value={settings.minAdvanceBooking}
+                      onChange={(e) => updateSetting("minAdvanceBooking", parseInt(e.target.value))}
                       className="font-alegreya"
                     />
                   </div>
-                )}
-              </div>
-            </div>
+                  <div>
+                    <Label htmlFor="maxAdvanceBooking" className="font-alegreya">
+                      Μέγιστες μέρες προκράτησης
+                    </Label>
+                    <Input
+                      id="maxAdvanceBooking"
+                      type="number"
+                      min="1"
+                      value={settings.maxAdvanceBooking}
+                      onChange={(e) => updateSetting("maxAdvanceBooking", parseInt(e.target.value))}
+                      className="font-alegreya"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="cancellationPolicy" className="font-alegreya">
+                      Δωρεάν ακύρωση (ώρες πριν)
+                    </Label>
+                    <Input
+                      id="cancellationPolicy"
+                      type="number"
+                      min="0"
+                      value={settings.cancellationPolicy}
+                      onChange={(e) => updateSetting("cancellationPolicy", parseInt(e.target.value))}
+                      className="font-alegreya"
+                    />
+                  </div>
+                </div>
+
+                <div className="flex items-center space-x-2">
+                  <Switch
+                    id="overbookingAllowed"
+                    checked={settings.overbookingAllowed}
+                    onChange={(e) => updateSetting("overbookingAllowed", e.target.checked)}
+                  />
+                  <Label htmlFor="overbookingAllowed" className="font-alegreya">
+                    Επιτρέπεται υπερκράτηση (προσοχή!)
+                  </Label>
+                </div>
+              </CardContent>
+            </Card>
           </div>
         </TabsContent>
 
-        {/* Notification Settings */}
-        <TabsContent value="notifications" className="space-y-4">
-          <div className="bg-white rounded-sm border border-slate-200 overflow-hidden">
-            <div className="px-6 py-4 border-b border-slate-200">
-              <h2 className="text-lg font-cormorant font-semibold text-slate-800">Ρυθμίσεις Ειδοποιήσεων</h2>
-            </div>
-            <div className="p-6">
-              <div className="space-y-6">
-                <h3 className="text-md font-cormorant font-semibold text-slate-800">Ειδοποιήσεις Πελατών</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="flex items-center space-x-2">
-                    <Switch
-                      id="booking-confirmation"
-                      checked={settings.notifications.bookingConfirmation}
-                      onCheckedChange={(checked) => handleNotificationsChange("bookingConfirmation", checked)}
+        {/* Pricing & Payments */}
+        <TabsContent value="pricing">
+          <div className="grid gap-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 font-cormorant">
+                  <CreditCard className="h-5 w-5 text-[#0A4A4A]" />
+                  Τιμολόγηση & Εκπτώσεις
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div>
+                    <Label htmlFor="taxRate" className="font-alegreya">ΦΠΑ (%)</Label>
+                    <Input
+                      id="taxRate"
+                      type="number"
+                      min="0"
+                      max="30"
+                      step="0.1"
+                      value={settings.taxRate}
+                      onChange={(e) => updateSetting("taxRate", parseFloat(e.target.value))}
+                      className="font-alegreya"
                     />
-                    <Label htmlFor="booking-confirmation" className="font-alegreya">
-                      Επιβεβαίωση Κράτησης
+                  </div>
+                  <div>
+                    <Label htmlFor="directBookingDiscount" className="font-alegreya">
+                      Έκπτωση άμεσης κράτησης (%)
+                    </Label>
+                    <Input
+                      id="directBookingDiscount"
+                      type="number"
+                      min="0"
+                      max="25"
+                      value={settings.directBookingDiscount}
+                      onChange={(e) => updateSetting("directBookingDiscount", parseInt(e.target.value))}
+                      className="font-alegreya"
+                    />
+                  </div>
+                  <div className="flex items-center space-x-2 pt-6">
+                    <Switch
+                      id="automaticPricing"
+                      checked={settings.automaticPricing}
+                      onChange={(e) => updateSetting("automaticPricing", e.target.checked)}
+                    />
+                    <Label htmlFor="automaticPricing" className="font-alegreya">
+                      Δυναμική τιμολόγηση
                     </Label>
                   </div>
-                  <div className="flex items-center space-x-2">
-                    <Switch
-                      id="booking-reminder"
-                      checked={settings.notifications.bookingReminder}
-                      onCheckedChange={(checked) => handleNotificationsChange("bookingReminder", checked)}
-                    />
-                    <Label htmlFor="booking-reminder" className="font-alegreya">
-                      Υπενθύμιση Κράτησης
-                    </Label>
-                  </div>
-                  {settings.notifications.bookingReminder && (
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
+
+        {/* Notifications */}
+        <TabsContent value="notifications">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 font-cormorant">
+                <Bell className="h-5 w-5 text-[#0A4A4A]" />
+                Ρυθμίσεις Ειδοποιήσεων
+              </CardTitle>
+              <CardDescription className="font-alegreya">
+                Διαχείριση αυτόματων ειδοποιήσεων και ενημερώσεων
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-8">
+              <div>
+                <h3 className="font-cormorant font-semibold text-slate-800 mb-4">Γενικές Ειδοποιήσεις</h3>
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
                     <div>
-                      <label className="block text-sm font-medium text-slate-700 font-alegreya mb-1">
-                        Ώρες Πριν την Άφιξη
-                      </label>
+                      <Label htmlFor="emailNotifications" className="font-alegreya">Email ειδοποιήσεις</Label>
+                      <p className="text-xs text-slate-500 font-alegreya">Αποστολή ειδοποιήσεων μέσω email</p>
+                    </div>
+                    <Switch
+                      id="emailNotifications"
+                      checked={settings.emailNotifications}
+                      onChange={(e) => updateSetting("emailNotifications", e.target.checked)}
+                    />
+                  </div>
+                  
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <Label htmlFor="newBookingAlerts" className="font-alegreya">Ειδοποιήσεις νέων κρατήσεων</Label>
+                      <p className="text-xs text-slate-500 font-alegreya">Άμεση ενημέρωση για νέες κρατήσεις</p>
+                    </div>
+                    <Switch
+                      id="newBookingAlerts"
+                      checked={settings.newBookingAlerts}
+                      onChange={(e) => updateSetting("newBookingAlerts", e.target.checked)}
+                    />
+                  </div>
+
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <Label htmlFor="lowInventoryAlerts" className="font-alegreya">Ειδοποιήσεις χαμηλής διαθεσιμότητας</Label>
+                      <p className="text-xs text-slate-500 font-alegreya">Όταν μένουν λίγα δωμάτια</p>
+                    </div>
+                    <Switch
+                      id="lowInventoryAlerts"
+                      checked={settings.lowInventoryAlerts}
+                      onChange={(e) => updateSetting("lowInventoryAlerts", e.target.checked)}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <h3 className="font-cormorant font-semibold text-slate-800 mb-4">Ειδοποιήσεις Πελατών</h3>
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <Label htmlFor="bookingConfirmations" className="font-alegreya">Επιβεβαίωση κράτησης</Label>
+                      <p className="text-xs text-slate-500 font-alegreya">Αυτόματη αποστολή επιβεβαίωσης</p>
+                    </div>
+                    <Switch
+                      id="bookingConfirmations"
+                      checked={settings.bookingConfirmations}
+                      onChange={(e) => updateSetting("bookingConfirmations", e.target.checked)}
+                    />
+                  </div>
+                  
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <Label htmlFor="reminderNotifications" className="font-alegreya">Υπενθυμίσεις άφιξης</Label>
+                      <p className="text-xs text-slate-500 font-alegreya">Υπενθύμιση πριν την άφιξη</p>
+                    </div>
+                    <Switch
+                      id="reminderNotifications"
+                      checked={settings.reminderNotifications}
+                      onChange={(e) => updateSetting("reminderNotifications", e.target.checked)}
+                    />
+                  </div>
+                  
+                  {settings.reminderNotifications && (
+                    <div className="ml-6">
+                      <Label htmlFor="reminderHours" className="font-alegreya">Ώρες πριν την άφιξη</Label>
                       <Input
+                        id="reminderHours"
                         type="number"
                         min="1"
-                        value={settings.notifications.reminderHours}
-                        onChange={(e) => handleNotificationsChange("reminderHours", e.target.value)}
-                        className="font-alegreya"
+                        max="168"
+                        value={settings.reminderHours}
+                        onChange={(e) => updateSetting("reminderHours", parseInt(e.target.value))}
+                        className="w-32 font-alegreya"
                       />
                     </div>
                   )}
-                  <div className="flex items-center space-x-2">
-                    <Switch
-                      id="check-in-notification"
-                      checked={settings.notifications.checkInNotification}
-                      onCheckedChange={(checked) => handleNotificationsChange("checkInNotification", checked)}
-                    />
-                    <Label htmlFor="check-in-notification" className="font-alegreya">
-                      Ειδοποίηση Check-in
-                    </Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Switch
-                      id="review-request"
-                      checked={settings.notifications.reviewRequest}
-                      onCheckedChange={(checked) => handleNotificationsChange("reviewRequest", checked)}
-                    />
-                    <Label htmlFor="review-request" className="font-alegreya">
-                      Αίτημα Αξιολόγησης
-                    </Label>
-                  </div>
-                  {settings.notifications.reviewRequest && (
-                    <div>
-                      <label className="block text-sm font-medium text-slate-700 font-alegreya mb-1">
-                        Ημέρες Μετά το Check-out
-                      </label>
-                      <Input
-                        type="number"
-                        min="0"
-                        value={settings.notifications.reviewRequestDelay}
-                        onChange={(e) => handleNotificationsChange("reviewRequestDelay", e.target.value)}
-                        className="font-alegreya"
-                      />
-                    </div>
-                  )}
-                </div>
-
-                <h3 className="text-md font-cormorant font-semibold text-slate-800 mt-8">Ειδοποιήσεις Διαχειριστών</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="flex items-center space-x-2">
-                    <Switch
-                      id="admin-new-booking"
-                      checked={settings.notifications.adminNewBooking}
-                      onCheckedChange={(checked) => handleNotificationsChange("adminNewBooking", checked)}
-                    />
-                    <Label htmlFor="admin-new-booking" className="font-alegreya">
-                      Νέα Κράτηση
-                    </Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Switch
-                      id="admin-cancellation"
-                      checked={settings.notifications.adminCancellation}
-                      onCheckedChange={(checked) => handleNotificationsChange("adminCancellation", checked)}
-                    />
-                    <Label htmlFor="admin-cancellation" className="font-alegreya">
-                      Ακύρωση Κράτησης
-                    </Label>
-                  </div>
                 </div>
               </div>
-            </div>
-          </div>
+            </CardContent>
+          </Card>
         </TabsContent>
 
-        {/* User Management */}
-        <TabsContent value="users" className="space-y-4">
-          <div className="bg-white rounded-sm border border-slate-200 overflow-hidden">
-            <div className="px-6 py-4 border-b border-slate-200">
-              <h2 className="text-lg font-cormorant font-semibold text-slate-800">Διαχείριση Χρηστών</h2>
-            </div>
-            <div className="p-6">
-              <div className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {/* System Preferences */}
+        <TabsContent value="system">
+          <div className="grid gap-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 font-cormorant">
+                  <Settings className="h-5 w-5 text-[#0A4A4A]" />
+                  Προβολή Δεδομένων
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <label className="block text-sm font-medium text-slate-700 font-alegreya mb-1">Όνομα</label>
-                    <Input
-                      value={newUser.name}
-                      onChange={(e) => handleNewUserChange("name", e.target.value)}
-                      className="font-alegreya"
-                      placeholder="Όνομα χρήστη"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-slate-700 font-alegreya mb-1">Email</label>
-                    <Input
-                      type="email"
-                      value={newUser.email}
-                      onChange={(e) => handleNewUserChange("email", e.target.value)}
-                      className="font-alegreya"
-                      placeholder="email@example.com"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-slate-700 font-alegreya mb-1">Ρόλος</label>
-                    <Select value={newUser.role} onValueChange={(value) => handleNewUserChange("role", value)}>
+                    <Label htmlFor="itemsPerPage" className="font-alegreya">Εγγραφές ανά σελίδα</Label>
+                    <Select
+                      value={settings.itemsPerPage.toString()}
+                      onValueChange={(value) => updateSetting("itemsPerPage", parseInt(value))}
+                    >
                       <SelectTrigger className="font-alegreya">
-                        <SelectValue placeholder="Επιλέξτε ρόλο" />
+                        <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="admin">Διαχειριστής</SelectItem>
-                        <SelectItem value="manager">Διευθυντής</SelectItem>
-                        <SelectItem value="staff">Προσωπικό</SelectItem>
+                        <SelectItem value="10">10</SelectItem>
+                        <SelectItem value="20">20</SelectItem>
+                        <SelectItem value="50">50</SelectItem>
+                        <SelectItem value="100">100</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
                 </div>
-                <Button className="bg-[#0A4A4A] hover:bg-[#083a3a] text-white font-alegreya" onClick={handleAddUser}>
-                  <Plus className="h-4 w-4 mr-2" />
-                  Προσθήκη Χρήστη
-                </Button>
+              </CardContent>
+            </Card>
 
-                <div className="mt-8">
-                  <h3 className="text-md font-cormorant font-semibold text-slate-800 mb-4">Υπάρχοντες Χρήστες</h3>
-                  <div className="overflow-x-auto">
-                    <table className="min-w-full divide-y divide-slate-200">
-                      <thead className="bg-slate-50">
-                        <tr>
-                          <th
-                            scope="col"
-                            className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider font-alegreya"
-                          >
-                            Όνομα
-                          </th>
-                          <th
-                            scope="col"
-                            className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider font-alegreya"
-                          >
-                            Email
-                          </th>
-                          <th
-                            scope="col"
-                            className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider font-alegreya"
-                          >
-                            Ρόλος
-                          </th>
-                          <th
-                            scope="col"
-                            className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider font-alegreya"
-                          >
-                            Τελευταία Σύνδεση
-                          </th>
-                          <th
-                            scope="col"
-                            className="px-6 py-3 text-right text-xs font-medium text-slate-500 uppercase tracking-wider font-alegreya"
-                          >
-                            Ενέργειες
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody className="bg-white divide-y divide-slate-200">
-                        {settings.users.map((user) => (
-                          <tr key={user.id} className="hover:bg-slate-50">
-                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-900 font-alegreya">
-                              {user.name}
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-700 font-alegreya">
-                              {user.email}
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-700 font-alegreya">
-                              <span
-                                className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                                  user.role === "admin"
-                                    ? "bg-purple-50 text-purple-700"
-                                    : user.role === "manager"
-                                      ? "bg-blue-50 text-blue-700"
-                                      : "bg-green-50 text-green-700"
-                                }`}
-                              >
-                                {user.role === "admin"
-                                  ? "Διαχειριστής"
-                                  : user.role === "manager"
-                                    ? "Διευθυντής"
-                                    : "Προσωπικό"}
-                              </span>
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-700 font-alegreya">
-                              {user.lastLogin}
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                              {user.id !== "1" && (
-                                <button
-                                  onClick={() => handleRemoveUser(user.id)}
-                                  className="text-red-600 hover:text-red-900 font-alegreya"
-                                >
-                                  <Trash2 className="h-4 w-4" />
-                                </button>
-                              )}
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </TabsContent>
-
-        {/* System Settings */}
-        <TabsContent value="system" className="space-y-4">
-          <div className="bg-white rounded-sm border border-slate-200 overflow-hidden">
-            <div className="px-6 py-4 border-b border-slate-200">
-              <h2 className="text-lg font-cormorant font-semibold text-slate-800">Ρυθμίσεις Συστήματος</h2>
-            </div>
-            <div className="p-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 font-alegreya mb-1">Γλώσσα</label>
-                  <Select
-                    value={settings.system.language}
-                    onValueChange={(value) => handleSystemChange("language", value)}
-                  >
-                    <SelectTrigger className="font-alegreya">
-                      <SelectValue placeholder="Επιλέξτε γλώσσα" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="el">Ελληνικά</SelectItem>
-                      <SelectItem value="en">English</SelectItem>
-                      <SelectItem value="de">Deutsch</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 font-alegreya mb-1">Ζώνη Ώρας</label>
-                  <Select
-                    value={settings.system.timezone}
-                    onValueChange={(value) => handleSystemChange("timezone", value)}
-                  >
-                    <SelectTrigger className="font-alegreya">
-                      <SelectValue placeholder="Επιλέξτε ζώνη ώρας" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="Europe/Athens">Αθήνα (GMT+3)</SelectItem>
-                      <SelectItem value="Europe/London">Λονδίνο (GMT+1)</SelectItem>
-                      <SelectItem value="Europe/Berlin">Βερολίνο (GMT+2)</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 font-alegreya mb-1">
-                    Μορφή Ημερομηνίας
-                  </label>
-                  <Select
-                    value={settings.system.dateFormat}
-                    onValueChange={(value) => handleSystemChange("dateFormat", value)}
-                  >
-                    <SelectTrigger className="font-alegreya">
-                      <SelectValue placeholder="Επιλέξτε μορφή ημερομηνίας" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="DD/MM/YYYY">DD/MM/YYYY</SelectItem>
-                      <SelectItem value="MM/DD/YYYY">MM/DD/YYYY</SelectItem>
-                      <SelectItem value="YYYY-MM-DD">YYYY-MM-DD</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 font-alegreya mb-1">Μορφή Ώρας</label>
-                  <Select
-                    value={settings.system.timeFormat}
-                    onValueChange={(value) => handleSystemChange("timeFormat", value)}
-                  >
-                    <SelectTrigger className="font-alegreya">
-                      <SelectValue placeholder="Επιλέξτε μορφή ώρας" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="12">12-ωρη (AM/PM)</SelectItem>
-                      <SelectItem value="24">24-ωρη</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Switch
-                    id="auto-backup"
-                    checked={settings.system.autoBackup}
-                    onCheckedChange={(checked) => handleSystemChange("autoBackup", checked)}
-                  />
-                  <Label htmlFor="auto-backup" className="font-alegreya">
-                    Αυτόματο Backup
-                  </Label>
-                </div>
-                {settings.system.autoBackup && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 font-cormorant">
+                  <Database className="h-5 w-5 text-[#0A4A4A]" />
+                  Backup & Συντήρηση
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="flex items-center justify-between">
                   <div>
-                    <label className="block text-sm font-medium text-slate-700 font-alegreya mb-1">Συχνότητα</label>
+                    <Label htmlFor="autoBackup" className="font-alegreya">Αυτόματο backup</Label>
+                    <p className="text-xs text-slate-500 font-alegreya">Αυτόματη δημιουργία αντιγράφων ασφαλείας</p>
+                  </div>
+                  <Switch
+                    id="autoBackup"
+                    checked={settings.autoBackup}
+                    onChange={(e) => updateSetting("autoBackup", e.target.checked)}
+                  />
+                </div>
+                
+                {settings.autoBackup && (
+                  <div>
+                    <Label htmlFor="backupFrequency" className="font-alegreya">Συχνότητα backup</Label>
                     <Select
-                      value={settings.system.backupFrequency}
-                      onValueChange={(value) => handleSystemChange("backupFrequency", value)}
+                      value={settings.backupFrequency}
+                      onValueChange={(value) => updateSetting("backupFrequency", value as 'daily' | 'weekly' | 'monthly')}
                     >
-                      <SelectTrigger className="font-alegreya">
-                        <SelectValue placeholder="Επιλέξτε συχνότητα" />
+                      <SelectTrigger className="w-48 font-alegreya">
+                        <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="daily">Καθημερινά</SelectItem>
@@ -771,34 +639,231 @@ export default function SettingsPage() {
                     </Select>
                   </div>
                 )}
-                <div className="flex items-center space-x-2">
+
+                <div className="flex items-center justify-between">
+                  <div>
+                    <Label htmlFor="maintenanceMode" className="font-alegreya">Λειτουργία συντήρησης</Label>
+                    <p className="text-xs text-slate-500 font-alegreya">Απενεργοποίηση νέων κρατήσεων</p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    {settings.maintenanceMode && (
+                      <Badge className="bg-red-600 text-white font-alegreya">Ενεργό</Badge>
+                    )}
+                    <Switch
+                      id="maintenanceMode"
+                      checked={settings.maintenanceMode}
+                      onChange={(e) => updateSetting("maintenanceMode", e.target.checked)}
+                    />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
+
+        {/* Channel Management */}
+        <TabsContent value="channels">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 font-cormorant">
+                <Globe className="h-5 w-5 text-[#0A4A4A]" />
+                Διαχείριση Καναλιών Πώλησης
+              </CardTitle>
+              <CardDescription className="font-alegreya">
+                Ενεργοποίηση και διαχείριση εξωτερικών πλατφορμών κρατήσεων
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="space-y-4">
+                <div className="flex items-center justify-between p-4 border rounded-lg">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
+                      <Globe className="h-5 w-5 text-white" />
+                    </div>
+                    <div>
+                      <Label htmlFor="bookingComIntegration" className="font-alegreya font-semibold">Booking.com</Label>
+                      <p className="text-xs text-slate-500 font-alegreya">Συγχρονισμός με Booking.com</p>
+                    </div>
+                  </div>
                   <Switch
-                    id="maintenance-mode"
-                    checked={settings.system.maintenanceMode}
-                    onCheckedChange={(checked) => handleSystemChange("maintenanceMode", checked)}
+                    id="bookingComIntegration"
+                    checked={settings.bookingComIntegration}
+                    onChange={(e) => updateSetting("bookingComIntegration", e.target.checked)}
+                    disabled
                   />
-                  <Label htmlFor="maintenance-mode" className="font-alegreya">
-                    Λειτουργία Συντήρησης
-                  </Label>
+                </div>
+
+                <div className="flex items-center justify-between p-4 border rounded-lg">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-red-500 rounded-lg flex items-center justify-center">
+                      <Globe className="h-5 w-5 text-white" />
+                    </div>
+                    <div>
+                      <Label htmlFor="airbnbIntegration" className="font-alegreya font-semibold">Airbnb</Label>
+                      <p className="text-xs text-slate-500 font-alegreya">Συγχρονισμός με Airbnb</p>
+                    </div>
+                  </div>
+                  <Switch
+                    id="airbnbIntegration"
+                    checked={settings.airbnbIntegration}
+                    onChange={(e) => updateSetting("airbnbIntegration", e.target.checked)}
+                    disabled
+                  />
+                </div>
+
+                <div className="flex items-center justify-between p-4 border rounded-lg">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-yellow-500 rounded-lg flex items-center justify-center">
+                      <Globe className="h-5 w-5 text-white" />
+                    </div>
+                    <div>
+                      <Label htmlFor="expediaIntegration" className="font-alegreya font-semibold">Expedia</Label>
+                      <p className="text-xs text-slate-500 font-alegreya">Συγχρονισμός με Expedia Group</p>
+                    </div>
+                  </div>
+                  <Switch
+                    id="expediaIntegration"
+                    checked={settings.expediaIntegration}
+                    onChange={(e) => updateSetting("expediaIntegration", e.target.checked)}
+                    disabled
+                  />
                 </div>
               </div>
 
-              <div className="mt-8 pt-6 border-t border-slate-200">
-                <h3 className="text-md font-cormorant font-semibold text-slate-800 mb-4">Διαχείριση Βάσης Δεδομένων</h3>
-                <div className="flex flex-wrap gap-4">
+              <div className="p-4 border border-blue-200 bg-blue-50 rounded-lg">
+                <div className="flex items-center gap-2 mb-2">
+                  <CheckCircle className="h-5 w-5 text-blue-600" />
+                  <span className="font-medium font-alegreya text-blue-800">Σημείωση</span>
+                </div>
+                <p className="text-sm text-blue-700 font-alegreya">
+                  Για την ενεργοποίηση των καναλιών χρειάζονται τα διαπιστευτήρια API από κάθε πλατφόρμα. 
+                  Επικοινωνήστε με τον διαχειριστή συστήματος.
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* Security */}
+        <TabsContent value="security">
+          <div className="grid gap-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 font-cormorant">
+                  <Shield className="h-5 w-5 text-[#0A4A4A]" />
+                  Ασφάλεια & Πρόσβαση
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <Label htmlFor="sessionTimeout" className="font-alegreya">Χρόνος λήξης συνεδρίας (λεπτά)</Label>
+                    <Input
+                      id="sessionTimeout"
+                      type="number"
+                      min="30"
+                      max="480"
+                      value={settings.sessionTimeout}
+                      onChange={(e) => updateSetting("sessionTimeout", parseInt(e.target.value))}
+                      className="font-alegreya"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="maxConcurrentSessions" className="font-alegreya">Μέγιστες ταυτόχρονες συνεδρίες</Label>
+                    <Input
+                      id="maxConcurrentSessions"
+                      type="number"
+                      min="1"
+                      max="10"
+                      value={settings.maxConcurrentSessions}
+                      onChange={(e) => updateSetting("maxConcurrentSessions", parseInt(e.target.value))}
+                      className="font-alegreya"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <Label htmlFor="requireTwoFA" className="font-alegreya">Αυθεντοποίηση δύο παραγόντων</Label>
+                      <p className="text-xs text-slate-500 font-alegreya">Επιπλέον ασφάλεια για διαχειριστές</p>
+                    </div>
+                    <Switch
+                      id="requireTwoFA"
+                      checked={settings.requireTwoFA}
+                      onChange={(e) => updateSetting("requireTwoFA", e.target.checked)}
+                    />
+                  </div>
+
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <Label htmlFor="passwordComplexity" className="font-alegreya">Απαιτήσεις πολυπλοκότητας κωδικού</Label>
+                      <p className="text-xs text-slate-500 font-alegreya">Ελάχιστα 8 χαρακτήρες, αριθμοί, σύμβολα</p>
+                    </div>
+                    <Switch
+                      id="passwordComplexity"
+                      checked={settings.passwordComplexity}
+                      onChange={(e) => updateSetting("passwordComplexity", e.target.checked)}
+                    />
+                  </div>
+
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <Label htmlFor="auditLogging" className="font-alegreya">Καταγραφή ενεργειών</Label>
+                      <p className="text-xs text-slate-500 font-alegreya">Αρχείο όλων των ενεργειών διαχειριστών</p>
+                    </div>
+                    <Switch
+                      id="auditLogging"
+                      checked={settings.auditLogging}
+                      onChange={(e) => updateSetting("auditLogging", e.target.checked)}
+                    />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 font-cormorant">
+                  <Key className="h-5 w-5 text-[#0A4A4A]" />
+                  Κατάσταση Ασφαλείας
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="p-4 border border-green-200 bg-green-50 rounded-lg">
+                    <div className="flex items-center gap-2 mb-2">
+                      <CheckCircle className="h-5 w-5 text-green-600" />
+                      <span className="font-medium font-alegreya text-green-800">SSL Ασφάλεια</span>
+                    </div>
+                    <p className="text-sm text-green-700 font-alegreya">Ενεργοποιημένη</p>
+                  </div>
+                  
+                  <div className="p-4 border border-green-200 bg-green-50 rounded-lg">
+                    <div className="flex items-center gap-2 mb-2">
+                      <CheckCircle className="h-5 w-5 text-green-600" />
+                      <span className="font-medium font-alegreya text-green-800">Backup Ενεργό</span>
+                    </div>
+                    <p className="text-sm text-green-700 font-alegreya">Τελευταίο: Σήμερα 03:00</p>
+                  </div>
+                </div>
+
+                <div className="flex flex-wrap gap-3">
                   <Button variant="outline" className="font-alegreya">
                     <Database className="h-4 w-4 mr-2" />
-                    Δημιουργία Backup
+                    Άμεσο Backup
                   </Button>
                   <Button variant="outline" className="font-alegreya">
-                    Επαναφορά από Backup
+                    <FileText className="h-4 w-4 mr-2" />
+                    Αρχείο Δραστηριότητας
                   </Button>
-                  <Button variant="outline" className="text-red-600 hover:text-red-700 hover:bg-red-50 font-alegreya">
-                    Εκκαθάριση Δεδομένων
+                  <Button variant="outline" className="font-alegreya">
+                    <Key className="h-4 w-4 mr-2" />
+                    Ανανέωση API Keys
                   </Button>
                 </div>
-              </div>
-            </div>
+              </CardContent>
+            </Card>
           </div>
         </TabsContent>
       </Tabs>
