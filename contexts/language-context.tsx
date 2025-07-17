@@ -1,10 +1,13 @@
 "use client"
 import { createContext, useContext, useState, useCallback, useEffect, type ReactNode } from "react"
-import { usePathname } from "next/navigation"
-import { LanguageCode, Translations, translationsData } from "@/lib/translations"
+import en from "@/contexts/jsons/en.json"
+import el from "@/contexts/jsons/el.json"
+import de from "@/contexts/jsons/de.json"
+
+export type LanguageCode = "el" | "en" | "de"
 
 // Helper function to get nested values from an object using a dot-separated string
-const getNestedValue = (obj: any, path: string): string | undefined => {
+const getNestedValue = (obj: any, path: string, language?: string): string | undefined => {
   const keys = path.split(".")
   let current = obj
   for (const key of keys) {
@@ -14,7 +17,13 @@ const getNestedValue = (obj: any, path: string): string | undefined => {
       return undefined
     }
   }
-  return typeof current === "string" ? current : undefined
+  if (typeof current === "string") return current
+  if (typeof current === "object" && current !== null && language && language in current) return current[language]
+  return undefined
+}
+
+interface Translations {
+  [key: string]: any // Can be a string or a nested object
 }
 
 interface LanguageContextProps {
@@ -23,42 +32,56 @@ interface LanguageContextProps {
   t: (key: string, defaultValue?: string, replacements?: Record<string, string | number>) => string
 }
 
+export const translationsData: Record<LanguageCode, Translations> = {
+  en,
+  el,
+  de,
+}
+
 const LanguageContext = createContext<LanguageContextProps | undefined>(undefined)
 
-export const LanguageProvider = ({ children }: { children: ReactNode }) => {
-  const pathname = usePathname()
-  // Extract language from the first segment of the path
-  const pathLang = (() => {
-    const parts = pathname.split("/").filter(Boolean)
-    if (parts.length > 0 && ["el", "en", "de"].includes(parts[0])) {
-      return parts[0] as LanguageCode
-    }
-    return "en" as LanguageCode // fallback
-  })()
-  const [language, setLanguageState] = useState<LanguageCode>(pathLang)
+export const LanguageProvider = ({
+  children,
+  initialLanguage,
+}: {
+  children: ReactNode;
+  initialLanguage?: LanguageCode;
+}) => {
+  const [language, setLanguageState] = useState<LanguageCode>(initialLanguage || "el");
 
-  // Sync language state with URL
   useEffect(() => {
-    setLanguageState(pathLang)
-  }, [pathLang])
+    // If initialLanguage changes (from URL), update state
+    if (initialLanguage && initialLanguage !== language) {
+      setLanguageState(initialLanguage);
+      localStorage.setItem("language", initialLanguage);
+    }
+  }, [initialLanguage]);
+
+  useEffect(() => {
+    const savedLanguage = localStorage.getItem("language") as LanguageCode;
+    if (savedLanguage && ["el", "en", "de"].includes(savedLanguage)) {
+      setLanguageState(savedLanguage);
+    }
+  }, []);
 
   const setLanguage = useCallback((lang: LanguageCode) => {
-    setLanguageState(lang)
-    // No localStorage, navigation is handled by header
-  }, [])
+    setLanguageState(lang);
+    localStorage.setItem("language", lang);
+  }, []);
 
   const t = useCallback(
     (key: string, defaultValue?: string, replacements?: Record<string, string | number>): string => {
       const currentLangTranslations = translationsData[language]
       const fallbackLangTranslations = translationsData["en"] // English as fallback
 
-      let translatedString = getNestedValue(currentLangTranslations, key)
+      let translatedString = getNestedValue(currentLangTranslations, key, language)
 
       if (translatedString === undefined) {
-        translatedString = getNestedValue(fallbackLangTranslations, key)
+        translatedString = getNestedValue(fallbackLangTranslations, key, language)
       }
 
       if (translatedString === undefined) {
+        // console.warn(`Translation key "${key}" not found for language "${language}" or fallback "en". Using default or key.`);
         return defaultValue !== undefined ? defaultValue : key
       }
 

@@ -9,64 +9,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Search, Filter, Plus, Edit, Trash2, Eye } from "lucide-react"
 import { adminAPI } from "@/lib/api"
 
-// Mock data - in a real app, this would come from your database
-const rooms = [
-  {
-    id: "standard",
-    number: "101",
-    name: "Standard Δωμάτιο",
-    capacity: 2,
-    price: 60,
-    status: "available",
-    image: "/room-1.png",
-  },
-  {
-    id: "standard-2",
-    number: "102",
-    name: "Standard Δωμάτιο",
-    capacity: 2,
-    price: 60,
-    status: "occupied",
-    image: "/room-1.png",
-  },
-  {
-    id: "standard-3",
-    number: "103",
-    name: "Standard Δωμάτιο",
-    capacity: 2,
-    price: 60,
-    status: "maintenance",
-    image: "/room-1.png",
-  },
-  {
-    id: "family",
-    number: "201",
-    name: "Οικογενειακό Δωμάτιο",
-    capacity: 4,
-    price: 80,
-    status: "available",
-    image: "/room-2.png",
-  },
-  {
-    id: "family-2",
-    number: "202",
-    name: "Οικογενειακό Δωμάτιο",
-    capacity: 4,
-    price: 80,
-    status: "occupied",
-    image: "/room-2.png",
-  },
-  {
-    id: "romantic",
-    number: "301",
-    name: "Ρομαντικό Δωμάτιο",
-    capacity: 2,
-    price: 100,
-    status: "available",
-    image: "/room-3.png",
-  },
-]
-
 const getStatusText = (status: string) => {
   switch (status) {
     case "available":
@@ -147,7 +89,7 @@ export default function RoomsPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="text-slate-600 font-alegreya">Loading rooms...</div>
+        <div className="text-slate-600 font-alegreya">Φόρτωση δωματίων...</div>
       </div>
     )
   }

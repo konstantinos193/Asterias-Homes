@@ -24,6 +24,20 @@ export default function Home() {
       ...roomType,
       displayId: `${roomType.id}-featured-${index}`,
       image: roomType.images[index % roomType.images.length],
+      featureKeys: [
+        "rooms.feature.entirePlace",
+        "rooms.feature.freeParking",
+        "rooms.feature.breakfastIncluded",
+        "rooms.feature.balcony",
+        "rooms.feature.privateBathroom",
+        "rooms.feature.freeWifi",
+        "rooms.feature.shower",
+        "rooms.feature.airConditioning",
+        "rooms.feature.flatScreenTV",
+        "rooms.feature.kitchenette",
+        "rooms.feature.nonSmoking",
+        "rooms.feature.familyFriendly"
+      ]
     }))
   }
 

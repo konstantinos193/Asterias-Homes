@@ -1,29 +1,44 @@
 "use client"
 
 import * as React from "react"
-import * as SwitchPrimitives from "@radix-ui/react-switch"
 
-import { cn } from "@/lib/utils"
+interface SwitchProps extends React.InputHTMLAttributes<HTMLInputElement> {}
 
-const Switch = React.forwardRef<
-  React.ElementRef<typeof SwitchPrimitives.Root>,
-  React.ComponentPropsWithoutRef<typeof SwitchPrimitives.Root>
->(({ className, ...props }, ref) => (
-  <SwitchPrimitives.Root
-    className={cn(
-      "peer inline-flex h-6 w-11 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-primary data-[state=unchecked]:bg-input",
-      className
-    )}
-    {...props}
-    ref={ref}
-  >
-    <SwitchPrimitives.Thumb
-      className={cn(
-        "pointer-events-none block h-5 w-5 rounded-full bg-background shadow-lg ring-0 transition-transform data-[state=checked]:translate-x-5 data-[state=unchecked]:translate-x-0"
-      )}
-    />
-  </SwitchPrimitives.Root>
-))
-Switch.displayName = SwitchPrimitives.Root.displayName
-
-export { Switch }
+export const Switch = React.forwardRef<HTMLInputElement, SwitchProps>(
+  ({ className = "", ...props }, ref) => (
+    <label style={{ display: 'inline-flex', alignItems: 'center', cursor: 'pointer' }}>
+      <input
+        type="checkbox"
+        ref={ref}
+        className={`sr-only ${className}`}
+        {...props}
+      />
+      <span
+        style={{
+          display: 'inline-block',
+          width: 44,
+          height: 24,
+          background: props.checked ? '#2563eb' : '#e5e7eb',
+          borderRadius: 9999,
+          position: 'relative',
+          transition: 'background 0.2s',
+        }}
+      >
+        <span
+          style={{
+            position: 'absolute',
+            left: props.checked ? 22 : 2,
+            top: 2,
+            width: 20,
+            height: 20,
+            background: '#fff',
+            borderRadius: '50%',
+            boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+            transition: 'left 0.2s',
+          }}
+        />
+      </span>
+    </label>
+  )
+)
+Switch.displayName = "Switch"

@@ -31,8 +31,8 @@ export default function AdminOffersPage() {
     } catch (error) {
       console.error("Failed to fetch offers", error)
       toast({
-        title: t("common.error"),
-        description: t("admin.offers.errors.fetch"),
+        title: "Σφάλμα",
+        description: "Αποτυχία φόρτωσης προσφορών",
         variant: "destructive",
       })
     } finally {
@@ -46,19 +46,19 @@ export default function AdminOffersPage() {
   }, [])
 
   const handleDelete = async (id: string) => {
-    if (!confirm(t("admin.offers.confirmDelete"))) return
+    if (!confirm("Είστε σίγουροι ότι θέλετε να διαγράψετε αυτή την προσφορά;")) return
     try {
       await offersAPI.delete(id)
       toast({
-        title: t("common.success"),
-        description: t("admin.offers.success.delete"),
+        title: "Επιτυχία",
+        description: "Η προσφορά διαγράφηκε επιτυχώς",
       })
       fetchOffers() // Refresh the list
     } catch (error) {
       console.error("Failed to delete offer", error)
       toast({
-        title: t("common.error"),
-        description: t("admin.offers.errors.delete"),
+        title: "Σφάλμα",
+        description: "Αποτυχία διαγραφής προσφοράς",
         variant: "destructive",
       })
     }
@@ -68,15 +68,15 @@ export default function AdminOffersPage() {
     try {
       await offersAPI.toggle(id)
       toast({
-        title: t("common.success"),
-        description: t("admin.offers.success.toggle"),
+        title: "Επιτυχία",
+        description: "Η κατάσταση της προσφοράς ενημερώθηκε",
       })
       fetchOffers() // Refresh the list
     } catch (error) {
       console.error("Failed to toggle offer status", error)
       toast({
-        title: t("common.error"),
-        description: t("admin.offers.errors.toggle"),
+        title: "Σφάλμα",
+        description: "Αποτυχία ενημέρωσης κατάστασης προσφοράς",
         variant: "destructive",
       })
     }
@@ -86,14 +86,14 @@ export default function AdminOffersPage() {
     <div className="space-y-8">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-cormorant font-light text-slate-800">{t("admin.offers.title")}</h1>
-          <p className="text-slate-600 font-alegreya">{t("admin.offers.subtitle")}</p>
+          <h1 className="text-2xl font-cormorant font-light text-slate-800">Προσφορές</h1>
+          <p className="text-slate-600 font-alegreya">Διαχείριση ειδικών προσφορών και εκπτώσεων</p>
         </div>
         <div>
           <Link href="/admin/offers/new">
             <Button className="bg-[#0A4A4A] hover:bg-[#083a3a] text-white font-alegreya">
               <PlusCircle className="h-4 w-4 mr-2" />
-              {t("admin.offers.addNew")}
+              Δημιουργία Νέας Προσφοράς
             </Button>
           </Link>
         </div>
@@ -108,31 +108,31 @@ export default function AdminOffersPage() {
                   scope="col"
                   className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider font-alegreya"
                 >
-                  {t("admin.offers.table.name")}
+                  Όνομα
                 </th>
                 <th
                   scope="col"
                   className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider font-alegreya"
                 >
-                  {t("admin.offers.table.discount")}
+                  Έκπτωση
                 </th>
                 <th
                   scope="col"
                   className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider font-alegreya"
                 >
-                  {t("admin.offers.table.validUntil")}
+                  Ισχύει Μέχρι
                 </th>
                 <th
                   scope="col"
                   className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider font-alegreya"
                 >
-                  {t("admin.offers.table.status")}
+                  Κατάσταση
                 </th>
                 <th
                   scope="col"
                   className="px-6 py-3 text-right text-xs font-medium text-slate-500 uppercase tracking-wider font-alegreya"
                 >
-                  {t("admin.offers.table.actions")}
+                  Ενέργειες
                 </th>
               </tr>
             </thead>
@@ -140,7 +140,7 @@ export default function AdminOffersPage() {
               {loading ? (
                 <tr>
                   <td colSpan={5} className="text-center p-12">
-                    <p className="text-slate-500 font-alegreya">{t("common.loading")}</p>
+                    <p className="text-slate-500 font-alegreya">Φόρτωση...</p>
                   </td>
                 </tr>
               ) : offers.length > 0 ? (
@@ -153,7 +153,7 @@ export default function AdminOffersPage() {
                       {offer.discount}%
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-700 font-alegreya">
-                      {new Date(offer.endDate).toLocaleDateString()}
+                      {new Date(offer.endDate).toLocaleDateString('el-GR')}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-700 font-alegreya">
                       <span
@@ -161,9 +161,7 @@ export default function AdminOffersPage() {
                           offer.active ? "bg-green-100 text-green-800" : "bg-slate-100 text-slate-800"
                         }`}
                       >
-                        {offer.active
-                          ? t("admin.offers.status.active")
-                          : t("admin.offers.status.inactive")}
+                        {offer.active ? "Ενεργή" : "Ανενεργή"}
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2">
@@ -171,7 +169,7 @@ export default function AdminOffersPage() {
                         variant="ghost"
                         size="icon"
                         onClick={() => handleToggle(offer._id)}
-                        title={offer.active ? "Deactivate" : "Activate"}
+                        title={offer.active ? "Απενεργοποίηση" : "Ενεργοποίηση"}
                       >
                         {offer.active ? (
                           <ToggleRight className="h-5 w-5 text-green-600" />
@@ -180,7 +178,7 @@ export default function AdminOffersPage() {
                         )}
                       </Button>
                       <Link href={`/admin/offers/edit/${offer._id}`}>
-                        <Button variant="ghost" size="icon">
+                        <Button variant="ghost" size="icon" title="Επεξεργασία">
                           <Edit className="h-4 w-4" />
                         </Button>
                       </Link>
@@ -189,6 +187,7 @@ export default function AdminOffersPage() {
                         size="icon"
                         onClick={() => handleDelete(offer._id)}
                         className="text-red-600 hover:text-red-800"
+                        title="Διαγραφή"
                       >
                         <Trash className="h-4 w-4" />
                       </Button>
@@ -198,7 +197,7 @@ export default function AdminOffersPage() {
               ) : (
                 <tr>
                   <td colSpan={5} className="text-center p-12">
-                    <p className="text-slate-500 font-alegreya">{t("admin.offers.noOffers")}</p>
+                    <p className="text-slate-500 font-alegreya">Δεν βρέθηκαν προσφορές. Ξεκινήστε προσθέτοντας μια νέα προσφορά.</p>
                   </td>
                 </tr>
               )}

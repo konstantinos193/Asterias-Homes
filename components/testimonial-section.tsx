@@ -8,23 +8,23 @@ export default function HighlightsSection() {
 
   const highlights = [
     {
-      titleKey: "highlights.item1.title",
-      descriptionKey: "highlights.item1.description",
+      titleKey: "highlights.highlight1.title",
+      descriptionKey: "highlights.highlight1.description",
       icon: Sunset,
     },
     {
-      titleKey: "highlights.item2.title",
-      descriptionKey: "highlights.item2.description",
+      titleKey: "highlights.highlight2.title",
+      descriptionKey: "highlights.highlight2.description",
       icon: Fish,
     },
     {
-      titleKey: "highlights.item3.title",
-      descriptionKey: "highlights.item3.description",
+      titleKey: "highlights.highlight3.title",
+      descriptionKey: "highlights.highlight3.description",
       icon: Anchor,
     },
     {
-      titleKey: "highlights.item4.title",
-      descriptionKey: "highlights.item4.description",
+      titleKey: "highlights.highlight4.title",
+      descriptionKey: "highlights.highlight4.description",
       icon: Camera,
     },
   ]

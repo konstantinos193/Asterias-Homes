@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { useLanguage } from "@/contexts/language-context"
 import { useAuth } from "@/hooks/use-auth"
@@ -8,22 +8,13 @@ import { useAuth } from "@/hooks/use-auth"
 export default function AdminLogin() {
   const { t } = useLanguage()
   const router = useRouter()
-  const { login, user, loading } = useAuth()
+  const { login } = useAuth()
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState("")
-
-  // Redirect if already logged in
-  useEffect(() => {
-    if (!loading && user) {
-      router.replace("/admin")
-      // Using a hard redirect as a fallback to ensure navigation
-      window.location.href = "/admin"
-    }
-  }, [user, loading, router])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
@@ -34,33 +25,14 @@ export default function AdminLogin() {
     e.preventDefault()
     setIsSubmitting(true)
     setError("")
-
     try {
-      console.log("Attempting login with:", formData.email)
       await login(formData.email, formData.password)
-      console.log("Login successful, redirecting...")
-      // Force a hard redirect to admin dashboard
-      window.location.replace("/admin")
+      router.push("/admin")
     } catch (err: any) {
-      console.error("Login error:", err)
-
-      // Handle rate limiting specifically
-      if (err.message && err.message.includes('429')) {
-        setError("Too many login attempts. Please wait a few minutes and try again.")
-      } else {
-        setError(err.message || "Login failed")
-      }
+      setError(err.message || "Login failed")
     } finally {
       setIsSubmitting(false)
     }
-  }
-
-  if (loading) {
-    return <div className="min-h-screen flex items-center justify-center bg-slate-50">Loading...</div>
-  }
-  
-  if (user) {
-    return <div className="min-h-screen flex items-center justify-center bg-slate-50">Redirecting to admin dashboard...</div>
   }
 
   return (

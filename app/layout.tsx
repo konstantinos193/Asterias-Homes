@@ -7,6 +7,7 @@ import Footer from "@/components/footer"
 import { ThemeProvider } from "@/components/theme-provider"
 import { LanguageProvider } from "@/contexts/language-context"
 import { Toaster } from "@/components/ui/sonner"
+import { AuthProvider } from '@/hooks/use-auth'
 
 const cormorant = Cormorant({
   subsets: ["latin", "latin-ext"],
@@ -144,16 +145,18 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body className={`${cormorant.variable} ${alegreya.variable} font-sans`}>
-        <LanguageProvider>
-          <ThemeProvider attribute="class" defaultTheme="light" enableSystem disableTransitionOnChange>
-            <Header />
-            <main>{children}</main>
-            <Footer />
-            <Toaster />
-          </ThemeProvider>
-        </LanguageProvider>
+    <html lang="en">
+      <body>
+        <AuthProvider>
+          <LanguageProvider>
+            <ThemeProvider attribute="class" defaultTheme="light" enableSystem disableTransitionOnChange>
+              <Header />
+              <main>{children}</main>
+              <Footer />
+              <Toaster />
+            </ThemeProvider>
+          </LanguageProvider>
+        </AuthProvider>
       </body>
     </html>
   )

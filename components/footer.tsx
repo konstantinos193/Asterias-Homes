@@ -26,64 +26,50 @@ export default function Footer() {
             </div>
             <div className="w-24 h-0.5 bg-[#8B4B5C] mb-6"></div>
             <p className="text-slate-300 font-alegreya text-center max-w-xl mb-4">{t("footer.description")}</p>
-            <div className="flex space-x-4">
-              <a
-                href="#"
-                className="flex items-center justify-center w-10 h-10 rounded-full bg-[#8B4B5C]/20 text-white hover:bg-[#8B4B5C] transition-colors"
-                aria-label="Instagram"
-              >
-                <Instagram className="h-5 w-5" />
-              </a>
-              <a
-                href="#"
-                className="flex items-center justify-center w-10 h-10 rounded-full bg-[#8B4B5C]/20 text-white hover:bg-[#8B4B5C] transition-colors"
-                aria-label="Facebook"
-              >
-                <Facebook className="h-5 w-5" />
-              </a>
-            </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {/* Contact Information */}
             <div className="flex flex-col items-center md:items-start">
-              <h3 className="text-lg font-cormorant font-semibold mb-4 text-[#E8E2D5]">{t("footer.contact")}</h3>
+              <h3 className="text-lg font-alegreya font-light mb-4 text-[#E8E2D5]">{t("footer.contact")}</h3>
               <ul className="space-y-4">
                 <li className="flex items-start">
                   <Phone className="h-5 w-5 text-[#8B4B5C] mt-0.5 mr-3 flex-shrink-0" />
-                  <span className="text-slate-300 font-alegreya">{t("footer.details.phone.number")}</span>
+                  <span className="text-slate-300 font-alegreya font-light">{t("footer.details.phone.number")}</span>
                 </li>
                 <li className="flex items-start">
                   <Mail className="h-5 w-5 text-[#8B4B5C] mt-0.5 mr-3 flex-shrink-0" />
-                  <span className="text-slate-300 font-alegreya">{t("footer.details.email.address")}</span>
+                  <span className="text-slate-300 font-alegreya font-light">{t("footer.details.email.address")}</span>
                 </li>
                 <li className="flex items-start">
                   <MapPin className="h-5 w-5 text-[#8B4B5C] mt-0.5 mr-3 flex-shrink-0" />
-                  <span className="text-slate-300 font-alegreya">{t("footer.details.address")}</span>
+                  <span className="text-slate-300 font-alegreya font-light">
+                    {t("footer.details.address.street")}
+                  </span>
                 </li>
               </ul>
             </div>
 
             {/* Quick Links */}
             <div className="flex flex-col items-center md:items-start">
-              <h3 className="text-lg font-cormorant font-semibold mb-4 text-[#E8E2D5]">{t("footer.links")}</h3>
+              <h3 className="text-lg font-alegreya font-light mb-4 text-[#E8E2D5]">{t("footer.links")}</h3>
               <div className="grid grid-cols-2 gap-x-8 gap-y-3">
-                <Link href="/" className="text-slate-300 hover:text-white transition-colors font-alegreya">
+                <Link href="/" className="text-slate-300 hover:text-white transition-colors font-alegreya font-light">
                   {t("nav.home")}
                 </Link>
-                <Link href="/rooms" className="text-slate-300 hover:text-white transition-colors font-alegreya">
+                <Link href="/rooms" className="text-slate-300 hover:text-white transition-colors font-alegreya font-light">
                   {t("nav.rooms")}
                 </Link>
-                <Link href="/about" className="text-slate-300 hover:text-white transition-colors font-alegreya">
+                <Link href="/about" className="text-slate-300 hover:text-white transition-colors font-alegreya font-light">
                   {t("nav.about")}
                 </Link>
-                <Link href="/bookings" className="text-slate-300 hover:text-white transition-colors font-alegreya">
+                <Link href="/bookings" className="text-slate-300 hover:text-white transition-colors font-alegreya font-light">
                   {t("nav.bookings")}
                 </Link>
-                <Link href="/contact" className="text-slate-300 hover:text-white transition-colors font-alegreya">
+                <Link href="/contact" className="text-slate-300 hover:text-white transition-colors font-alegreya font-light">
                   {t("nav.contact")}
                 </Link>
-                <Link href="/admin" className="text-slate-300 hover:text-white transition-colors font-alegreya">
+                <Link href="/admin" className="text-slate-300 hover:text-white transition-colors font-alegreya font-light">
                   {t("nav.admin")}
                 </Link>
               </div>
@@ -91,29 +77,29 @@ export default function Footer() {
 
             {/* Reception Hours */}
             <div className="flex flex-col items-center md:items-start">
-              <h3 className="text-lg font-cormorant font-semibold mb-4 text-[#E8E2D5]">
+              <h3 className="text-lg font-alegreya font-light mb-4 text-[#E8E2D5]">
                 {t("footer.receptionHours.title")}
               </h3>
               <ul className="space-y-3">
                 <li className="flex items-start">
                   <Clock className="h-5 w-5 text-[#8B4B5C] mt-0.5 mr-3 flex-shrink-0" />
                   <div>
-                    <p className="text-white font-alegreya font-medium">{t("footer.receptionHours.mondayFriday")}</p>
-                    <p className="text-slate-300 font-alegreya">{t("footer.receptionHours.mondayFridayHours")}</p>
+                    <p className="text-white font-alegreya font-light">{t("footer.receptionHours.mondayFriday")}</p>
+                    <p className="text-slate-300 font-alegreya font-light">{t("footer.receptionHours.mondayFridayHours")}</p>
                   </div>
                 </li>
                 <li className="flex items-start">
                   <Clock className="h-5 w-5 text-[#8B4B5C] mt-0.5 mr-3 flex-shrink-0 opacity-0 md:opacity-100" />{" "}
                   <div>
-                    <p className="text-white font-alegreya font-medium">{t("footer.receptionHours.saturday")}</p>
-                    <p className="text-slate-300 font-alegreya">{t("footer.receptionHours.saturdayHours")}</p>
+                    <p className="text-white font-alegreya font-light">{t("footer.receptionHours.saturday")}</p>
+                    <p className="text-slate-300 font-alegreya font-light">{t("footer.receptionHours.saturdayHours")}</p>
                   </div>
                 </li>
                 <li className="flex items-start">
                   <Clock className="h-5 w-5 text-[#8B4B5C] mt-0.5 mr-3 flex-shrink-0 opacity-0 md:opacity-100" />{" "}
                   <div>
-                    <p className="text-white font-alegreya font-medium">{t("footer.receptionHours.sunday")}</p>
-                    <p className="text-slate-300 font-alegreya">{t("footer.receptionHours.sundayHours")}</p>
+                    <p className="text-white font-alegreya font-light">{t("footer.receptionHours.sunday")}</p>
+                    <p className="text-slate-300 font-alegreya font-light">{t("footer.receptionHours.sundayHours")}</p>
                   </div>
                 </li>
               </ul>

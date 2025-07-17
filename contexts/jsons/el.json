@@ -1,0 +1,831 @@
+{
+    "common": {
+      "loading": "Φόρτωση...",
+      "error": "Σφάλμα",
+      "success": "Επιτυχία",
+      "confirm": "Επιβεβαίωση",
+      "cancel": "Άκυρο",
+      "edit": "Επεξεργασία",
+      "delete": "Διαγραφή",
+      "view": "Προβολή",
+      "save": "Αποθήκευση",
+      "close": "Κλείσιμο",
+      "search": "Αναζήτηση",
+      "reset": "Επαναφορά",
+      "actions": "Ενέργειες",
+      "createdAt": "Δημιουργήθηκε Στις",
+      "updatedAt": "Ενημερώθηκε Στις",
+      "id": "ID"
+    },
+    "nav": {
+      "home": "Αρχική",
+      "about": "Σχετικά",
+      "rooms": "Δωμάτια",
+      "bookings": "Κρατήσεις",
+      "contact": "Επικοινωνία",
+      "book": "Κράτηση Τώρα",
+      "admin": "Διαχειριστής"
+    },
+    "languageSelector": {
+      "titleMobile": "Γλώσσα / Language"
+    },
+    "logo": {
+      "alt": "Λογότυπο Asterias Homes",
+      "altPublic": "Λογότυπο Asterias Homes"
+    },
+    "header": {
+      "openMenu": "Άνοιγμα κυρίως μενού",
+      "closeMenu": "Κλείσιμο κυρίως μενού"
+    },
+    "hero": {
+      "slide1": {
+        "title": "Κορωνησία",
+        "subtitle": "Όπου η ηρεμία έχει φωνή"
+      },
+      "slide2": {
+        "title": "Άνετα Διαμερίσματα",
+        "subtitle": "Στην καρδιά του Αμβρακικού Κόλπου"
+      },
+      "slide3": {
+        "title": "Μοναδική Εμπειρία",
+        "subtitle": "Μεταξύ Θάλασσας και Ουρανού"
+      },
+      "book": "Κράτηση Τώρα"
+    },
+    "welcome": {
+      "subtitle": "Καλωσορίσατε",
+      "title": "Σε άνετα διαμερίσματα για διακοπές",
+      "paragraph1": "Ζήστε την αυθεντική ελληνική φιλοξενία στην ήρεμη ομορφιά της Κορωνησίας. Τα άνετα διαμερίσματά μας προσφέρουν τον ιδανικό συνδυασμό παραδοσιακής γοητείας και σύγχρονης άνεσης για τις διακοπές σας.",
+      "paragraph2": "Κάθε διαμέρισμα είναι μοναδικά σχεδιασμένο για να σας προσφέρει μια εμπειρία σπιτιού μακριά από το σπίτι σας στον Αμβρακικό Κόλπο, όπου μπορείτε να ανακαλύψετε τη μοναδική ηρεμία της τοποθεσίας μας.",
+      "button": "Εξερευνήστε την Ιστορία μας"
+    },
+    "rooms": {
+      "section": {
+        "subtitle": "Η Διαμονή Μας",
+        "title": "Τα Διαμερίσματά Μας",
+        "description": "Ανακαλύψτε τα 7 πολυτελή διαμερίσματα διακοπών μας, το καθένα μοναδικά σχεδιασμένο για την τέλεια διαμονή σας στην Κορωνησία."
+      },
+      "perNight": "/ διανυκτέρευση",
+      "viewAll": "Προβολή Όλων των Διαμερισμάτων",
+      "standard": {
+        "name": "Studio Διαμέρισμα",
+        "description": "Άνετο studio διαμέρισμα με σύγχρονες ανέσεις, ιδανικό για ζευγάρια. Διαθέτει μικρή κουζίνα, ιδιωτικό μπάνιο και μπαλκόνι με θέα στον κήπο."
+      },
+      "family": {
+        "name": "Οικογενειακό Διαμέρισμα",
+        "description": "Ευρύχωρο διαμέρισμα δύο υπνοδωματίων ιδανικό για οικογένειες. Διαθέτει πλήρη κουζίνα, καθιστικό και μπαλκόνι με εκπληκτική θέα στον Αμβρακικό Κόλπο."
+      },
+      "romantic": {
+        "name": "Διαμέρισμα με Θέα Θάλασσα",
+        "description": "Premium διαμέρισμα με πανοραμική θέα στη θάλασσα, ιδανικό για ζευγάρια. Διαθέτει πολυτελείς ανέσεις, ιδιωτική βεράντα και ρομαντική ατμόσφαιρα."
+      },
+      "twin": {
+        "name": "Διαμέρισμα με Μονά Κρεβάτια",
+        "description": "Μοντέρνο διαμέρισμα με μονά κρεβάτια, ιδανικό για φίλους ή συναδέλφους. Περιλαμβάνει πλήρη κουζίνα και άνετο χώρο καθιστικού."
+      },
+      "suite": {
+        "name": "Deluxe Διαμέρισμα",
+        "description": "Πολυτελές διαμέρισμα δύο υπνοδωματίων με ξεχωριστό καθιστικό, πλήρη κουζίνα και premium ανέσεις για μια εξαιρετική διαμονή."
+      },
+      "accessible": {
+        "name": "Προσβάσιμο Διαμέρισμα",
+        "description": "Προσεκτικά σχεδιασμένο διαμέρισμα με προσβάσιμα χαρακτηριστικά, εξασφαλίζοντας άνετη διαμονή για όλους τους επισκέπτες."
+      },
+      "feature": {
+        "entirePlace": "Ολόκληρος ο χώρος δικός σας",
+        "freeParking": {
+          "el": "Δωρεάν πάρκινγκ",
+          "en": "Free parking",
+          "de": "Kostenloses Parken"
+        },
+        "breakfastIncluded": {
+          "el": "Πρωινό",
+          "en": "Breakfast included",
+          "de": "Frühstück inklusive"
+        },
+        "balcony": {
+          "el": "Μπαλκόνι",
+          "en": "Balcony",
+          "de": "Balkon"
+        },
+        "privateBathroom": {
+          "el": "Ιδιωτικό μπάνιο",
+          "en": "Private bathroom",
+          "de": "Eigenes Badezimmer"
+        },
+        "freeWifi": {
+          "el": "Δωρεάν Wi-Fi",
+          "en": "Free Wifi",
+          "de": "Kostenloses WLAN"
+        },
+        "shower": {
+          "el": "Ντουζιέρα",
+          "en": "Shower",
+          "de": "Dusche"
+        },
+        "airConditioning": {
+          "el": "Κλιματισμός",
+          "en": "Air conditioning",
+          "de": "Klimaanlage"
+        },
+        "flatScreenTV": {
+          "el": "Επίπεδη τηλεόραση",
+          "en": "Flat-screen TV",
+          "de": "Flachbildfernseher"
+        },
+        "kitchenette": {
+          "el": "Μικρή Κουζίνα",
+          "en": "Kitchenette",
+          "de": "Kochnische"
+        },
+        "nonSmoking": {
+          "el": "Δωμάτια μη καπνιζόντων",
+          "en": "Non-smoking rooms",
+          "de": "Nichtraucherzimmer"
+        },
+        "familyFriendly": {
+          "el": "Οικογενειακά δωμάτια",
+          "en": "Family rooms",
+          "de": "Familienzimmer"
+        }
+      }
+    },
+    "roomCard": {
+      "bookNow": "Κράτηση Διαμερίσματος"
+    },
+    "specialOffers": {
+      "title": "Ειδικές Προσφορές",
+      "subtitle": "Επωφεληθείτε από τις αποκλειστικές μας προσφορές",
+      "allOffers": "Δείτε Όλες τις Προσφορές",
+      "summerEscape": { "title": "Καλοκαιρινή Απόδραση" },
+      "romanticWeekend": { "title": "Ρομαντικό Σαββατοκύριακο" },
+      "earlyBird": { "title": "Προσφορά Έγκαιρης Κράτησης" }
+    },
+    "offers": {
+      "section": {
+        "subtitle": "Αποκλειστικές Προσφορές",
+        "title": "Οι Ειδικές Μας Προσφορές",
+        "description": "Ανακαλύψτε τις προσεκτικά επιλεγμένες προσφορές μας, σχεδιασμένες για να κάνουν τη διαμονή σας στα διαμερίσματα ακόμα πιο αξέχαστη. Κάντε απευθείας κράτηση για τις καλύτερες τιμές και προνόμια."
+      },
+      "summerEscape": {
+        "title": "Καλοκαιρινή Απόδραση",
+        "description": "Απολαύστε έκπτωση 20% στην καλοκαιρινή σας διαμονή. Περιλαμβάνει καλάθι καλωσορίσματος και ευέλικτο check-in.",
+        "badge": "Hot Προσφορά",
+        "roomType": "Studio Διαμέρισμα",
+        "includes": {
+          "freeBreakfast": "Καλάθι Καλωσορίσματος",
+          "welcomeWine": "Καλωσόρισμα με Μπουκάλι Κρασί",
+          "lateCheckout": "Ευέλικτο Check-out"
+        }
+      },
+      "romanticWeekend": {
+        "title": "Ρομαντικό Σαββατοκύριακο",
+        "description": "Εκπλήξτε το αγαπημένο σας πρόσωπο με μια ρομαντική απόδραση. Περιλαμβάνεται σαμπάνια, προτάσεις εστιατορίων και ευέλικτο check-out.",
+        "badge": "Αγαπημένο Ζευγαριών",
+        "roomType": "Διαμέρισμα με Θέα Θάλασσα",
+        "includes": {
+          "champagne": "Μπουκάλι Σαμπάνια",
+          "romanticDinner": "Προτάσεις Εστιατορίων",
+          "lateCheckout": "Ευέλικτο Check-out",
+          "breakfastInRoom": "Καλάθι Καλωσορίσματος"
+        }
+      },
+      "familyFun": {
+        "title": "Πακέτο Οικογενειακής Διασκέδασης",
+        "description": "Δημιουργήστε αξέχαστες αναμνήσεις με την οικογένειά σας. Ειδικές τιμές για μεγαλύτερες διαμονές και οικογενειακές ανέσεις.",
+        "roomType": "Οικογενειακό Διαμέρισμα",
+        "includes": {
+          "freeKidsStay": "Ειδικές Οικογενειακές Τιμές",
+          "kidsActivities": "Οδηγός Τοπικών Δραστηριοτήτων",
+          "familyBreakfast": "Οικογενειακό Καλάθι Καλωσορίσματος"
+        }
+      },
+      "earlyBird": {
+        "title": "Προσφορά Έγκαιρης Κράτησης",
+        "description": "Κάντε κράτηση εκ των προτέρων και εξοικονομήστε έως και 25% στη διαμονή σας. Μη επιστρέψιμη.",
+        "badge": "Μεγάλη Εξοικονόμηση!",
+        "includes": {
+          "discountAllRooms": "Έκπτωση σε όλα τα διαμερίσματα",
+          "freeUpgrade": "Δωρεάν Αναβάθμιση Διαμερίσματος (βάσει διαθεσιμότητας)"
+        }
+      },
+      "lastMinute": {
+        "title": "Προσφορά Τελευταίας Στιγμής",
+        "description": "Αυθόρμητο ταξίδι; Εξασφαλίστε την καλύτερη διαθέσιμη τιμή για κρατήσεις εντός 48 ωρών από την άφιξη.",
+        "badge": "Κλείστε Τώρα!",
+        "includes": {
+          "discount": "Ειδική Μειωμένη Τιμή",
+          "instantConfirmation": "Άμεση Επιβεβαίωση"
+        }
+      },
+      "autumnRetreat": {
+        "title": "Φθινοπωρινή Απόδραση",
+        "description": "Ζήστε την ομορφιά του φθινοπώρου στην Κορωνησία με το ειδικό μας πακέτο.",
+        "badge": "Εποχιακό",
+        "includes": {
+          "freeTour": "Δωρεάν Ξενάγηση στην Περιοχή",
+          "localWelcomeProducts": "Καλωσόρισμα με Καλάθι Τοπικών Προϊόντων"
+        }
+      },
+      "includes": "Τι Περιλαμβάνεται:",
+      "validUntil": "Ισχύει έως",
+      "daysRemaining": "Απομένουν:",
+      "days": "ημέρες",
+      "from": "Από",
+      "perNight": "/διανυκτέρευση",
+      "viewOffer": "Δείτε την Προσφορά",
+      "moreDetails": "Περισσότερες Λεπτομέρειες",
+      "viewAllOffers": "Δείτε Όλες τις Προσφορές"
+    },
+    "featuresSection": {
+      "title": "Γιατί να επιλέξετε το Asterias Homes;",
+      "subtitle": "Αξέχαστες Εμπειρίες σας Περιμένουν",
+      "item1": {
+        "title": "Εξαιρετική Τοποθεσία",
+        "description": "Στην καρδιά της Κορωνησίας, με εκπληκτική θέα και εύκολη πρόσβαση στα τοπικά αξιοθέατα."
+      },
+      "item2": {
+        "title": "Αυθεντική Φιλοξενία",
+        "description": "Ζήστε την γνήσια ελληνική ζεστασιά και εξατομικευμένη εξυπηρέτηση από την ομάδα μας."
+      },
+      "item3": {
+        "title": "Σπίτι Μακριά από το Σπίτι",
+        "description": "Τα διαμερίσματά μας συνδυάζουν παραδοσιακή αισθητική με σύγχρονες ανέσεις για μια μοναδική και άνετη διαμονή."
+      },
+      "item4": {
+        "title": "Γαλήνιο Καταφύγιο",
+        "description": "Αποδράστε από τη φασαρία και χαλαρώστε στο ήρεμο περιβάλλον του Αμβρακικού Κόλπου."
+      }
+    },
+    "discover": {
+      "title": "Ανακαλύψτε την Κορωνησία",
+      "description": "Ένα κρυμμένο διαμάντι στον Αμβρακικό Κόλπο, η Κορωνησία σας προσκαλεί να εξερευνήσετε τα γαλήνια τοπία της, την πλούσια άγρια ζωή και την διαχρονική γοητεία ενός παραδοσιακού ψαροχωριού. Η περιπέτειά σας ξεκινά στο Asterias Homes.",
+      "button": "Μάθετε Περισσότερα για την Περιοχή",
+      "imageAlt": "Ηλιοβασίλεμα στην Κορωνησία"
+    },
+    "highlights": {
+      "title": "Σχόλια Επισκεπτών",
+      "description": "Τι Λένε οι Επισκέπτες Μας",
+      "highlight1": {
+        "title": "Εκπληκτική Θέα",
+        "description": "Το να ξυπνάς με τον γαλήνιο Αμβρακικό Κόλπο από το μπαλκόνι του διαμερίσματός μας ήταν αξέχαστο. Η θέα ήταν απλά εκπληκτική!",
+        "author": "Μαρία Κ."
+      },
+      "highlight2": {
+        "title": "Ζεστή & Φιλόξενη",
+        "description": "Η ομάδα στο Asterias Homes μας έκανε να νιώσουμε σαν οικογένεια. Η φιλοξενία και η προσοχή τους στη λεπτομέρεια ήταν εξαιρετικές.",
+        "author": "Γιάννης & Σάρα Π."
+      },
+      "highlight3": {
+        "title": "Τέλεια Απόδραση",
+        "description": "Η Κορωνησία είναι ένας παράδεισος και το Asterias Homes είναι το ιδανικό μέρος για να το ζήσετε. Ειρηνικό, όμορφο και πραγματικά χαλαρωτικό.",
+        "author": "Νίκος Γ."
+      },
+      "highlight4": {
+        "title": {
+          "el": "Φωτογραφικές Τοποθεσίες",
+          "en": "Photo Spots",
+          "de": "Fotospots"
+        },
+        "description": {
+          "el": "Ανακαλύψτε μοναδικά τοπία και σημεία ιδανικά για φωτογράφιση στον υγρότοπο του Αμβρακικού.",
+          "en": "Discover unique landscapes and perfect photo locations in the Amvrakikos wetland.",
+          "de": "Entdecken Sie einzigartige Landschaften und perfekte Fotospots im Feuchtgebiet von Amvrakikos."
+        }
+      }
+    },
+    "footer": {
+      "description": "Asterias Homes, το γαλήνιο καταφύγιό σας στην Κορωνησία, προσφέροντας 7 πολυτελή διαμερίσματα διακοπών με παραδοσιακή γοητεία και σύγχρονη άνεση δίπλα στον Αμβρακικό Κόλπο.",
+      "contact": "Στοιχεία Επικοινωνίας",
+      "links": "Γρήγοροι Σύνδεσμοι",
+      "copyright": "Με επιφύλαξη παντός δικαιώματος.",
+      "receptionHours": {
+        "title": "Ώρες Επικοινωνίας",
+        "mondayFriday": "Δευτέρα - Παρασκευή",
+        "mondayFridayHours": "08:00 - 22:00",
+        "saturday": "Σάββατο",
+        "saturdayHours": "09:00 - 21:00",
+        "sunday": "Κυριακή",
+        "sundayHours": "09:00 - 20:00"
+      },
+      "details": {
+        "phone": {
+          "title": "Καλέστε Μας",
+          "number": "+30 6972705881",
+          "availability": "Διαθέσιμο καθημερινά από τις 08:00 έως τις 22:00"
+        },
+        "email": {
+          "title": "Στείλτε Μας Email",
+          "address": "asterias.apartmentskoronisia@gmail.com",
+          "replyTime": "Συνήθως απαντάμε εντός 24 ωρών"
+        },
+        "address": {
+          "title": "Επισκεφθείτε Μας",
+          "street": "Κορωνησία, Άρτα",
+          "region": "Κορωνησία, Άρτα"
+        }
+      }
+    },
+    "about": {
+      "header": {
+        "title": "Σχετικά με το Asterias Homes",
+        "subtitle": "Discover the story behind our luxury vacation apartments in Koronisia."
+      },
+      "story": {
+        "subtitle": "Our Journey",
+        "title": "Crafting Authentic Experiences",
+        "paragraph1": "Nestled in the heart of the picturesque fishing village of Koronisia, Asterias Homes began with a simple vision: to offer luxury vacation apartments that blend traditional Greek hospitality with modern comforts. Our journey started over a decade ago, driven by a deep love for this unique island and a desire to share its serene beauty with travelers seeking an authentic Greek experience.",
+        "paragraph2": "From a single family property, we've carefully developed a collection of 7 unique luxury apartments, each thoughtfully designed to provide guests with a true 'home away from home' experience. We've preserved the traditional architectural charm while integrating modern amenities that ensure comfort and convenience for every guest.",
+        "paragraph3": "Our commitment is to provide exceptional vacation rental experiences where guests can unwind, reconnect with nature, and experience the timeless allure of the Amvrakikos Gulf. We believe in sustainable tourism and strive to operate in harmony with our pristine environment while supporting the local community.",
+        "imageAlt1": "View of Asterias Homes apartments with lush greenery"
+      },
+      "mission": {
+        "title": "Our Mission",
+        "paragraph": "To provide unparalleled vacation rental experiences by offering exceptional service, luxury accommodations, and a deep connection to the local culture and natural beauty of Koronisia, ensuring every guest leaves with cherished memories."
+      },
+      "vision": {
+        "title": "Our Vision",
+        "paragraph": "To be recognized as the premier vacation rental destination in Koronisia for authentic, sustainable, and enriching travel experiences, fostering a legacy of warmth, tranquility, and respect for our community and environment."
+      },
+      "team": {
+        "subtitle": "Meet Our Family",
+        "title": "Dedicated to Your Comfort",
+        "paragraph": "At Asterias Homes, our team is more than just staff; we are a family dedicated to making your stay exceptional. With a passion for hospitality and a deep knowledge of Koronisia, we are always here to assist you, share local insights, and ensure your comfort throughout your stay.",
+        "imageAlt": "A welcoming group photo of the Asterias Homes team"
+      },
+      "findUs": {
+        "subtitle": "Visit Us",
+        "title": "How to Find Asterias Homes",
+        "mapTitle": "Location of Asterias Homes on Google Maps"
+      },
+      "heroTitle": "Παραδοσιακά δωμάτια στην Κορωνησία Άρτας",
+      "heroDescription": "Στην καρδιά του Αμβρακικού κόλπου, ιδανικό μέρος για γαλήνη, επαφή με τη φύση και αυθεντικές εμπειρίες.",
+      "bookNowButton": "Κάντε Κράτηση Τώρα",
+      "locationTitle": "Τοποθεσία & Περιοχή",
+      "locationDescription": "Τα δωμάτια μας βρίσκονται λίγα μέτρα από τις λιμνοθάλασσες και τον Αμβρακικό κόλπο, σε ένα ήσυχο παραθαλάσσιο χωριό ιδανικό για ξεκούραση, ρομαντικές ή οικογενειακές αποδράσεις.",
+      "locationTime": "Μόλις 20 λεπτά από την Άρτα και 40 λεπτά από την Πρέβεζα. Ιδανικό για εξορμήσεις στην Ήπειρο.",
+      "mapAlt": "Χάρτης ή τοποθεσία Κορωνησίας",
+      "experiencesAlt": "Εμπειρίες/Ηλιοβασίλεμα/Δραστηριότητες",
+      "experiencesTitle": "Αυθεντικές Εμπειρίες",
+      "experiences": {
+        "item1": "Περίπατοι στο παραθαλάσσιο μονοπάτι ή στο χωριό",
+        "item2": "Απολαύστε φρέσκο ψάρι στις ταβέρνες με θέα το ηλιοβασίλεμα",
+        "item3": "Ιδανικό σημείο για ψάρεμα, βαρκάδες, ποδηλασία",
+        "item4": "Εκδρομές σε Άρτα, Πρέβεζα, Γιάννενα, Λευκάδα"
+      },
+      "forWhomTitle": "Ιδανικό για...",
+      "forWhom": {
+        "item1": "Οικογένειες",
+        "item2": "Ζευγάρια",
+        "item3": "Τηλεργασία",
+        "item4": "Φυσιολάτρες"
+      },
+      "amenitiesAlt": "Παροχές/Δωμάτια/Εξωτερικοί χώροι",
+      "amenitiesTitle": "Παροχές",
+      "amenities": {
+        "item1": "Δωρεάν Wi-Fi",
+        "item2": "Κλιματισμός",
+        "item3": "Καθημερινή καθαριότητα",
+        "item4": "Άνετο πάρκινγκ",
+        "item5": "Οικογενειακά δωμάτια",
+        "item6": "Δωμάτια μη καπνιζόντων"
+      }
+    },
+    "admin": {
+      "sidebar": {
+        "dashboard": "Πίνακας Ελέγχου",
+        "bookings": "Κρατήσεις",
+        "rooms": "Διαμερίσματα",
+        "guests": "Επισκέπτες",
+        "settings": "Ρυθμίσεις",
+        "viewSite": "Προβολή Ιστοσελίδας",
+        "logout": "Αποσύνδεση",
+        "offers": "Προσφορές",
+        "reports": "Αναφορές",
+        "open": "Άνοιγμα μενού",
+        "close": "Κλείσιμο μενού"
+      },
+      "header": {
+        "title": "Πίνακας Διαχείρισης",
+        "notifications": "Ειδοποιήσεις",
+        "user": {
+          "profile": "Προφίλ",
+          "settings": "Ρυθμίσεις",
+          "logout": "Αποσύνδεση"
+        }
+      },
+      "userAvatar": {
+        "alt": "Φωτογραφία Χρήστη"
+      },
+      "dashboard": {
+        "title": "Πίνακας Ελέγχου",
+        "subtitle": "Επισκόπηση της κατάστασης των διαμερισμάτων",
+        "stats": {
+          "todayArrivals": "Σημερινές Άφιξεις",
+          "availableRooms": "Διαθέσιμα Διαμερίσματα",
+          "totalGuests": "Σύνολο Επισκεπτών",
+          "occupancy": "Πληρότητα"
+        },
+        "recentBookings": {
+          "title": "Πρόσφατες Κρατήσεις",
+          "guest": "Επισκέπτης",
+          "room": "Διαμέρισμα",
+          "checkIn": "Check-in",
+          "checkOut": "Check-out",
+          "status": "Κατάσταση",
+          "total": "Σύνολο",
+          "viewAll": "Προβολή όλων των κρατήσεων →"
+        },
+        "todayArrivals": {
+          "title": "Σημερινές Άφιξεις",
+          "guest": "Επισκέπτης",
+          "room": "Διαμέρισμα",
+          "time": "Ώρα",
+          "status": "Κατάσταση",
+          "manage": "Διαχείριση αφίξεων →"
+        }
+      },
+      "status": {
+        "confirmed": "Επιβεβαιωμένη",
+        "pending": "Εκκρεμής",
+        "cancelled": "Ακυρωμένη",
+        "checkedIn": "Έγινε Check-in",
+        "checkedOut": "Έγινε Check-out"
+      },
+      "offers": {
+        "title": "Προσφορές",
+        "subtitle": "Διαχείριση ειδικών προσφορών και εκπτώσεων.",
+        "addNew": "Δημιουργία Νέας Προσφοράς",
+        "table": {
+          "name": "Όνομα",
+          "discount": "Έκπτωση",
+          "validFrom": "Ισχύει Από",
+          "validUntil": "Ισχύει Έως",
+          "status": "Κατάσταση",
+          "actions": "Ενέργειες",
+          "edit": "Επεξεργασία"
+        },
+        "status": {
+          "active": "Ενεργή",
+          "inactive": "Ανενεργή"
+        },
+        "noOffers": "Δεν βρέθηκαν προσφορές. Ξεκινήστε προσθέτοντας μια νέα προσφορά.",
+        "new": {
+          "title": "Δημιουργία Νέας Προσφοράς",
+          "subtitle": "Συμπληρώστε τις λεπτομέρειες για τη νέα ειδική προσφορά."
+        },
+        "form": {
+          "nameLabel": "Όνομα Προσφοράς",
+          "namePlaceholder": "π.χ., Καλοκαιρινή Προσφορά",
+          "descriptionLabel": "Περιγραφή",
+          "descriptionPlaceholder": "Περιγράψτε την προσφορά...",
+          "discountLabel": "Έκπτωση",
+          "discountPlaceholder": "π.χ., 20% ή 15 EUR",
+          "validFromLabel": "Ισχύει Από",
+          "validUntilLabel": "Ισχύει Έως",
+          "statusLabel": "Κατάσταση",
+          "statusActive": "Ενεργή",
+          "statusInactive": "Ανενεργή",
+          "imagesLabel": "Εικόνες Προσφοράς",
+          "imagesPlaceholder": "Μεταφορτώστε έως 3 εικόνες",
+          "imageUploadNote": "Μέγιστο 3 εικόνες. Προτεινόμενο μέγεθος: 800x600px.",
+          "primaryImageLabel": "Ορισμός ως Κύρια",
+          "removeImageLabel": "Αφαίρεση Εικόνας",
+          "saveButton": "Αποθήκευση Προσφοράς",
+          "cancelButton": "Άκυρο"
+        }
+      },
+      "reports": {
+        "title": "Αναφορές Ακινήτου",
+        "subtitle": "Ανάλυση τάσεων και απόδοσης κρατήσεων διαμερισμάτων.",
+        "comingSoon": "Functionality coming soon.",
+        "bookingStats": {
+          "title": "Booking Statistics",
+          "description": "View trends in bookings, cancellations, lead times, and popular apartment types."
+        },
+        "revenue": {
+          "title": "Revenue Reports",
+          "description": "Track revenue per available apartment, average daily rate (ADR), and total income."
+        },
+        "occupancy": {
+          "title": "Occupancy Analysis",
+          "description": "Monitor occupancy rates, length of stay, and peak seasons."
+        },
+        "guestDemographics": {
+          "title": "Guest Demographics",
+          "description": "Understand your guest origins, preferences, and booking channels."
+        },
+        "customReport": {
+          "title": "Custom Report Generator",
+          "description": "Build and export custom reports based on your specific needs. (Future Implementation)",
+          "comingSoon": "This feature is planned for future development."
+        }
+      },
+      "bookings": {
+        "title": "Κρατήσεις",
+        "subtitle": "Διαχείριση όλων των κρατήσεων διαμερισμάτων",
+        "search": {
+          "placeholder": "Αναζήτηση κρατήσεων...",
+          "filterAll": "Όλες",
+          "filterConfirmed": "Επιβεβαιωμένες",
+          "filterPending": "Εκκρεμείς",
+          "filterCancelled": "Ακυρωμένες",
+          "filterCheckedIn": "Check-in",
+          "filterCheckedOut": "Check-out"
+        },
+        "table": {
+          "bookingNumber": "Αριθμός Κράτησης",
+          "guest": "Επισκέπτης",
+          "room": "Διαμέρισμα", 
+          "dates": "Ημερομηνίες",
+          "total": "Σύνολο",
+          "status": "Κατάσταση",
+          "actions": "Ενέργειες"
+        },
+        "noBookings": "Δεν βρέθηκαν κρατήσεις.",
+        "loading": "Φόρτωση κρατήσεων...",
+        "viewDetails": "Προβολή Λεπτομερειών"
+      }
+    },
+    "roomsPage": {
+      "title": "Τα πολυτελή μας διαμερίσματα",
+      "subtitle": "Εξερευνήστε τη συλλογή μας από 7 μοναδικά διαμερίσματα διακοπών, το καθένα σχεδιασμένο για άνετη και αυθεντική διαμονή στην καρδιά της Κορωνησίας."
+    },
+    "bookingsPage": {
+      "hero": {
+        "title": "Κάντε Κράτηση Διαμερίσματος",
+        "subtitle": "Βρείτε το ιδανικό διαμέρισμα για αξέχαστες διακοπές στην Κορωνησία."
+      },
+      "form": {
+        "checkInLabel": "Άφιξη",
+        "checkOutLabel": "Αναχώρηση",
+        "datePlaceholder": "ηη/μμ/εεεε",
+        "adultsLabel": "Ενήλικες",
+        "adultsValue": { "1": "1 Ενήλικας", "2": "2 Ενήλικες", "3": "3 Ενήλικες", "4": "4 Ενήλικες" },
+        "childrenLabel": "Παιδιά",
+        "childrenValue": { "0": "0 Παιδιά", "1": "1 Παιδί", "2": "2 Παιδιά", "3": "3 Παιδιά" },
+        "searchButton": "Αναζήτηση Διαμερισμάτων"
+      },
+      "summary": {
+        "nights_one": "Νύχτα",
+        "nights_other": "Νύχτες",
+        "adults_one": "Ενήλικας",
+        "adults_other": "Ενήλικες",
+        "children_one": "Παιδί",
+        "children_other": "Παιδιά"
+      },
+      "comparison": {
+        "barText": "apartments selected for comparison",
+        "compareButton": "Compare",
+        "modalTitle": "Compare Apartments",
+        "removeTooltip": "Remove from comparison",
+        "pricePerNight": "per night",
+        "totalPrice": "Total for {nights} nights: {price}€",
+        "sizeLabel": "Apartment Size",
+        "capacityLabel": "Max Capacity",
+        "capacityText": "{count} guests",
+        "bedLabel": "Bed Type",
+        "viewLabel": "View",
+        "bathroomLabel": "Bathroom",
+        "amenitiesTitle": "Key Features",
+        "featureLabel": {
+          "wifi": "Wi-Fi",
+          "ac": "Air Conditioning",
+          "tv": "Television",
+          "minibar": "Kitchen",
+          "breakfast": "Welcome Basket",
+          "parking": "Parking",
+          "balcony": "Balcony"
+        },
+        "detailsButton": "View Details",
+        "bookButton": "Book Now",
+        "unavailableButton": "Unavailable",
+        "clearButton": "Clear Comparison"
+      },
+      "viewToggle": {
+        "listTitle": "Διαθέσιμα Διαμερίσματα",
+        "listSubtitle": "Περιηγηθείτε στα διαθέσιμα διαμερίσματά μας και βρείτε το ιδανικό για εσά",
+        "calendarTitle": "Apartment Availability Calendar",
+        "calendarSubtitle": "Check apartment availability by date.",
+        "listViewTab": "Λίστα",
+        "calendarViewTab": "Ημερολόγιο"
+      },
+      "calendar": {
+        "title": "Availability for",
+        "subtitle": "Select dates to check apartment availability.",
+        "selectRoomPlaceholder": "Select an Apartment Type",
+        "allRoomsOption": "All Apartments (Overall Availability)",
+        "legend": {
+          "available": "Available",
+          "limited": "Limited Availability",
+          "unavailable": "Unavailable / Booked",
+          "selected": "Selected Dates"
+        },
+        "dayHeader": {
+          "sun": "Sun",
+          "mon": "Mon",
+          "tue": "Tue",
+          "wed": "Wed",
+          "thu": "Thu",
+          "fri": "Fri",
+          "sat": "Sat"
+        },
+        "roomAvailabilityText": "{count} apartments of this type",
+        "roomPricePerNight": "per night",
+        "availabilityTooltip": "{availableCount} of {totalRooms} apartments available",
+        "selectedDatesSummaryTitle": "Selected Dates",
+        "selectedDatesNights_one": "{nights} night",
+        "selectedDatesNights_other": "{nights} nights",
+        "viewAvailableRoomsButton": "View Available Apartments for these Dates"
+      },
+      "filters": {
+        "title": "Filter Your Results",
+        "priceRangeLabel": "Price Range (per night)",
+        "roomTypeLabel": "Apartment Type",
+        "roomType": {
+          "all": "All Apartment Types",
+          "standard": "Studio Apartments",
+          "family": "Family Apartments",
+          "romantic": "Sea View Apartments",
+          "superior": "Deluxe Apartments"
+        },
+        "amenitiesLabel": "Amenities",
+        "resultsSummary": "Showing {count} of {total} apartments",
+        "clearButton": "Clear Filters"
+      },
+      "roomList": {
+        "unavailableOverlay": "Currently Unavailable",
+        "capacityText": "Up to {count} guests",
+        "pricePerNight": "per night",
+        "totalPrice": "Total: {price}€",
+        "detailsButton": "View Details",
+        "bookButton": "Book Now",
+        "unavailableButton": "Unavailable",
+        "noRoomsFoundTitle": "No Apartments Found",
+        "noRoomsFoundSubtitle": "Try adjusting your search criteria or filters.",
+        "clearFiltersButton": "Clear All Filters"
+      },
+      "benefits": {
+        "title": "Γιατί να κάνετε κράτηση μαζί μας;",
+        "item1": {
+          "title": "Εγγύηση Καλύτερης Τιμής",
+          "description": "Εξασφαλίστε τις καλύτερες τιμές κάνοντας κράτηση απευθείας από την ιστοσελίδα μας."
+        },
+        "item2": {
+          "title": "Ευέλικτη Ακύρωση",
+          "description": "Απολαύστε ηρεμία με τις ευέλικτες πολιτικές ακύρωσης που προσφέρουμε στους περισσότερους τύπους τιμών."
+        },
+        "item3": {
+          "title": "Exclusive Offers",
+          "description": "Access special packages and deals not available anywhere else."
+        }
+      },
+      "cta": {
+        "title": "Χρειάζεστε βοήθεια ή έχετε απορίες;",
+        "subtitle": "Η φιλική μας ομάδα είναι εδώ για να σας βοηθήσει να οργανώσετε την τέλεια διαμονή σας. Επικοινωνήστε μαζί μας σήμερα!",
+        "contactButton": "Επικοινωνήστε μαζί μας",
+        "callButton": "Καλέστε μας τώρα"
+      },
+      "rooms": {
+        "standard": {
+          "name": "Studio Apartment",
+          "description": "A cozy studio perfect for couples, offering comfort and essential amenities with kitchenette.",
+          "bedType": "Double Bed",
+          "view": "Garden View",
+          "bathroom": "Private Bathroom"
+        },
+        "family": {
+          "name": "Family Apartment",
+          "description": "Spacious and comfortable, ideal for families with children and full kitchen facilities.",
+          "bedType": "Double Bed & Sofa Bed",
+          "view": "Sea or Garden View",
+          "bathroom": "Private Bathroom"
+        },
+        "romantic": {
+          "name": "Sea View Apartment",
+          "description": "Specially designed for couples, featuring romantic ambiance and premium amenities with sea views.",
+          "bedType": "King Size Bed",
+          "view": "Sea View",
+          "bathroom": "Ensuite with Premium Fixtures"
+        },
+        "superior": {
+          "name": "Deluxe Apartment",
+          "description": "Experience luxury with stunning views, separate living area, and enhanced comfort.",
+          "bedType": "King Size Bed",
+          "view": "Panoramic Sea View",
+          "bathroom": "Premium Private Bathroom"
+        }
+      },
+      "amenities": {
+        "wifi": "Free Wi-Fi",
+        "ac": "Air Conditioning",
+        "privateBathroom": "Private Bathroom",
+        "tv": "Flat-screen TV",
+        "refrigerator": "Full Kitchen",
+        "balcony": "Balcony/Terrace",
+        "jacuzzi": "Premium Bath",
+        "breakfast": "Welcome Basket",
+        "minibar": "Kitchen Facilities",
+        "coffeemaker": "Coffee/Tea Facilities",
+        "seaView": "Sea View"
+      },
+      "features": {
+        "doubleBed": "Double Bed",
+        "gardenView": "Garden View",
+        "balcony": "Private Balcony",
+        "sofaBed": "Sofa Bed",
+        "seaView": "Direct Sea View",
+        "kingSizeBed": "King Size Bed",
+        "privateBalcony": "Exclusive Private Balcony",
+        "livingArea": "Separate Living Area",
+        "premiumBathroom": "Premium Bathroom Fittings",
+        "kitchenette": "Kitchenette",
+        "fullKitchen": "Full Kitchen"
+      }
+    },
+    "contactPage": {
+      "header": {
+        "title": "Επικοινωνήστε Μαζί Μας",
+        "subtitle": "Επικοινωνήστε με το Asterias Homes. Είμαστε εδώ για να σας βοηθήσουμε με οποιεσδήποτε ερωτήσεις ή απορίες σχετικά με την κράτηση."
+      },
+      "form": {
+        "title": "Στείλτε Μας ένα Μήνυμα",
+        "label": {
+          "name": "Ονοματεπώνυμο",
+          "email": "Διεύθυνση Email",
+          "phone": "Αριθμός Τηλεφώνου (Προαιρετικό)",
+          "message": "Το Μήνυμά Σας"
+        },
+        "button": {
+          "submit": "Αποστολή Μηνύματος",
+          "submitting": "Αποστολή..."
+        },
+        "successMessage": "Ευχαριστούμε! Το μήνυμά σας στάλθηκε με επιτυχία. Θα επικοινωνήσουμε μαζί σας σύντομα."
+      },
+      "details": {
+        "title": "Τα Στοιχεία Επικοινωνίας Μας",
+        "phone": {
+          "title": "Καλέστε Μας",
+          "number": "+30 6972705881",
+          "availability": "Διαθέσιμο καθημερινά από τις 08:00 έως τις 22:00"
+        },
+        "email": {
+          "title": "Στείλτε Μας Email",
+          "address": "asterias.apartmentskoronisia@gmail.com",
+          "replyTime": "Συνήθως απαντάμε εντός 24 ωρών"
+        },
+        "address": {
+          "title": "Επισκεφθείτε Μας",
+          "street": "Κορωνησία, Άρτα",
+          "region": "Κορωνησία, Άρτα"
+        },
+        "social": {
+          "title": "Ακολουθήστε Μας",
+          "instagramAlt": "Instagram",
+          "facebookAlt": "Facebook",
+          "hashtag": "#AsteriasKoronisia"
+        }
+      },
+      "location": {
+        "title": "Βρείτε Μας στον Χάρτη"
+      }
+    },
+    "location": {
+      "title": "Κορωνησία, Άρτα – Στην καρδιά του Αμβρακικού κόλπου",
+      "description1": "Αν ψάχνεις γαληνή επαφή με τη φύση και αυθεντικές εμπειρίες, η Κορωνησία είναι το ιδανικό μέρος.",
+      "description2": "Τα δωμάτια μας βρίσκονται λίγα μέτρα από τις λιμνοθάλασσες και τον Αμβρακικό κόλπο, σε ένα ήσυχο παραθαλάσσιο χωριό ιδανικό για ξεκούραση, ρομαντικές ή οικογενειακές αποδράσεις.",
+      "activities": [
+        "Ιδανικό σημείο για ψάρεμα, βαρκάδες, ποδηλασία",
+        "Περίπατοι στο παραθαλάσσιο μονοπάτι ή στο χωριό",
+        "Απολαύστε φρέσκο ψάρι στις ταβέρνες με θέα το ηλιοβασίλεμα",
+        "Εκδρομές σε Άρτα, Πρέβεζα, Γιάννενα, Λευκάδα"
+      ],
+      "slogan": [
+        "Κορωνησία, εκεί που ηρεμία έχει φωνή",
+        "Ζήσε την ησυχία, νιώσε την Κορωνησία",
+        "Η φύση μιλάει, αρκεί να την ακούσεις"
+      ]
+    },
+    "amenities": {
+      "title": "Παροχές",
+      "list": [
+        "Δωρεάν Wi-Fi",
+        "Κλιματισμός",
+        "Καθημερινή καθαριότητα",
+        "Άνετο πάρκινγκ",
+        "Οικογενειακά δωμάτια",
+        "Δωμάτια μη καπνιζόντων"
+      ]
+    },
+    "roomFeatures": {
+      "title": "Τι θα βρείτε στα δωμάτια",
+      "list": [
+        "Κουζίνα με φούρνο, σκεύη, τοστιέρα, καφετιέρα",
+        "Μπάνιο με ντους, τουαλέτα, νιπτήρα",
+        "Ντουλάπα, κομοδίνο, κλιματιστικό, τηλεόραση",
+        "Υπνοδωμάτιο 1: 2 μονά κρεβάτια (90-130εκ.)",
+        "Υπνοδωμάτιο 2: διπλό κρεβάτι (131-150εκ.)",
+        "Εξωτερικοί χώροι: βεράντα, αυλή, κήπος με καρέκλες και τραπεζάκι"
+      ]
+    }
+  }

@@ -1,0 +1,896 @@
+{
+  "common": {
+    "loading": "Laden...",
+    "error": "Fehler",
+    "success": "Erfolg",
+    "confirm": "Bestätigen",
+    "cancel": "Abbrechen",
+    "edit": "Bearbeiten",
+    "delete": "Löschen",
+    "view": "Ansehen",
+    "save": "Speichern",
+    "close": "Schließen",
+    "search": "Suchen",
+    "reset": "Zurücksetzen",
+    "actions": "Aktionen",
+    "createdAt": "Erstellt am",
+    "updatedAt": "Aktualisiert am",
+    "id": "ID"
+  },
+  "nav": {
+    "home": "Startseite",
+    "about": "Über uns",
+    "rooms": "Zimmer",
+    "bookings": "Buchungen",
+    "contact": "Kontakt",
+    "book": "Jetzt buchen",
+    "admin": "Admin"
+  },
+  "languageSelector": {
+    "titleMobile": "Sprache"
+  },
+  "logo": {
+    "alt": "Asterias Homes Logo",
+    "altPublic": "Asterias Homes Logo"
+  },
+  "header": {
+    "openMenu": "Hauptmenü öffnen",
+    "closeMenu": "Hauptmenü schließen"
+  },
+  "hero": {
+    "slide1": {
+      "title": "Koronisia",
+      "subtitle": "Wo Ruhe eine Stimme hat"
+    },
+    "slide2": {
+      "title": "Komfortable Apartments",
+      "subtitle": "Im Herzen des Amvrakikos-Golfs"
+    },
+    "slide3": {
+      "title": "Einzigartiges Erlebnis",
+      "subtitle": "Zwischen Meer und Himmel"
+    },
+    "book": "Jetzt buchen"
+  },
+  "welcome": {
+    "subtitle": "Willkommen",
+    "title": "In komfortablen Ferienapartments",
+    "paragraph1": "Erleben Sie authentische griechische Gastfreundschaft in der ruhigen Schönheit von Koronisia. Unsere komfortablen Apartments bieten eine perfekte Mischung aus traditionellem Charme und modernem Komfort für Ihren perfekten Urlaub.",
+    "paragraph2": "Jedes Apartment ist einzigartig gestaltet, um Ihnen ein Zuhause fernab der Heimat am Amvrakikos-Golf zu bieten, wo Sie die einzigartige Ruhe unserer Lage entdecken können.",
+    "button": "Unsere Geschichte entdecken"
+  },
+  "rooms": {
+    "section": {
+      "subtitle": "Unsere Unterkünfte",
+      "title": "Unsere Apartments",
+      "description": "Entdecken Sie unsere 7 luxuriösen Ferienapartments, jedes einzigartig gestaltet für Ihren perfekten Aufenthalt in Koronisia."
+    },
+    "perNight": "/ Nacht",
+    "viewAll": "Alle Apartments ansehen",
+    "standard": {
+      "name": "Gemütliches Studio-Apartment",
+      "description": "Komfortables Studio-Apartment mit modernen Annehmlichkeiten, perfekt für Paare. Mit Küchenzeile, eigenem Bad und Balkon mit Gartenblick."
+    },
+    "family": {
+      "name": "Familien-Apartment",
+      "description": "Geräumiges Apartment mit zwei Schlafzimmern, ideal für Familien. Mit voll ausgestatteter Küche, Wohnbereich und Balkon mit herrlichem Blick auf den Amvrakikos-Golf."
+    },
+    "romantic": {
+      "name": "Apartment mit Meerblick",
+      "description": "Premium-Apartment mit Panoramablick auf das Meer, perfekt für Paare. Mit luxuriösen Annehmlichkeiten, privater Terrasse und romantischer Atmosphäre."
+    },
+    "twin": {
+      "name": "Apartment mit Einzelbetten",
+      "description": "Modernes Apartment mit Einzelbetten, perfekt für Freunde oder Kollegen. Mit voll ausgestatteter Küche und komfortablem Wohnbereich."
+    },
+    "suite": {
+      "name": "Deluxe-Apartment",
+      "description": "Luxuriöses Apartment mit zwei Schlafzimmern, separatem Wohnbereich, voll ausgestatteter Küche und Premium-Annehmlichkeiten für einen außergewöhnlichen Aufenthalt."
+    },
+    "accessible": {
+      "name": "Barrierefreies Apartment",
+      "description": "Durchdacht gestaltetes Apartment mit barrierefreien Funktionen, um einen komfortablen Aufenthalt für alle Gäste zu gewährleisten."
+    },
+    "feature": {
+      "entirePlace": {
+        "el": "Ολόκληρος ο χώρος δικός σας",
+        "en": "The entire place is yours",
+        "de": "Die gesamte Unterkunft gehört Ihnen"
+      },
+      "freeParking": {
+        "el": "Δωρεάν πάρκινγκ",
+        "en": "Free parking",
+        "de": "Kostenloses Parken"
+      },
+      "breakfastIncluded": {
+        "el": "Πρωινό",
+        "en": "Breakfast included",
+        "de": "Frühstück inklusive"
+      },
+      "balcony": {
+        "el": "Μπαλκόνι",
+        "en": "Balcony",
+        "de": "Balkon"
+      },
+      "privateBathroom": {
+        "el": "Ιδιωτικό μπάνιο",
+        "en": "Private bathroom",
+        "de": "Eigenes Badezimmer"
+      },
+      "freeWifi": {
+        "el": "Δωρεάν Wi-Fi",
+        "en": "Free Wifi",
+        "de": "Kostenloses WLAN"
+      },
+      "shower": {
+        "el": "Ντουζιέρα",
+        "en": "Shower",
+        "de": "Dusche"
+      },
+      "airConditioning": {
+        "el": "Κλιματισμός",
+        "en": "Air conditioning",
+        "de": "Klimaanlage"
+      },
+      "flatScreenTV": {
+        "el": "Επίπεδη τηλεόραση",
+        "en": "Flat-screen TV",
+        "de": "Flachbildfernseher"
+      },
+      "kitchenette": {
+        "el": "Μικρή Κουζίνα",
+        "en": "Kitchenette",
+        "de": "Kochnische"
+      },
+      "nonSmoking": {
+        "el": "Δωμάτια μη καπνιζόντων",
+        "en": "Non-smoking rooms",
+        "de": "Nichtraucherzimmer"
+      },
+      "familyFriendly": {
+        "el": "Οικογενειακά δωμάτια",
+        "en": "Family rooms",
+        "de": "Familienzimmer"
+      }
+    }
+  },
+  "roomCard": {
+    "bookNow": "Apartment buchen"
+  },
+  "specialOffers": {
+    "title": "Sonderangebote",
+    "subtitle": "Profitieren Sie von unseren exklusiven Angeboten",
+    "allOffers": "Alle Angebote ansehen",
+    "summerEscape": { "title": "Sommerausflug" },
+    "romanticWeekend": { "title": "Romantisches Wochenende" },
+    "earlyBird": { "title": "Frühbucher-Special" }
+  },
+  "offers": {
+    "section": {
+      "subtitle": "Exklusive Angebote",
+      "title": "Unsere Sonderangebote",
+      "description": "Entdecken Sie unsere handverlesenen Angebote, die Ihren Aufenthalt in unseren Apartments noch unvergesslicher machen. Buchen Sie direkt für die besten Preise und Vorteile."
+    },
+    "summerEscape": {
+      "title": "Sommerausflug",
+      "description": "Genießen Sie 20% Rabatt auf Ihren Sommeraufenthalt. Inklusive Willkommenskorb und flexiblem Check-in.",
+      "badge": "Top-Angebot",
+      "roomType": "Studio-Apartment",
+      "includes": {
+        "freeBreakfast": "Willkommenskorb",
+        "welcomeWine": "Willkommensflasche Wein",
+        "lateCheckout": "Flexibles Check-out"
+      }
+    },
+    "romanticWeekend": {
+      "title": "Romantisches Wochenende",
+      "description": "Überraschen Sie Ihren Partner mit einem romantischen Kurzurlaub. Inklusive Champagner, Restaurantempfehlungen und flexiblem Check-out.",
+      "badge": "Liebling der Paare",
+      "roomType": "Apartment mit Meerblick",
+      "includes": {
+        "champagne": "Flasche Champagner",
+        "romanticDinner": "Restaurantempfehlungen",
+        "lateCheckout": "Flexibles Check-out",
+        "breakfastInRoom": "Willkommenskorb"
+      }
+    },
+    "familyFun": {
+      "title": "Familien-Spaß-Paket",
+      "description": "Schaffen Sie bleibende Erinnerungen mit Ihrer Familie. Sonderpreise für längere Aufenthalte und familienfreundliche Annehmlichkeiten.",
+      "roomType": "Familien-Apartment",
+      "includes": {
+        "freeKidsStay": "Spezielle Familienpreise",
+        "kidsActivities": "Lokaler Aktivitätenführer",
+        "familyBreakfast": "Familien-Willkommenskorb"
+      }
+    },
+    "earlyBird": {
+      "title": "Frühbucher-Special",
+      "description": "Buchen Sie im Voraus und sparen Sie bis zu 25% auf Ihren Aufenthalt. Nicht erstattungsfähig.",
+      "badge": "Großes Sparen!",
+      "includes": {
+        "discountAllRooms": "Rabatt auf alle Apartments",
+        "freeUpgrade": "Kostenloses Apartment-Upgrade (je nach Verfügbarkeit)"
+      }
+    },
+    "lastMinute": {
+      "title": "Last-Minute-Angebot",
+      "description": "Spontaner Ausflug? Erhalten Sie den besten verfügbaren Preis für Buchungen innerhalb von 48 Stunden vor Anreise.",
+      "badge": "Jetzt buchen!",
+      "includes": {
+        "discount": "Spezialpreis",
+        "instantConfirmation": "Sofortige Bestätigung"
+      }
+    },
+    "autumnRetreat": {
+      "title": "Herbst-Retreat",
+      "description": "Erleben Sie die Schönheit des Herbstes in Koronisia mit unserem speziellen Paket.",
+      "badge": "Saisonal",
+      "includes": {
+        "freeTour": "Kostenlose geführte Tour",
+        "localWelcomeProducts": "Willkommenskorb mit lokalen Produkten"
+      }
+    },
+    "includes": "Was enthalten ist:",
+    "validUntil": "Gültig bis",
+    "daysRemaining": "Verbleibende Tage:",
+    "days": "Tage",
+    "from": "Ab",
+    "perNight": "/Nacht",
+    "viewOffer": "Angebot ansehen",
+    "moreDetails": "Mehr Details",
+    "viewAllOffers": "Alle Angebote ansehen"
+  },
+  "featuresSection": {
+    "title": "Warum Asterias Homes wählen?",
+    "subtitle": "Unvergessliche Erlebnisse erwarten Sie",
+    "item1": {
+      "title": "Erstklassige Lage",
+      "description": "Im Herzen von Koronisia gelegen, mit atemberaubenden Ausblicken und einfachem Zugang zu lokalen Sehenswürdigkeiten."
+    },
+    "item2": {
+      "title": "Authentische Gastfreundschaft",
+      "description": "Erleben Sie echte griechische Wärme und personalisierten Service von unserem engagierten Team."
+    },
+    "item3": {
+      "title": "Zuhause fernab der Heimat",
+      "description": "Unsere Apartments verbinden traditionelle Ästhetik mit modernen Annehmlichkeiten für einen einzigartigen und komfortablen Aufenthalt."
+    },
+    "item4": {
+      "title": "Friedliches Refugium",
+      "description": "Entfliehen Sie dem Trubel und entspannen Sie in der ruhigen Umgebung des Amvrakikos-Golfs."
+    }
+  },
+  "discover": {
+    "title": "Koronisia entdecken",
+    "description": "Ein verborgenes Juwel im Amvrakikos-Golf, Koronisia lädt Sie ein, seine ruhigen Landschaften, reiche Tierwelt und den zeitlosen Charme eines traditionellen Fischerdorfs zu erkunden. Ihr Abenteuer beginnt bei Asterias Homes.",
+    "button": "Mehr über die Region erfahren",
+    "imageAlt": "Sonnenuntergang über der Insel Koronisia"
+  },
+  "highlights": {
+    "title": "Gäste-Highlights",
+    "description": "Was unsere Besucher sagen",
+    "highlight1": {
+      "title": "Atemberaubende Ausblicke",
+      "description": "Das Aufwachen mit dem ruhigen Amvrakikos-Golf vom Balkon unseres Apartments war unvergesslich. Die Aussicht war einfach atemberaubend!",
+      "author": "Maria K."
+    },
+    "highlight2": {
+      "title": "Warm & einladend",
+      "description": "Das Team von Asterias Homes hat uns wie eine Familie fühlen lassen. Ihre Gastfreundschaft und Liebe zum Detail waren außergewöhnlich.",
+      "author": "John & Sarah P."
+    },
+    "highlight3": {
+      "title": "Perfekter Kurzurlaub",
+      "description": "Koronisia ist ein Paradies, und Asterias Homes ist der perfekte Ort, um es zu erleben. Friedlich, wunderschön und wirklich entspannend.",
+      "author": "Nikos G."
+    },
+    "highlight4": {
+      "title": {
+        "el": "Φωτογραφικές Τοποθεσίες",
+        "en": "Photo Spots",
+        "de": "Fotospots"
+      },
+      "description": {
+        "el": "Ανακαλύψτε μοναδικά τοπία και σημεία ιδανικά για φωτογράφιση στον υγρότοπο του Αμβρακικού.",
+        "en": "Discover unique landscapes and perfect photo locations in the Amvrakikos wetland.",
+        "de": "Entdecken Sie einzigartige Landschaften und perfekte Fotospots im Feuchtgebiet von Amvrakikos."
+      }
+    }
+  },
+  "footer": {
+    "description": "Asterias Homes, Ihr ruhiges Refugium in Koronisia, bietet 7 luxuriöse Ferienapartments mit traditionellem Charme und modernem Komfort am Amvrakikos-Golf.",
+    "contact": "Kontaktinformationen",
+    "links": "Schnelllinks",
+    "copyright": "Alle Rechte vorbehalten.",
+    "receptionHours": {
+      "title": "Kontaktzeiten",
+      "mondayFriday": "Montag - Freitag",
+      "mondayFridayHours": "08:00 - 22:00",
+      "saturday": "Samstag",
+      "saturdayHours": "09:00 - 21:00",
+      "sunday": "Sonntag",
+      "sundayHours": "09:00 - 20:00"
+    },
+    "details": {
+      "phone": {
+        "title": "Rufen Sie uns an",
+        "number": "+30 6972705881",
+        "availability": "Täglich von 08:00 bis 22:00 verfügbar"
+      },
+      "email": {
+        "title": "E-Mail an uns",
+        "address": "asterias.apartmentskoronisia@gmail.com",
+        "replyTime": "Wir antworten in der Regel innerhalb von 24 Stunden"
+      },
+      "address": {
+        "title": "Besuchen Sie uns",
+        "street": "Koronisia, Arta",
+        "region": "Koronisia, Arta"
+      }
+    }
+  },
+  "about": {
+    "header": {
+      "title": "Über Asterias Homes",
+      "subtitle": "Entdecken Sie die Geschichte hinter unseren luxuriösen Ferienapartments in Koronisia."
+    },
+    "story": {
+      "subtitle": "Unsere Reise",
+      "title": "Authentische Erlebnisse schaffen",
+      "paragraph1": "Im Herzen des malerischen Fischerdorfs Koronisia gelegen, begann Asterias Homes mit einer einfachen Vision: luxuriöse Ferienapartments anzubieten, die traditionelle griechische Gastfreundschaft mit modernem Komfort verbinden. Unsere Reise begann vor über einem Jahrzehnt, getrieben von einer tiefen Liebe zu dieser einzigartigen Insel und dem Wunsch, ihre ruhige Schönheit mit Reisenden zu teilen, die ein authentisches griechisches Erlebnis suchen.",
+      "paragraph2": "Von einer einzigen Familienimmobilie aus haben wir sorgfältig eine Sammlung von 7 einzigartigen Luxusapartments entwickelt, die jeweils durchdacht gestaltet sind, um den Gästen ein echtes 'Zuhause fernab der Heimat'-Erlebnis zu bieten. Wir haben den traditionellen architektonischen Charme bewahrt und gleichzeitig moderne Annehmlichkeiten integriert, die Komfort und Bequemlichkeit für jeden Gast gewährleisten.",
+      "paragraph3": "Unser Engagement ist es, außergewöhnliche Ferienmiet-Erlebnisse zu bieten, bei denen die Gäste entspannen, sich mit der Natur verbinden und den zeitlosen Reiz des Amvrakikos-Golfs erleben können. Wir glauben an nachhaltigen Tourismus und streben danach, im Einklang mit unserer unberührten Umwelt zu arbeiten und die lokale Gemeinschaft zu unterstützen.",
+      "imageAlt1": "Blick auf die Asterias Homes Apartments mit üppigem Grün"
+    },
+    "mission": {
+      "title": "Unsere Mission",
+      "paragraph": "Einzigartige Ferienmiet-Erlebnisse zu bieten, indem wir außergewöhnlichen Service, luxuriöse Unterkünfte und eine tiefe Verbindung zur lokalen Kultur und natürlichen Schönheit von Koronisia anbieten, um sicherzustellen, dass jeder Gast mit geschätzten Erinnerungen abreist."
+    },
+    "vision": {
+      "title": "Unsere Vision",
+      "paragraph": "Als das führende Ziel für Ferienmietunterkünfte in Koronisia anerkannt zu werden für authentische, nachhaltige und bereichernde Reiseerlebnisse, die ein Erbe von Wärme, Ruhe und Respekt für unsere Gemeinschaft und Umwelt fördern."
+    },
+    "team": {
+      "subtitle": "Lernen Sie unsere Familie kennen",
+      "title": "Engagiert für Ihren Komfort",
+      "paragraph": "Bei Asterias Homes ist unser Team mehr als nur Personal; wir sind eine Familie, die sich darauf widmet, Ihren Aufenthalt unvergesslich zu machen. Mit einer Leidenschaft für Gastfreundschaft und tiefem Wissen über Koronisia sind wir immer da, um Ihnen zu helfen, lokale Einblicke zu teilen und Ihren Komfort während Ihres Aufenthalts zu gewährleisten.",
+      "imageAlt": "Ein einladendes Gruppenfoto des Asterias Homes-Teams"
+    },
+    "findUs": {
+      "subtitle": "Besuchen Sie uns",
+      "title": "Wie Sie Asterias Homes finden",
+      "mapTitle": "Lage von Asterias Homes auf Google Maps"
+    }
+  },
+  "admin": {
+    "sidebar": {
+      "dashboard": "Dashboard",
+      "bookings": "Buchungen",
+      "rooms": "Apartments",
+      "guests": "Gäste",
+      "settings": "Einstellungen",
+      "viewSite": "Website ansehen",
+      "logout": "Abmelden",
+      "offers": "Angebote",
+      "reports": "Berichte",
+      "open": "Seitenleiste öffnen",
+      "close": "Seitenleiste schließen"
+    },
+    "header": {
+      "title": "Admin-Panel",
+      "notifications": "Benachrichtigungen",
+      "user": {
+        "profile": "Profil",
+        "settings": "Einstellungen",
+        "logout": "Abmelden"
+      }
+    },
+    "userAvatar": {
+      "alt": "Benutzer-Avatar"
+    },
+    "dashboard": {
+      "title": "Dashboard",
+      "subtitle": "Übersicht über den Status der Apartments",
+      "stats": {
+        "todayArrivals": "Heutige Check-ins",
+        "availableRooms": "Verfügbare Apartments",
+        "totalGuests": "Gesamtgäste",
+        "occupancy": "Belegung"
+      },
+      "recentBookings": {
+        "title": "Letzte Buchungen",
+        "guest": "Gast",
+        "room": "Apartment",
+        "checkIn": "Check-in",
+        "checkOut": "Check-out",
+        "status": "Status",
+        "total": "Gesamt",
+        "viewAll": "Alle Buchungen ansehen →"
+      },
+      "todayArrivals": {
+        "title": "Heutige Check-ins",
+        "guest": "Gast",
+        "room": "Apartment",
+        "time": "Zeit",
+        "status": "Status",
+        "manage": "Check-ins verwalten →"
+      }
+    },
+    "status": {
+      "confirmed": "Bestätigt",
+      "pending": "Ausstehend",
+      "cancelled": "Storniert",
+      "checkedIn": "Eingecheckt",
+      "checkedOut": "Ausgecheckt"
+    },
+    "offers": {
+      "title": "Angebote",
+      "subtitle": "Verwalten Sie Sonderangebote und Rabatte.",
+      "addNew": "Neues Angebot erstellen",
+      "table": {
+        "name": "Name",
+        "discount": "Rabatt",
+        "validFrom": "Gültig ab",
+        "validUntil": "Gültig bis",
+        "status": "Status",
+        "actions": "Aktionen",
+        "edit": "Bearbeiten"
+      },
+      "status": {
+        "active": "Aktiv",
+        "inactive": "Inaktiv"
+      },
+      "noOffers": "Keine Angebote gefunden. Legen Sie los, indem Sie ein neues Angebot hinzufügen.",
+      "new": {
+        "title": "Neues Angebot erstellen",
+        "subtitle": "Füllen Sie die Details für das neue Sonderangebot aus."
+      },
+      "form": {
+        "nameLabel": "Angebotsname",
+        "namePlaceholder": "z.B. Sommer-Bonanza",
+        "descriptionLabel": "Beschreibung",
+        "descriptionPlaceholder": "Beschreiben Sie das Angebot...",
+        "discountLabel": "Rabatt",
+        "discountPlaceholder": "z.B. 20% oder 15 EUR",
+        "validFromLabel": "Gültig ab",
+        "validUntilLabel": "Gültig bis",
+        "statusLabel": "Status",
+        "statusActive": "Aktiv",
+        "statusInactive": "Inaktiv",
+        "imagesLabel": "Angebotsbilder",
+        "imagesPlaceholder": "Bis zu 3 Bilder hochladen",
+        "imageUploadNote": "Max. 3 Bilder. Empfohlene Größe: 800x600px.",
+        "primaryImageLabel": "Als primär festlegen",
+        "removeImageLabel": "Bild entfernen",
+        "saveButton": "Angebot speichern",
+        "cancelButton": "Abbrechen"
+      }
+    },
+    "reports": {
+      "title": "Immobilienberichte",
+      "subtitle": "Analysieren Sie Trends und Leistungen bei Apartmentbuchungen.",
+      "comingSoon": "Funktion demnächst verfügbar.",
+      "bookingStats": {
+        "title": "Buchungsstatistiken",
+        "description": "Sehen Sie Trends bei Buchungen, Stornierungen, Vorlaufzeiten und beliebten Apartmenttypen."
+      },
+      "revenue": {
+        "title": "Einnahmeberichte",
+        "description": "Verfolgen Sie Einnahmen pro verfügbarem Apartment, durchschnittlichen Tagespreis (ADR) und Gesamteinkommen."
+      },
+      "occupancy": {
+        "title": "Belegungsanalyse",
+        "description": "Überwachen Sie Belegungsraten, Aufenthaltsdauer und Hauptsaisons."
+      },
+      "guestDemographics": {
+        "title": "Gästedemografie",
+        "description": "Verstehen Sie die Herkunft, Vorlieben und Buchungskanäle Ihrer Gäste."
+      },
+      "customReport": {
+        "title": "Benutzerdefinierter Berichtsgenerator",
+        "description": "Erstellen und exportieren Sie benutzerdefinierte Berichte basierend auf Ihren spezifischen Bedürfnissen. (Zukünftige Implementierung)",
+        "comingSoon": "Diese Funktion ist für die zukünftige Entwicklung geplant."
+      }
+    }
+  },
+  "roomsPage": {
+    "title": "Unsere luxuriösen Apartments",
+    "subtitle": "Entdecken Sie unsere Kollektion von 7 einzigartigen Ferienapartments, die jeweils durchdacht gestaltet sind, um einen komfortablen und authentischen Aufenthalt im Herzen von Koronisia zu bieten."
+  },
+  "bookingsPage": {
+    "hero": {
+      "title": "Buchen Sie Ihren Apartment-Aufenthalt",
+      "subtitle": "Finden Sie das perfekte Ferienapartment für Ihren unvergesslichen Kurzurlaub in Koronisia."
+    },
+    "form": {
+      "checkInLabel": "Check-in",
+      "checkOutLabel": "Check-out",
+      "datePlaceholder": "TT/MM/JJJJ",
+      "adultsLabel": "Erwachsene",
+      "adultsValue": { "1": "1 Erwachsener", "2": "2 Erwachsene", "3": "3 Erwachsene", "4": "4 Erwachsene" },
+      "childrenLabel": "Kinder",
+      "childrenValue": { "0": "0 Kinder", "1": "1 Kind", "2": "2 Kinder", "3": "3 Kinder" },
+      "searchButton": "Apartments suchen"
+    },
+    "summary": {
+      "nights_one": "Nacht",
+      "nights_other": "Nächte",
+      "adults_one": "Erwachsener",
+      "adults_other": "Erwachsene",
+      "children_one": "Kind",
+      "children_other": "Kinder"
+    },
+    "comparison": {
+      "barText": "Apartments zum Vergleich ausgewählt",
+      "compareButton": "Vergleichen",
+      "modalTitle": "Apartments vergleichen",
+      "removeTooltip": "Aus dem Vergleich entfernen",
+      "pricePerNight": "pro Nacht",
+      "totalPrice": "Gesamt für {nights} Nächte: {price}€",
+      "sizeLabel": "Apartmentgröße",
+      "capacityLabel": "Maximale Kapazität",
+      "capacityText": "{count} Gäste",
+      "bedLabel": "Betttyp",
+      "viewLabel": "Aussicht",
+      "bathroomLabel": "Badezimmer",
+      "amenitiesTitle": "Hauptmerkmale",
+      "featureLabel": {
+        "wifi": "WLAN",
+        "ac": "Klimaanlage",
+        "tv": "Fernseher",
+        "minibar": "Küche",
+        "breakfast": "Willkommenskorb",
+        "parking": "Parkplatz",
+        "balcony": "Balkon"
+      },
+      "detailsButton": "Details ansehen",
+      "bookButton": "Jetzt buchen",
+      "unavailableButton": "Nicht verfügbar",
+      "clearButton": "Vergleich löschen"
+    },
+    "viewToggle": {
+      "listTitle": "Verfügbare Apartments",
+      "listSubtitle": "Durchstöbern Sie unsere verfügbaren Apartments und finden Sie Ihre perfekte Übereinstimmung.",
+      "calendarTitle": "Apartment-Verfügbarkeitskalender",
+      "calendarSubtitle": "Überprüfen Sie die Verfügbarkeit von Apartments nach Datum.",
+      "listViewTab": "Listenansicht",
+      "calendarViewTab": "Kalenderansicht"
+    },
+    "calendar": {
+      "title": "Verfügbarkeit für",
+      "subtitle": "Wählen Sie Daten aus, um die Verfügbarkeit von Apartments zu überprüfen.",
+      "selectRoomPlaceholder": "Apartmenttyp auswählen",
+      "allRoomsOption": "Alle Apartments (Gesamtverfügbarkeit)",
+      "legend": {
+        "available": "Verfügbar",
+        "limited": "Begrenzte Verfügbarkeit",
+        "unavailable": "Nicht verfügbar / Gebucht",
+        "selected": "Ausgewählte Daten"
+      },
+      "dayHeader": {
+        "sun": "So",
+        "mon": "Mo",
+        "tue": "Di",
+        "wed": "Mi",
+        "thu": "Do",
+        "fri": "Fr",
+        "sat": "Sa"
+      },
+      "roomAvailabilityText": "{count} Apartments dieses Typs",
+      "roomPricePerNight": "pro Nacht",
+      "availabilityTooltip": "{availableCount} von {totalRooms} Apartments verfügbar",
+      "selectedDatesSummaryTitle": "Ausgewählte Daten",
+      "selectedDatesNights_one": "{nights} Nacht",
+      "selectedDatesNights_other": "{nights} Nächte",
+      "viewAvailableRoomsButton": "Verfügbare Apartments für diese Daten ansehen"
+    },
+    "filters": {
+      "title": "Ihre Ergebnisse filtern",
+      "priceRangeLabel": "Preisspanne (pro Nacht)",
+      "roomTypeLabel": "Apartmenttyp",
+      "roomType": {
+        "all": "Alle Apartmenttypen",
+        "standard": "Studio-Apartments",
+        "family": "Familien-Apartments",
+        "romantic": "Apartments mit Meerblick",
+        "superior": "Deluxe-Apartments"
+      },
+      "amenitiesLabel": "Annehmlichkeiten",
+      "resultsSummary": "Zeigt {count} von {total} Apartments",
+      "clearButton": "Filter löschen"
+    },
+    "roomList": {
+      "unavailableOverlay": "Derzeit nicht verfügbar",
+      "capacityText": "Bis zu {count} Gäste",
+      "pricePerNight": "pro Nacht",
+      "totalPrice": "Gesamt: {price}€",
+      "detailsButton": "Details ansehen",
+      "bookButton": "Jetzt buchen",
+      "unavailableButton": "Nicht verfügbar",
+      "noRoomsFoundTitle": "Keine Apartments gefunden",
+      "noRoomsFoundSubtitle": "Versuchen Sie, Ihre Suchkriterien oder Filter anzupassen.",
+      "clearFiltersButton": "Alle Filter löschen"
+    },
+    "benefits": {
+      "title": "Warum bei uns buchen?",
+      "item1": {
+        "title": "Beste Preisgarantie",
+        "description": "Erhalten Sie die besten Preise, wenn Sie direkt über unsere Website buchen."
+      },
+      "item2": {
+        "title": "Flexible Stornierung",
+        "description": "Genießen Sie Seelenfrieden mit unseren flexiblen Stornierungsbedingungen bei den meisten Tarifen."
+      },
+      "item3": {
+        "title": "Exklusive Angebote",
+        "description": "Greifen Sie auf spezielle Pakete und Angebote zu, die nirgendwo anders verfügbar sind."
+      }
+    },
+    "cta": {
+      "title": "Benötigen Sie Hilfe oder haben Sie Fragen?",
+      "subtitle": "Unser freundliches Team ist hier, um Ihnen bei der Planung Ihres perfekten Aufenthalts zu helfen. Kontaktieren Sie uns noch heute!",
+      "contactButton": "Kontaktieren Sie uns",
+      "callButton": "Jetzt anrufen"
+    },
+    "rooms": {
+      "standard": {
+        "name": "Studio-Apartment",
+        "description": "Ein gemütliches Studio, perfekt für Paare, mit Komfort und essentiellen Annehmlichkeiten sowie Küchenzeile.",
+        "bedType": "Doppelbett",
+        "view": "Gartenblick",
+        "bathroom": "Eigenes Badezimmer"
+      },
+      "family": {
+        "name": "Familien-Apartment",
+        "description": "Geräumig und komfortabel, ideal für Familien mit Kindern und voll ausgestatteten Kücheneinrichtungen.",
+        "bedType": "Doppelbett & Schlafsofa",
+        "view": "Meer- oder Gartenblick",
+        "bathroom": "Eigenes Badezimmer"
+      },
+      "romantic": {
+        "name": "Apartment mit Meerblick",
+        "description": "Speziell für Paare gestaltet, mit romantischer Atmosphäre und Premium-Annehmlichkeiten mit Meerblick.",
+        "bedType": "Kingsize-Bett",
+        "view": "Meerblick",
+        "bathroom": "Ensuite mit Premium-Armaturen"
+      },
+      "superior": {
+        "name": "Deluxe-Apartment",
+        "description": "Erleben Sie Luxus mit atemberaubendem Blick, separatem Wohnbereich und erhöhtem Komfort.",
+        "bedType": "Kingsize-Bett",
+        "view": "Panoramablick auf das Meer",
+        "bathroom": "Premium eigenes Badezimmer"
+      }
+    },
+    "amenities": {
+      "wifi": "Kostenloses WLAN",
+      "ac": "Klimaanlage",
+      "privateBathroom": "Eigenes Badezimmer",
+      "tv": "Flachbildfernseher",
+      "refrigerator": "Voll ausgestattete Küche",
+      "balcony": "Balkon/Terrasse",
+      "jacuzzi": "Premium-Bad",
+      "breakfast": "Willkommenskorb",
+      "minibar": "Kücheneinrichtungen",
+      "coffeemaker": "Kaffee-/Teestation",
+      "seaView": "Meerblick"
+    },
+    "features": {
+      "doubleBed": "Doppelbett",
+      "gardenView": "Gartenblick",
+      "balcony": "Privater Balkon",
+      "sofaBed": "Schlafsofa",
+      "seaView": "Direkter Meerblick",
+      "kingSizeBed": "Kingsize-Bett",
+      "privateBalcony": "Exklusiver privater Balkon",
+      "livingArea": "Separater Wohnbereich",
+      "premiumBathroom": "Premium-Badezimmerausstattung",
+      "kitchenette": "Kochnische",
+      "fullKitchen": "Voll ausgestattete Küche"
+    }
+  },
+  "contactPage": {
+    "header": {
+      "title": "Kontaktieren Sie uns",
+      "subtitle": "Nehmen Sie Kontakt mit Asterias Homes auf. Wir sind hier, um Ihnen bei Fragen oder Buchungsanfragen zu helfen."
+    },
+    "form": {
+      "title": "Senden Sie uns eine Nachricht",
+      "label": {
+        "name": "Vollständiger Name",
+        "email": "E-Mail-Adresse",
+        "phone": "Telefonnummer (optional)",
+        "message": "Ihre Nachricht"
+      },
+      "button": {
+        "submit": "Nachricht senden",
+        "submitting": "Wird gesendet..."
+      },
+      "successMessage": "Vielen Dank! Ihre Nachricht wurde erfolgreich gesendet. Wir melden uns bald bei Ihnen."
+    },
+    "details": {
+      "title": "Unsere Kontaktdaten",
+      "phone": {
+        "title": "Rufen Sie uns an",
+        "number": "+30 2681 023456",
+        "availability": "Täglich von 08:00 bis 22:00 verfügbar"
+      },
+      "email": {
+        "title": "E-Mail an uns",
+        "address": "info@asteriashomes.gr",
+        "replyTime": "Wir antworten in der Regel innerhalb von 24 Stunden"
+      },
+      "address": {
+        "title": "Besuchen Sie uns",
+        "street": "Insel Koronisia",
+        "region": "Amvrakikos-Golf, 47100, Griechenland"
+      },
+      "social": {
+        "title": "Folgen Sie uns",
+        "instagramAlt": "Instagram",
+        "facebookAlt": "Facebook",
+        "hashtag": "#AsteriasKoronisia"
+      }
+    },
+    "location": {
+      "title": "Finden Sie uns auf der Karte"
+    }
+  },
+  "homepage": {
+    "hero": {
+      "slogan": "Finden Sie Ihre Ruhe in Koronisia",
+      "slogan_en": "Find Your Peace in Koronisia",
+      "slogan_de": "Finden Sie Ihre Ruhe in Koronisia",
+      "cta": "Die Apartments entdecken",
+      "cta_en": "Discover the Apartments",
+      "cta_de": "Entdecken Sie die Apartments"
+    },
+    "welcome": {
+      "title": "Willkommen in Koronisia",
+      "title_en": "Welcome to Koronisia",
+      "title_de": "Willkommen in Koronisia",
+      "subtitle": "Ein einzigartiges Ziel für Ruhe und authentische Gastfreundschaft.",
+      "subtitle_en": "A unique destination of tranquility and authentic hospitality.",
+      "subtitle_de": "Ein einzigartiges Ziel für Ruhe und authentische Gastfreundschaft.",
+      "description": "Koronisia ist eine kleine Insel im Amvrakischen Golf, bekannt für ihre Ruhe, Natur und traditionelle Atmosphäre. Hier hören Sie nur das Meer und die Vögel.",
+      "description_en": "Koronisia is a small island in the Amvrakikos Gulf, known for its tranquility, nature, and traditional atmosphere. Here, all you hear is the sea and the birds.",
+      "description_de": "Koronisia ist eine kleine Insel im Amvrakischen Golf, bekannt für ihre Ruhe, Natur und traditionelle Atmosphäre. Hier hören Sie nur das Meer und die Vögel."
+    },
+    "whoIsItFor": {
+      "title": "Für wen ist es?",
+      "title_en": "Who is it for?",
+      "title_de": "Für wen ist es?",
+      "couples": {
+        "title": "Paare",
+        "title_en": "Couples",
+        "title_de": "Paare",
+        "description": "Romantische Atmosphäre, Meerblick und entspannte Momente.",
+        "description_en": "Romantic atmosphere, sea views, and moments of relaxation.",
+        "description_de": "Romantische Atmosphäre, Meerblick und entspannte Momente."
+      },
+      "families": {
+        "title": "Familien",
+        "title_en": "Families",
+        "title_de": "Familien",
+        "description": "Geräumige Apartments, sichere Umgebung, naturnah.",
+        "description_en": "Spacious apartments, safe environment, close to nature.",
+        "description_de": "Geräumige Apartments, sichere Umgebung, naturnah."
+      },
+      "remote": {
+        "title": "Remote-Arbeiter",
+        "title_en": "Remote Workers",
+        "title_de": "Remote-Arbeiter",
+        "description": "Ruhiger Ort, schnelles WLAN, Inspiration aus der Natur.",
+        "description_en": "Quiet place, fast Wi-Fi, inspiration from nature.",
+        "description_de": "Ruhiger Ort, schnelles WLAN, Inspiration aus der Natur."
+      },
+      "nature": {
+        "title": "Natur & Vogelbeobachtung",
+        "title_en": "Nature & Birdwatching",
+        "title_de": "Natur & Vogelbeobachtung",
+        "description": "Feuchtgebiete, seltene Vögel, Wandern und Erkundung.",
+        "description_en": "Wetlands, rare birds, hiking and exploration.",
+        "description_de": "Feuchtgebiete, seltene Vögel, Wandern und Erkundung."
+      }
+    },
+    "amenities": {
+      "title": "Ausstattung",
+      "title_en": "Amenities",
+      "title_de": "Ausstattung",
+      "parking": "Kostenloses Parken",
+      "parking_en": "Free Parking",
+      "parking_de": "Kostenloses Parken",
+      "wifi": "Schnelles WLAN",
+      "wifi_en": "Fast Wi-Fi",
+      "wifi_de": "Schnelles WLAN",
+      "kitchen": "Voll ausgestattete Küche",
+      "kitchen_en": "Fully equipped kitchen",
+      "kitchen_de": "Voll ausgestattete Küche",
+      "ac": "Klimaanlage",
+      "ac_en": "Air Conditioning",
+      "ac_de": "Klimaanlage",
+      "breakfast": "Willkommenskorb",
+      "breakfast_en": "Welcome basket",
+      "breakfast_de": "Willkommenskorb",
+      "cleaning": "Tägliche Reinigung",
+      "cleaning_en": "Daily cleaning",
+      "cleaning_de": "Tägliche Reinigung",
+      "balcony": "Balkon mit Aussicht",
+      "balcony_en": "Balcony with view",
+      "balcony_de": "Balkon mit Aussicht",
+      "family": "Familienfreundlich",
+      "family_en": "Family friendly",
+      "family_de": "Familienfreundlich",
+      "pet": "Haustierfreundlich",
+      "pet_en": "Pet friendly",
+      "pet_de": "Haustierfreundlich"
+    },
+    "explore": {
+      "title": "Entdecken Sie die Umgebung",
+      "title_en": "Explore the Area",
+      "title_de": "Entdecken Sie die Umgebung",
+      "fishing": "Angeln & Bootfahren",
+      "fishing_en": "Fishing & Boating",
+      "fishing_de": "Angeln & Bootfahren",
+      "walking": "Wandern & Radfahren",
+      "walking_en": "Walking & Cycling",
+      "walking_de": "Wandern & Radfahren",
+      "birdwatching": "Vogelbeobachtung",
+      "birdwatching_en": "Birdwatching",
+      "birdwatching_de": "Vogelbeobachtung",
+      "nearby": "Ausflüge nach Arta, Preveza, Lefkada",
+      "nearby_en": "Trips to Arta, Preveza, Lefkada",
+      "nearby_de": "Ausflüge nach Arta, Preveza, Lefkada"
+    },
+    "showcase": {
+      "title": "Unsere Apartments",
+      "title_en": "Our Apartments",
+      "title_de": "Unsere Apartments",
+      "description": "Sehen Sie sich die Apartments an und finden Sie das passende für Sie.",
+      "description_en": "See the apartments and find the one that suits you.",
+      "description_de": "Sehen Sie sich die Apartments an und finden Sie das passende für Sie.",
+      "cta": "Alle Apartments ansehen",
+      "cta_en": "View all apartments",
+      "cta_de": "Alle Apartments ansehen"
+    }
+  },
+  "location": {
+    "title": "Koronisia, Arta – Im Herzen des Amvrakischen Golfs",
+    "description1": "Wer Ruhe, Natur und authentische Erlebnisse sucht, ist in Koronisia genau richtig.",
+    "description2": "Unsere Zimmer liegen nur wenige Meter von den Lagunen und dem Amvrakischen Golf entfernt, in einem ruhigen Küstendorf – ideal für Erholung, romantische oder Familienurlaube.",
+    "activities": [
+      "Ideal zum Angeln, Bootfahren, Radfahren",
+      "Spaziergänge am Meer oder im Dorf",
+      "Genießen Sie frischen Fisch in den Tavernen beim Sonnenuntergang",
+      "Ausflüge nach Arta, Preveza, Ioannina, Lefkada"
+    ],
+    "slogan": [
+      "Koronisia – wo Ruhe eine Stimme hat",
+      "Erlebe die Stille, spüre Koronisia",
+      "Die Natur spricht, wenn du zuhörst"
+    ]
+  },
+  "amenities": {
+    "title": "Ausstattung",
+    "list": [
+      "Kostenloses WLAN",
+      "Klimaanlage",
+      "Tägliche Reinigung",
+      "Bequeme Parkplätze",
+      "Familienzimmer",
+      "Nichtraucherzimmer"
+    ]
+  },
+  "roomFeatures": {
+    "title": "Ausstattung der Zimmer",
+    "list": [
+      "Küche mit Ofen, Geschirr, Toaster, Kaffeemaschine",
+      "Badezimmer mit Dusche, WC, Waschbecken",
+      "Kleiderschrank, Nachttisch, Klimaanlage, Fernseher",
+      "Schlafzimmer 1: 2 Einzelbetten (90-130cm)",
+      "Schlafzimmer 2: Doppelbett (131-150cm)",
+      "Außenbereiche: Veranda, Hof, Garten mit Stühlen und Tisch"
+    ]
+  }
+}

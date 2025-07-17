@@ -5,8 +5,10 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { CheckCircle, XCircle, Clock, AlertCircle, Search, Filter, Download } from "lucide-react"
+import { CheckCircle, XCircle, Clock, AlertCircle, Search, Filter, Download, Calendar, User, MapPin, Euro, Phone, Mail } from "lucide-react"
 import { adminAPI } from "@/lib/api"
+import { useLanguage } from "@/contexts/language-context"
+import * as XLSX from 'xlsx'
 
 // Mock data - in a real app, this would come from your database
 const bookings = [
@@ -147,7 +149,27 @@ const getStatusClass = (status: string) => {
   }
 }
 
+const getStatusFilterText = (status: string) => {
+  switch (status) {
+    case "all":
+      return "Όλες οι κρατήσεις"
+    case "CONFIRMED":
+      return "Επιβεβαιωμένες"
+    case "PENDING":
+      return "Εκκρεμείς"
+    case "CHECKED_IN":
+      return "Check-in"
+    case "CHECKED_OUT":
+      return "Check-out"
+    case "CANCELLED":
+      return "Ακυρωμένες"
+    default:
+      return "Κατάσταση"
+  }
+}
+
 export default function BookingsPage() {
+  const { t } = useLanguage()
   const [bookings, setBookings] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState("")
@@ -191,10 +213,76 @@ export default function BookingsPage() {
     }
   }
 
+  const handleExport = () => {
+    // Prepare data for Excel export
+    const excelData = filteredBookings.map(booking => ({
+      'Αριθμός Κράτησης': booking.bookingNumber || '',
+      'Επισκέπτης': `${booking.guestInfo?.firstName || ''} ${booking.guestInfo?.lastName || ''}`.trim(),
+      'Email': booking.guestInfo?.email || '',
+      'Τηλέφωνο': booking.guestInfo?.phone || '',
+      'Διαμέρισμα': booking.room?.name || '',
+      'Check-in': booking.checkIn ? new Date(booking.checkIn).toLocaleDateString('el-GR') : '',
+      'Check-out': booking.checkOut ? new Date(booking.checkOut).toLocaleDateString('el-GR') : '',
+      'Ενήλικες': booking.adults || 0,
+      'Παιδιά': booking.children || 0,
+      'Σύνολο (€)': booking.totalAmount || 0,
+      'Κατάσταση': booking.bookingStatus === 'CONFIRMED' ? 'Επιβεβαιωμένη' :
+                  booking.bookingStatus === 'PENDING' ? 'Εκκρεμής' :
+                  booking.bookingStatus === 'CANCELLED' ? 'Ακυρωμένη' :
+                  booking.bookingStatus === 'CHECKED_IN' ? 'Check-in' :
+                  booking.bookingStatus === 'CHECKED_OUT' ? 'Check-out' :
+                  booking.bookingStatus || '',
+      'Ημερομηνία Δημιουργίας': booking.createdAt ? new Date(booking.createdAt).toLocaleDateString('el-GR') : '',
+      'Ειδικές Απαιτήσεις': booking.guestInfo?.specialRequests || '',
+      'Μέθοδος Πληρωμής': booking.paymentMethod === 'CARD' ? 'Κάρτα' : 
+                          booking.paymentMethod === 'CASH' ? 'Μετρητά' : 
+                          booking.paymentMethod || '',
+      'Κατάσταση Πληρωμής': booking.paymentStatus === 'PAID' ? 'Πληρωμένο' :
+                           booking.paymentStatus === 'PENDING' ? 'Εκκρεμές' :
+                           booking.paymentStatus === 'FAILED' ? 'Αποτυχία' :
+                           booking.paymentStatus === 'REFUNDED' ? 'Επιστράφηκε' :
+                           booking.paymentStatus || ''
+    }))
+
+    // Create workbook and worksheet
+    const wb = XLSX.utils.book_new()
+    const ws = XLSX.utils.json_to_sheet(excelData)
+    
+    // Set column widths for better readability
+    const colWidths = [
+      { wch: 15 }, // Αριθμός Κράτησης
+      { wch: 20 }, // Επισκέπτης
+      { wch: 25 }, // Email
+      { wch: 15 }, // Τηλέφωνο
+      { wch: 20 }, // Διαμέρισμα
+      { wch: 12 }, // Check-in
+      { wch: 12 }, // Check-out
+      { wch: 10 }, // Ενήλικες
+      { wch: 8 },  // Παιδιά
+      { wch: 12 }, // Σύνολο
+      { wch: 15 }, // Κατάσταση
+      { wch: 18 }, // Ημερομηνία Δημιουργίας
+      { wch: 30 }, // Ειδικές Απαιτήσεις
+      { wch: 15 }, // Μέθοδος Πληρωμής
+      { wch: 15 }  // Κατάσταση Πληρωμής
+    ]
+    ws['!cols'] = colWidths
+
+    // Add the worksheet to workbook
+    XLSX.utils.book_append_sheet(wb, ws, 'Κρατήσεις')
+    
+    // Generate filename with current date
+    const today = new Date().toISOString().split('T')[0]
+    const filename = `Κρατήσεις_Asterias_${today}.xlsx`
+    
+    // Save and download the file
+    XLSX.writeFile(wb, filename)
+  }
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="text-slate-600 font-alegreya">Loading bookings...</div>
+        <div className="text-slate-600 font-alegreya">Φόρτωση κρατήσεων...</div>
       </div>
     )
   }
@@ -208,15 +296,19 @@ export default function BookingsPage() {
   }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-4 md:space-y-8">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div className="flex flex-col gap-4">
         <div>
-          <h1 className="text-2xl font-cormorant font-light text-slate-800">Διαχείριση Κρατήσεων</h1>
-          <p className="text-slate-600 font-alegreya">Προβολή και διαχείριση όλων των κρατήσεων</p>
+          <h1 className="text-xl md:text-2xl font-cormorant font-light text-slate-800">Κρατήσεις</h1>
+          <p className="text-sm md:text-base text-slate-600 font-alegreya">Διαχείριση όλων των κρατήσεων δωματίων</p>
         </div>
-        <div className="flex gap-2">
-          <Button className="bg-[#0A4A4A] hover:bg-[#083a3a] text-white font-alegreya">
+        <div className="flex justify-end">
+          <Button 
+            onClick={handleExport}
+            className="bg-[#0A4A4A] hover:bg-[#083a3a] text-white font-alegreya text-sm"
+            size="sm"
+          >
             <Download className="h-4 w-4 mr-2" />
             Εξαγωγή
           </Button>
@@ -225,8 +317,9 @@ export default function BookingsPage() {
 
       {/* Filters */}
       <div className="bg-white p-4 rounded-sm border border-slate-200">
-        <div className="flex flex-col sm:flex-row gap-4">
-          <div className="relative flex-grow">
+        <div className="space-y-4">
+          {/* Search Bar */}
+          <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
             <Input
               placeholder="Αναζήτηση με όνομα, email ή αριθμό κράτησης..."
@@ -235,75 +328,52 @@ export default function BookingsPage() {
               className="pl-9 font-alegreya"
             />
           </div>
-          <div className="flex gap-4">
-            <div className="w-48">
-              <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger className="font-alegreya">
-                  <div className="flex items-center">
-                    <Filter className="h-4 w-4 mr-2 text-slate-400" />
-                    <SelectValue placeholder="Κατάσταση" />
-                  </div>
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Όλες οι κρατήσεις</SelectItem>
-                  <SelectItem value="CONFIRMED">Επιβεβαιωμένες</SelectItem>
-                  <SelectItem value="PENDING">Εκκρεμείς</SelectItem>
-                  <SelectItem value="CHECKED_IN">Check-in</SelectItem>
-                  <SelectItem value="CHECKED_OUT">Check-out</SelectItem>
-                  <SelectItem value="CANCELLED">Ακυρωμένες</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+          
+          {/* Status Filter */}
+          <div className="w-full md:w-64">
+            <Select value={statusFilter} onValueChange={setStatusFilter}>
+              <SelectTrigger className="font-alegreya">
+                <Filter className="h-4 w-4 mr-2 text-slate-400" />
+                <SelectValue>{getStatusFilterText(statusFilter)}</SelectValue>
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Όλες οι κρατήσεις</SelectItem>
+                <SelectItem value="CONFIRMED">Επιβεβαιωμένες</SelectItem>
+                <SelectItem value="PENDING">Εκκρεμείς</SelectItem>
+                <SelectItem value="CHECKED_IN">Check-in</SelectItem>
+                <SelectItem value="CHECKED_OUT">Check-out</SelectItem>
+                <SelectItem value="CANCELLED">Ακυρωμένες</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
         </div>
       </div>
 
-      {/* Bookings Table */}
-      <div className="bg-white rounded-sm border border-slate-200 overflow-hidden">
+      {/* Desktop Table View */}
+      <div className="hidden lg:block bg-white rounded-sm border border-slate-200 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-slate-200">
             <thead className="bg-slate-50">
               <tr>
-                <th
-                  scope="col"
-                  className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider font-alegreya"
-                >
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider font-alegreya">
                   Αριθμός
                 </th>
-                <th
-                  scope="col"
-                  className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider font-alegreya"
-                >
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider font-alegreya">
                   Επισκέπτης
                 </th>
-                <th
-                  scope="col"
-                  className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider font-alegreya"
-                >
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider font-alegreya">
                   Δωμάτιο
                 </th>
-                <th
-                  scope="col"
-                  className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider font-alegreya"
-                >
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider font-alegreya">
                   Check-in / Check-out
                 </th>
-                <th
-                  scope="col"
-                  className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider font-alegreya"
-                >
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider font-alegreya">
                   Κατάσταση
                 </th>
-                <th
-                  scope="col"
-                  className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider font-alegreya"
-                >
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider font-alegreya">
                   Σύνολο
                 </th>
-                <th
-                  scope="col"
-                  className="px-6 py-3 text-right text-xs font-medium text-slate-500 uppercase tracking-wider font-alegreya"
-                >
+                <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-slate-500 uppercase tracking-wider font-alegreya">
                   Ενέργειες
                 </th>
               </tr>
@@ -333,10 +403,7 @@ export default function BookingsPage() {
                       onValueChange={(value) => handleStatusUpdate(booking._id, value)}
                     >
                       <SelectTrigger className="w-32">
-                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${getStatusClass(booking.bookingStatus)}`}>
-                          {getStatusIcon(booking.bookingStatus)}
-                          <span className="ml-1">{getStatusText(booking.bookingStatus)}</span>
-                        </span>
+                        <SelectValue>{getStatusText(booking.bookingStatus)}</SelectValue>
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="CONFIRMED">Επιβεβαιωμένη</SelectItem>
@@ -361,12 +428,99 @@ export default function BookingsPage() {
             </tbody>
           </table>
         </div>
-        {filteredBookings.length === 0 && (
-          <div className="py-12 text-center">
-            <p className="text-slate-500 font-alegreya">Δεν βρέθηκαν κρατήσεις με τα επιλεγμένα κριτήρια</p>
-          </div>
-        )}
       </div>
+
+      {/* Mobile Card View */}
+      <div className="lg:hidden space-y-4">
+        {filteredBookings.map((booking) => (
+          <div key={booking._id} className="bg-white rounded-lg border border-slate-200 p-4 shadow-sm">
+            {/* Header Row */}
+            <div className="flex items-start justify-between mb-3">
+              <div className="flex-1">
+                <Link href={`/admin/bookings/${booking._id}`} className="text-sm font-medium text-[#0A4A4A] hover:underline font-alegreya">
+                  {booking.bookingNumber}
+                </Link>
+                <div className="text-xs text-slate-500 mt-1 font-alegreya">
+                  {new Date(booking.createdAt).toLocaleDateString('el-GR')}
+                </div>
+              </div>
+              <div className="text-right">
+                <div className="text-sm font-medium text-slate-900 font-alegreya">€{booking.totalAmount}</div>
+                <div className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium border mt-1 ${getStatusClass(booking.bookingStatus)}`}>
+                  {getStatusIcon(booking.bookingStatus)}
+                  <span className="ml-1">{getStatusText(booking.bookingStatus)}</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Guest Info */}
+            <div className="space-y-2 mb-3">
+              <div className="flex items-center text-sm text-slate-700 font-alegreya">
+                <User className="h-4 w-4 mr-2 text-slate-400" />
+                <span>{booking.guestInfo?.firstName} {booking.guestInfo?.lastName}</span>
+              </div>
+              <div className="flex items-center text-sm text-slate-700 font-alegreya">
+                <Mail className="h-4 w-4 mr-2 text-slate-400" />
+                <span className="truncate">{booking.guestInfo?.email}</span>
+              </div>
+              {booking.guestInfo?.phone && (
+                <div className="flex items-center text-sm text-slate-700 font-alegreya">
+                  <Phone className="h-4 w-4 mr-2 text-slate-400" />
+                  <span>{booking.guestInfo?.phone}</span>
+                </div>
+              )}
+            </div>
+
+            {/* Room & Dates */}
+            <div className="space-y-2 mb-4">
+              <div className="flex items-center text-sm text-slate-700 font-alegreya">
+                <MapPin className="h-4 w-4 mr-2 text-slate-400" />
+                <span>{booking.room?.name || 'N/A'}</span>
+              </div>
+              <div className="flex items-center text-sm text-slate-700 font-alegreya">
+                <Calendar className="h-4 w-4 mr-2 text-slate-400" />
+                <span>
+                  {new Date(booking.checkIn).toLocaleDateString('el-GR')} - {new Date(booking.checkOut).toLocaleDateString('el-GR')}
+                </span>
+              </div>
+            </div>
+
+            {/* Status Update & Action */}
+            <div className="flex items-center justify-between pt-3 border-t border-slate-100">
+              <div className="flex-1 mr-3">
+                <Select
+                  value={booking.bookingStatus}
+                  onValueChange={(value) => handleStatusUpdate(booking._id, value)}
+                >
+                  <SelectTrigger className="text-xs h-8">
+                    <SelectValue>{getStatusText(booking.bookingStatus)}</SelectValue>
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="CONFIRMED">Επιβεβαιωμένη</SelectItem>
+                    <SelectItem value="PENDING">Εκκρεμής</SelectItem>
+                    <SelectItem value="CHECKED_IN">Check-in</SelectItem>
+                    <SelectItem value="CHECKED_OUT">Check-out</SelectItem>
+                    <SelectItem value="CANCELLED">Ακυρωμένη</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <Link
+                href={`/admin/bookings/${booking._id}`}
+                className="text-xs text-[#0A4A4A] hover:text-[#083a3a] font-alegreya font-medium"
+              >
+                Λεπτομέρειες →
+              </Link>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* No Results */}
+      {filteredBookings.length === 0 && (
+        <div className="bg-white rounded-sm border border-slate-200 py-12 text-center">
+          <p className="text-slate-500 font-alegreya">Δεν βρέθηκαν κρατήσεις με τα επιλεγμένα κριτήρια</p>
+        </div>
+      )}
     </div>
   )
 }
