@@ -119,13 +119,22 @@ Asterias Homes offers traditional apartment rentals in the beautiful coastal vil
 ## 📧 Email System Setup
 
 ### Gmail Configuration
-1. **Create Gmail Account**: Set up a dedicated business Gmail account
-2. **Enable 2FA**: Required for app password generation
+
+**Choose ONE of these options:**
+
+#### Option 1: App Password (RECOMMENDED)
+1. **Use Gmail**: `asterias.apartmentskoronisia@gmail.com`
+2. **Enable 2FA**: Go to Google Account → Security → 2-Step Verification
 3. **Generate App Password**: 
-   - Go to Google Account settings
-   - Security → 2-Step Verification → App passwords
-   - Generate password for "Mail"
-4. **Update Environment**: Add credentials to backend `.env`
+   - Security → App passwords → Mail → Generate
+   - Use 16-character password as `EMAIL_APP_PASSWORD`
+
+#### Option 2: Regular Password (Simpler)
+1. **Use Gmail**: `asterias.apartmentskoronisia@gmail.com`
+2. **Enable Less Secure Access**: Google Account → Security → Less secure app access → ON
+3. **Use Regular Password**: Set `EMAIL_PASSWORD` to your Gmail password
+
+**Environment Setup**: Add to Render environment variables or local `.env`
 
 ### Email Templates
 - **3 Languages**: All templates available in Greek, English, German
@@ -210,8 +219,8 @@ This project is proprietary software developed for Asterias Homes.
 ## 📞 Support
 
 For technical support or questions:
-- **Email**: info@asteriashome.gr
-- **Phone**: +30 26810 XXXXX
+- **Email**: asterias.apartmentskoronisia@gmail.com
+- **Phone**: +30 6972705881
 - **Location**: Koronisia, Arta 48100, Greece
 
 ---

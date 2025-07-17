@@ -498,7 +498,7 @@ export default function AdminSettingsPage() {
                   <div className="flex items-center justify-between">
                     <div>
                       <Label htmlFor="newBookingAlerts" className="font-alegreya">Ειδοποιήσεις νέων κρατήσεων</Label>
-                      <p className="text-xs text-slate-500 font-alegreya">Άμεση ενημέρωση για νέες κρατήσεις</p>
+                      <p className="text-xs text-slate-500 font-alegreya">Άμεση ενημέρωση για νέες κρατήσεις σε όλους τους διαχειριστές</p>
                     </div>
                     <Switch
                       id="newBookingAlerts"
@@ -510,7 +510,7 @@ export default function AdminSettingsPage() {
                   <div className="flex items-center justify-between">
                     <div>
                       <Label htmlFor="lowInventoryAlerts" className="font-alegreya">Ειδοποιήσεις χαμηλής διαθεσιμότητας</Label>
-                      <p className="text-xs text-slate-500 font-alegreya">Όταν μένουν λίγα δωμάτια</p>
+                      <p className="text-xs text-slate-500 font-alegreya">Όταν μένουν λίγα δωμάτια - αποστολή σε όλους τους διαχειριστές</p>
                     </div>
                     <Switch
                       id="lowInventoryAlerts"
