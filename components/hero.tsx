@@ -9,19 +9,18 @@ export default function Hero() {
   const [currentSlide, setCurrentSlide] = useState(0)
   const { t, language } = useLanguage()
 
+  const heroImage = "https://i.imgur.com/mQuYaP7.jpeg"
+
   const slides = [
     {
-      image: "/welcome.png",
       title: t("hero.slide1.title"),
       subtitle: t("hero.slide1.subtitle"),
     },
     {
-      image: "/welcome.png",
       title: t("hero.slide2.title"),
       subtitle: t("hero.slide2.subtitle"),
     },
     {
-      image: "/welcome.png",
       title: t("hero.slide3.title"),
       subtitle: t("hero.slide3.subtitle"),
     },
@@ -39,7 +38,7 @@ export default function Hero() {
       {/* Single static image */}
       <div className="absolute inset-0">
         <Image
-          src="/welcome.png"
+          src={heroImage}
           alt="Asterias Homes"
           fill
           priority

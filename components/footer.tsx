@@ -21,7 +21,9 @@ export default function Footer() {
         {/* Main footer content */}
         <div className="px-6 py-8">
           <div className="flex flex-col items-center mb-6">
-            <Image src="/logo-white.png" alt="Asterias Hotel" width={180} height={70} className="h-12 w-auto mb-6" />
+            <div className="bg-white/80 backdrop-blur-sm rounded-lg p-4 mb-6">
+              <Image src="https://i.imgur.com/yogQh0J.png" alt="Asterias Hotel" width={1200} height={450} className="h-32 w-auto" />
+            </div>
             <div className="w-24 h-0.5 bg-[#8B4B5C] mb-6"></div>
             <p className="text-slate-300 font-alegreya text-center max-w-xl mb-4">{t("footer.description")}</p>
             <div className="flex space-x-4">

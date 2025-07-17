@@ -112,9 +112,19 @@ export default function AdminDashboard() {
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
+        console.log('ADMIN DASHBOARD: Fetching dashboard data...')
         const data = await adminAPI.getDashboard()
+        console.log('ADMIN DASHBOARD: Data received:', data)
         setDashboardData(data)
       } catch (err: any) {
+        console.error('ADMIN DASHBOARD: API Error:', err)
+        
+        // Dont set error state for 41errors since were redirecting to login
+        if (err.message && err.message.includes('401')) {
+          console.log('ADMIN DASHBOARD: 401 error - redirecting to login')
+          return; // Dont set error state, just return
+        }
+        
         setError(err.message || "Failed to load dashboard data")
       } finally {
         setLoading(false)

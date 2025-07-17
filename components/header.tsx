@@ -4,8 +4,9 @@ import { useState, useEffect, useRef } from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { Menu, X, ChevronDown } from "lucide-react"
-import { useLanguage, type LanguageCode } from "@/contexts/language-context"
-import { usePathname } from "next/navigation"
+import { useLanguage } from "@/contexts/language-context"
+import type { LanguageCode } from "@/lib/translations"
+import { useRouter, usePathname } from "next/navigation"
 
 const navigation = [
   { name: "nav.home", href: "/" },
@@ -34,6 +35,7 @@ const languages: { code: LanguageCode; name: string; flag: string }[] = [
 ]
 
 export default function Header() {
+  const router = useRouter()
   const pathname = usePathname()
   const { language, setLanguage, t } = useLanguage()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
@@ -46,7 +48,6 @@ export default function Header() {
   const useLightHeaderBg = scrolled || (!scrolled && pathname === "/")
 
   useEffect(() => {
-    // Initialize renderHeader based on the current path
     setRenderHeader(!pathname.startsWith("/admin"))
 
     const handleScroll = () => {
@@ -65,9 +66,22 @@ export default function Header() {
       window.removeEventListener("scroll", handleScroll)
       document.removeEventListener("mousedown", handleClickOutside)
     }
-  }, [pathname]) // Add pathname to dependency array for renderHeader updates
+  }, [pathname])
 
   const selectedLang = languages.find((lang) => lang.code === language) || languages[0]
+
+  function getPathWithoutLang(path: string) {
+    const parts = path.split("/").filter(Boolean)
+    if (parts.length > 0 && ["en", "el", "de"].includes(parts[0])) {
+      parts.shift()
+    }
+    return "/" + parts.join("/")
+  }
+
+  function withLang(lang: string, path: string) {
+    const clean = getPathWithoutLang(path)
+    return `/${lang}${clean === "/" ? "" : clean}`
+  }
 
   if (!renderHeader) {
     return null
@@ -81,11 +95,11 @@ export default function Header() {
         <div className="flex items-center justify-between h-full">
           {/* Logo */}
           <div className="flex-shrink-0 mr-4">
-            <Link href="/" className="block">
+            <Link href={withLang(language, "/")} className="block">
               <span className="sr-only">{t("logo.altPublic", "Asterias Hotel")}</span>
               <div className={`relative transition-all duration-300 ${scrolled ? "w-48 h-20" : "w-56 h-24"}`}>
                 <Image
-                  src="/asterias-logo-new.png"
+                  src="https://i.imgur.com/leL7gRY.png"
                   alt={t("logo.altPublic", "Asterias Hotel Logo")}
                   fill
                   className="object-contain"
@@ -101,7 +115,7 @@ export default function Header() {
               {navigation.map((item) => (
                 <Link
                   key={item.name}
-                  href={item.href}
+                  href={withLang(language, item.href)}
                   className={`text-lg font-cormorant font-medium tracking-wide transition-colors hover:scale-105 transform duration-200 text-slate-800 hover:text-[#8B4B5C]`}
                 >
                   {t(item.name)}
@@ -144,11 +158,12 @@ export default function Header() {
                       onClick={() => {
                         setLanguage(lang.code)
                         setLanguageDropdownOpen(false)
+                        router.push(withLang(lang.code, pathname))
                       }}
-                      className={`flex items-center w-full px-4 py-3 text-sm text-slate-700 hover:bg-[#E8E2D5]/50 transition-colors duration-150 ${
+                      className={`flex items-center w-full px-4 py-3 text-sm text-slate-700 hover:bg-[#8B4B5C]/10 transition-colors duration-150 ${
                         index === 0 ? "rounded-t-lg" : ""
                       } ${index === languages.length - 1 ? "rounded-b-lg" : ""} ${
-                        lang.code === language ? "bg-[#E8E2D5]/30" : ""
+                        lang.code === language ? "bg-[#8B4B5C]/10" : ""
                       }`}
                     >
                       <div className="w-6 h-auto mr-3 relative overflow-hidden shadow-sm">
@@ -172,7 +187,7 @@ export default function Header() {
             </div>
 
             <Link
-              href="/bookings"
+              href={withLang(language, "/bookings")}
               className={`px-6 py-2.5 rounded-lg text-white font-medium tracking-wide transition-all duration-200 transform hover:scale-105 ${
                 scrolled ? "bg-[#8B4B5C] hover:bg-[#7A4251] shadow-md" : "bg-[#8B4B5C]/90 hover:bg-[#8B4B5C]"
               }`}
@@ -204,13 +219,13 @@ export default function Header() {
           aria-hidden="true"
           onClick={() => setMobileMenuOpen(false)}
         />
-        <div className="fixed inset-y-0 right-0 z-50 w-full overflow-y-auto bg-white px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10">
+        <div className="fixed inset-y-0 right-0 z-50 w-full overflow-y-auto bg-[#F0F0E0] px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10">
           <div className="flex items-center justify-between">
-            <Link href="/" className="flex items-center" onClick={() => setMobileMenuOpen(false)}>
+            <Link href={withLang(language, "/")} className="flex items-center" onClick={() => setMobileMenuOpen(false)}>
               <span className="sr-only">{t("logo.altPublic", "Asterias Hotel")}</span>
               <div className="relative h-16 w-44">
                 <Image
-                  src="/asterias-logo-new.png"
+                  src="https://i.imgur.com/leL7gRY.png"
                   alt={t("logo.altPublic", "Asterias Hotel Logo")}
                   fill
                   className="object-contain"
@@ -220,7 +235,7 @@ export default function Header() {
             </Link>
             <button
               type="button"
-              className="rounded-md p-2.5 text-slate-700 hover:bg-slate-100"
+              className="rounded-md p-2.5 text-slate-700 hover:bg-[#8B4B5C]/10"
               onClick={() => setMobileMenuOpen(false)}
               aria-label={t("header.closeMenu", "Close menu")}
             >
@@ -233,8 +248,8 @@ export default function Header() {
                 {navigation.map((item) => (
                   <Link
                     key={item.name}
-                    href={item.href}
-                    className="block px-3 py-3 text-lg font-cormorant font-medium text-slate-800 hover:bg-[#E8E2D5] rounded-md transition-colors"
+                    href={withLang(language, item.href)}
+                    className="block px-3 py-3 text-lg font-cormorant font-medium text-slate-800 hover:bg-[#8B4B5C]/10 rounded-md transition-colors"
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     {t(item.name)}
@@ -252,12 +267,13 @@ export default function Header() {
                         key={lang.code}
                         className={`flex items-center w-full text-sm font-medium px-3 py-3 rounded-lg transition-colors ${
                           lang.code === language
-                            ? "bg-[#E8E2D5]/50 text-[#8B4B5C]"
-                            : "text-slate-600 hover:text-[#8B4B5C] hover:bg-[#E8E2D5]/30"
+                            ? "bg-[#8B4B5C]/10 text-[#8B4B5C]"
+                            : "text-slate-600 hover:text-[#8B4B5C] hover:bg-[#8B4B5C]/10"
                         }`}
                         onClick={() => {
                           setLanguage(lang.code)
                           setMobileMenuOpen(false)
+                          router.push(withLang(lang.code, pathname))
                         }}
                       >
                         <div className="w-6 h-auto mr-3 relative overflow-hidden shadow-sm">
@@ -279,7 +295,7 @@ export default function Header() {
                   </div>
                 </div>
                 <Link
-                  href="/bookings"
+                  href={withLang(language, "/bookings")}
                   className="block w-full px-4 py-3 text-center bg-[#8B4B5C] text-white font-medium rounded-lg hover:bg-[#7A4251] transition-colors shadow-sm"
                   onClick={() => setMobileMenuOpen(false)}
                 >

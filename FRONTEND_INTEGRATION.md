@@ -209,4 +209,4 @@ The frontend now includes comprehensive error handling:
 2. **Implement real-time updates**: WebSocket integration
 3. **Add file uploads**: Image upload for rooms and offers
 4. **Enhance security**: Add rate limiting, CSRF protection
-5. **Performance optimization**: Add caching, pagination 
+5. **Performance optimization**: Add caching, pagination

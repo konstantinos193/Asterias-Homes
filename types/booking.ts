@@ -17,14 +17,18 @@ export interface BookingData {
 export interface Room {
   id: string
   name: string
+  nameKey: string
+  description: string
+  descriptionKey: string
   price: number
   maxGuests: number
-  image: string
+  images: string[]
   size: number
   bedType: string
   view: string
   bathroom: string
   features: string[]
+  featureKeys: string[]
   amenities: {
     wifi: boolean
     ac: boolean

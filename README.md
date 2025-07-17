@@ -1,70 +1,75 @@
-# Asterias Homes
+# Asterias Homes: Your Modern Apartment Rental Solution
 
-A modern hotel booking website built with Next.js, TypeScript, and Tailwind CSS.
+![Asterias Homes](https://i.imgur.com/mQuYaP7.jpeg) 
 
-## Features
+Welcome to **Asterias Homes**, a sleek and responsive apartment rental platform built with the latest web technologies. This project provides a seamless user experience for browsing apartments, making reservations, and managing bookings, complete with a powerful admin dashboard for staff.
 
-- Multi-language support (Greek/English)
-- Room booking system with Stripe payment integration
-- Admin dashboard for managing bookings and rooms
-- Responsive design with modern UI components
-- Image galleries and testimonials
+## ✨ Key Features
 
-## Environment Variables
+- **Intuitive Apartment Booking**: A multi-step booking wizard guides users through the reservation process.
+- **Secure Payments**: Integrated with Stripe for reliable and secure payment processing.
+- **Multi-Language Support**: Easily switch between English and Greek.
+- **Powerful Admin Dashboard**: Manage apartments, bookings, special offers, and view reports.
+- **Modern Tech Stack**: Built with Next.js, TypeScript, and Tailwind CSS for a fast, reliable, and scalable application.
+- **Responsive Design**: A beautiful and functional interface on any device, from desktops to mobile phones.
 
-To run this project, you need to set up the following environment variables:
+## 🚀 Getting Started
 
-### Required for Production
+Follow these steps to get the Asterias Homes frontend up and running on your local machine.
+
+### Prerequisites
+
+- [Node.js](https://nodejs.org/) (v18 or later)
+- [pnpm](https://pnpm.io/) package manager
+- A [Stripe](https://stripe.com/) account for payment processing
+
+### 1. Clone the Repository
 
 ```bash
-# Stripe Configuration
-STRIPE_SECRET_KEY=sk_test_your_stripe_secret_key_here
-STRIPE_PUBLISHABLE_KEY=pk_test_your_stripe_publishable_key_here
-NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_your_stripe_publishable_key_here
+git clone https://github.com/your-username/asterias-homes.git
+cd asterias-homes
 ```
 
-### Getting Stripe Keys
+### 2. Install Dependencies
 
-1. Sign up for a Stripe account at https://stripe.com
-2. Go to the Stripe Dashboard
-3. Navigate to Developers > API Keys
-4. Copy your publishable and secret keys
-5. For testing, use the test keys (they start with `pk_test_` and `sk_test_`)
+```bash
+pnpm install
+```
 
-## Installation
+### 3. Set Up Environment Variables
 
-1. Clone the repository
-2. Install dependencies:
-   ```bash
-   pnpm install
-   ```
-3. Set up environment variables (see above)
-4. Run the development server:
-   ```bash
-   pnpm dev
-   ```
+Create a `.env.local` file in the root of the project and add the following environment variables. You can get your Stripe keys from your [Stripe Dashboard](https://dashboard.stripe.com/apikeys).
 
-## Build Issues Fixed
+```env
+# Stripe API Keys
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_your_stripe_publishable_key
+STRIPE_SECRET_KEY=sk_test_your_stripe_secret_key
 
-The following issues have been resolved:
+# Backend API URL
+NEXT_PUBLIC_API_BASE_URL=http://localhost:5000/api 
+```
 
-1. **Import Error**: Fixed `roomsData` import to use `allRoomsData` from `@/data/rooms`
-2. **Stripe Configuration**: Added proper error handling for missing environment variables
-3. **Type Safety**: Fixed price parsing and room lookup logic
+### 4. Run the Development Server
 
-## Deployment
+```bash
+pnpm dev
+```
 
-For deployment on Vercel:
+Open [http://localhost:3000](http://localhost:3000) in your browser to see the application in action.
 
-1. Set the environment variables in your Vercel project settings
-2. Deploy using the Vercel CLI or connect your GitHub repository
-3. Ensure all environment variables are configured in the Vercel dashboard
+## 🛠️ Tech Stack
 
-## Tech Stack
+- **Framework**: [Next.js](https://nextjs.org/)
+- **Language**: [TypeScript](https://www.typescriptlang.org/)
+- **Styling**: [Tailwind CSS](https://tailwindcss.com/)
+- **UI Components**: [shadcn/ui](https://ui.shadcn.com/)
+- **Payments**: [Stripe](https://stripe.com/)
+- **Package Manager**: [pnpm](https://pnpm.io/)
 
-- **Framework**: Next.js 15
-- **Language**: TypeScript
-- **Styling**: Tailwind CSS
-- **UI Components**: Radix UI + shadcn/ui
-- **Payment**: Stripe
-- **Package Manager**: pnpm 
+## 🤝 Contributing
+
+Contributions are welcome! If you have suggestions for improvements or want to report a bug, please open an issue or submit a pull request.
+
+---
+
+*This README provides instructions for setting up the frontend application. For details on the backend API, please refer to the `backend/README.md` file.*

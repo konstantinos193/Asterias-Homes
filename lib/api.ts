@@ -1,13 +1,41 @@
 // API service for communicating with the backend
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://asterias-backend.onrender.com/api';
 
 // Helper function to handle API responses
 const handleResponse = async (response: Response) => {
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({}));
+    
+    // Handle 401authorized - clear tokens and redirect to login
+    if (response.status === 41) {
+      removeAuthToken();
+      if (typeof window !== 'undefined') {
+        window.location.href = '/admin/login';
+      }
+    }
+    
     throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
   }
   return response.json();
+};
+
+// Helper function to get token safely
+const getAuthToken = () => {
+  if (typeof window === 'undefined') return null;
+  return localStorage.getItem('authToken');
+};
+
+// Helper function to set token safely
+const setAuthToken = (token: string) => {
+  if (typeof window === 'undefined') return;
+  localStorage.setItem('authToken', token);
+};
+
+// Helper function to remove token safely
+const removeAuthToken = () => {
+  if (typeof window === 'undefined') return;
+  localStorage.removeItem('authToken');
+  localStorage.removeItem('refreshToken');
 };
 
 // Helper function to make API requests
@@ -22,7 +50,7 @@ const apiRequest = async (endpoint: string, options: RequestInit = {}) => {
   };
 
   // Add auth token if available
-  const token = localStorage.getItem('authToken');
+  const token = getAuthToken();
   if (token) {
     config.headers = {
       ...config.headers,
@@ -56,8 +84,10 @@ export const authAPI = {
     
     // Store token in localStorage
     if (response.token) {
-      localStorage.setItem('authToken', response.token);
-      localStorage.setItem('refreshToken', response.refreshToken);
+      setAuthToken(response.token);
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('refreshToken', response.refreshToken);
+      }
     }
     
     return response;
@@ -67,8 +97,7 @@ export const authAPI = {
     try {
       await apiRequest('/auth/logout', { method: 'POST' });
     } finally {
-      localStorage.removeItem('authToken');
-      localStorage.removeItem('refreshToken');
+      removeAuthToken();
     }
   },
 
@@ -124,6 +153,8 @@ export const roomsAPI = {
   },
 };
 
+export const getRooms = () => roomsAPI.getAll();
+
 // Bookings API
 export const bookingsAPI = {
   create: async (bookingData: {
@@ -169,6 +200,21 @@ export const offersAPI = {
     return apiRequest('/offers');
   },
 
+  // Admin: Get all offers with pagination
+  getAllAdmin: async (params?: { page?: number; limit?: number; active?: boolean }) => {
+    const searchParams = new URLSearchParams();
+    if (params) {
+      Object.entries(params).forEach(([key, value]) => {
+        if (value !== undefined) {
+          searchParams.append(key, String(value));
+        }
+      });
+    }
+    const queryString = searchParams.toString();
+    const endpoint = queryString ? `/offers/admin/all?${queryString}` : '/offers/admin/all';
+    return apiRequest(endpoint);
+  },
+
   getById: async (id: string) => {
     return apiRequest(`/offers/${id}`);
   },
@@ -177,6 +223,36 @@ export const offersAPI = {
     return apiRequest('/offers/validate-code', {
       method: 'POST',
       body: JSON.stringify({ code }),
+    });
+  },
+
+  // Admin: Create a new offer
+  create: async (offerData: any) => {
+    return apiRequest('/offers', {
+      method: 'POST',
+      body: JSON.stringify(offerData),
+    });
+  },
+
+  // Admin: Update an offer
+  update: async (id: string, offerData: any) => {
+    return apiRequest(`/offers/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(offerData),
+    });
+  },
+
+  // Admin: Delete an offer
+  delete: async (id: string) => {
+    return apiRequest(`/offers/${id}`, {
+      method: 'DELETE',
+    });
+  },
+
+  // Admin: Toggle offer status
+  toggle: async (id: string) => {
+    return apiRequest(`/offers/${id}/toggle`, {
+      method: 'PATCH',
     });
   },
 };

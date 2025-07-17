@@ -1,11 +1,12 @@
 import type { Metadata } from "next"
 import type React from "react"
-import { Cormorant, Alegreya_Sans } from "next/font/google"
+import { Cormorant, Alegreya_Sans as Alegreya } from "next/font/google"
 import "./globals.css"
 import Header from "@/components/header"
 import Footer from "@/components/footer"
 import { ThemeProvider } from "@/components/theme-provider"
 import { LanguageProvider } from "@/contexts/language-context"
+import { Toaster } from "@/components/ui/sonner"
 
 const cormorant = Cormorant({
   subsets: ["latin", "latin-ext"],
@@ -13,7 +14,7 @@ const cormorant = Cormorant({
   display: "swap",
 })
 
-const alegreyaSans = Alegreya_Sans({
+const alegreya = Alegreya({
   subsets: ["latin", "greek", "latin-ext"],
   weight: ["400"],
   variable: "--font-alegreya",
@@ -103,11 +104,11 @@ export const metadata: Metadata = {
   },
   icons: {
     icon: [
-      { url: "/logo.png", sizes: "16x16", type: "image/png" },
-      { url: "/logo.png", sizes: "32x32", type: "image/png" },
-      { url: "/logo.png", sizes: "96x96", type: "image/png" },
+      { url: "https://i.imgur.com/znGgwJY.png", sizes: "16x16", type: "image/png" },
+      { url: "https://i.imgur.com/znGgwJY.png", sizes: "32x32", type: "image/png" },
+      { url: "https://i.imgur.com/znGgwJY.png", sizes: "96x96", type: "image/png" },
     ],
-    shortcut: "/logo.png",
+    shortcut: "https://i.imgur.com/znGgwJY.png",
     apple: [
       { url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
       { url: "/apple-touch-icon-152x152.png", sizes: "152x152", type: "image/png" },
@@ -141,29 +142,18 @@ export const metadata: Metadata = {
     generator: 'v0.dev'
 }
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="el" suppressHydrationWarning>
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
-        <meta name="format-detection" content="telephone=no" />
-        <link rel="dns-prefetch" href="//fonts.googleapis.com" />
-        <link rel="dns-prefetch" href="//fonts.gstatic.com" />
-      </head>
-      <body className={`${cormorant.variable} ${alegreyaSans.variable} font-sans`}>
-        <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false}>
-          <LanguageProvider>
+    <html lang="en" suppressHydrationWarning>
+      <body className={`${cormorant.variable} ${alegreya.variable} font-sans`}>
+        <LanguageProvider>
+          <ThemeProvider attribute="class" defaultTheme="light" enableSystem disableTransitionOnChange>
             <Header />
             <main>{children}</main>
             <Footer />
-          </LanguageProvider>
-        </ThemeProvider>
+            <Toaster />
+          </ThemeProvider>
+        </LanguageProvider>
       </body>
     </html>
   )

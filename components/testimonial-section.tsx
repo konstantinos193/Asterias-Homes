@@ -4,48 +4,27 @@ import { Anchor, Fish, Sunset, Camera } from "lucide-react"
 import { useLanguage } from "@/contexts/language-context"
 
 export default function HighlightsSection() {
-  const { t, language } = useLanguage()
+  const { t } = useLanguage()
 
   const highlights = [
     {
-      title: "Μαγευτικά Ηλιοβασιλέματα",
-      englishTitle: "Magical Sunsets",
-      germanTitle: "Magische Sonnenuntergänge",
-      description: "Απολαύστε μοναδικά ηλιοβασιλέματα πάνω από τον Αμβρακικό Κόλπο από το μπαλκόνι του δωματίου σας.",
-      englishDescription: "Enjoy unique sunsets over the Amvrakikos Gulf from your room's balcony.",
-      germanDescription:
-        "Genießen Sie einzigartige Sonnenuntergänge über dem Amvrakischen Golf vom Balkon Ihres Zimmers.",
+      titleKey: "highlights.item1.title",
+      descriptionKey: "highlights.item1.description",
       icon: Sunset,
     },
     {
-      title: "Φρέσκα Θαλασσινά",
-      englishTitle: "Fresh Seafood",
-      germanTitle: "Frische Meeresfrüchte",
-      description: "Γευτείτε φρέσκα ψάρια και θαλασσινά από τοπικούς ψαράδες στις παραδοσιακές ταβέρνες της περιοχής.",
-      englishDescription: "Taste fresh fish and seafood from local fishermen at the traditional taverns in the area.",
-      germanDescription:
-        "Probieren Sie frischen Fisch und Meeresfrüchte von lokalen Fischern in den traditionellen Tavernen der Gegend.",
+      titleKey: "highlights.item2.title",
+      descriptionKey: "highlights.item2.description",
       icon: Fish,
     },
     {
-      title: "Παραδοσιακό Λιμάνι",
-      englishTitle: "Traditional Harbor",
-      germanTitle: "Traditioneller Hafen",
-      description: "Περπατήστε στο γραφικό λιμάνι της Κορωνησίας και ζήστε την αυθεντική ατμόσφαιρα ενός ψαροχωριού.",
-      englishDescription:
-        "Walk around the picturesque harbor of Koronisia and experience the authentic atmosphere of a fishing village.",
-      germanDescription:
-        "Spazieren Sie durch den malerischen Hafen von Koronisia und erleben Sie die authentische Atmosphäre eines Fischerdorfes.",
+      titleKey: "highlights.item3.title",
+      descriptionKey: "highlights.item3.description",
       icon: Anchor,
     },
     {
-      title: "Φωτογραφικές Τοποθεσίες",
-      englishTitle: "Photographic Locations",
-      germanTitle: "Fotografische Orte",
-      description: "Ανακαλύψτε μοναδικά τοπία και σημεία ιδανικά για φωτογράφιση στον υγρότοπο του Αμβρακικού.",
-      englishDescription: "Discover unique landscapes and ideal spots for photography in the Amvrakikos wetland.",
-      germanDescription:
-        "Entdecken Sie einzigartige Landschaften und ideale Orte zum Fotografieren im Feuchtgebiet von Amvrakikos.",
+      titleKey: "highlights.item4.title",
+      descriptionKey: "highlights.item4.description",
       icon: Camera,
     },
   ]
@@ -59,28 +38,39 @@ export default function HighlightsSection() {
           <p className="mt-6 text-lg font-alegreya text-slate-700">{t("highlights.description")}</p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="hidden md:grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {highlights.map((highlight, index) => (
-            <div key={index} className="bg-white p-8 rounded-sm relative shadow-sm border-t-2 border-[#0A4A4A]">
-              <div className="inline-flex items-center justify-center p-3 bg-[#A9AEA2]/20 rounded-sm mb-6">
-                <highlight.icon className="h-6 w-6 text-[#0A4A4A]" />
+            <div key={index} className="bg-white p-8 rounded-sm relative shadow-sm border-t-2 border-[#0A4A4A] group">
+              <div className="inline-flex items-center justify-center p-3 bg-[#A9AEA2]/20 rounded-sm mb-6 group-hover:bg-[#A9AEA2]/30 transition-colors duration-300">
+                <highlight.icon className="h-6 w-6 text-[#0A4A4A] group-hover:animate-pulse transition-all duration-300" />
               </div>
               <h3 className="text-xl font-cormorant font-semibold text-slate-800 mb-3">
-                {language === "el"
-                  ? highlight.title
-                  : language === "en"
-                    ? highlight.englishTitle
-                    : highlight.germanTitle}
+                {t(highlight.titleKey)}
               </h3>
               <p className="font-alegreya text-slate-700">
-                {language === "el"
-                  ? highlight.description
-                  : language === "en"
-                    ? highlight.englishDescription
-                    : highlight.germanDescription}
+                {t(highlight.descriptionKey)}
               </p>
             </div>
           ))}
+        </div>
+
+        {/* Mobile horizontal scroll version */}
+        <div className="md:hidden overflow-x-auto pb-4 -mx-4 px-4">
+          <div className="flex gap-6 w-max">
+            {highlights.map((highlight, index) => (
+              <div key={index} className="bg-white p-6 rounded-sm relative shadow-sm border-t-2 border-[#0A4A4A] group min-w-[280px]">
+                <div className="inline-flex items-center justify-center p-3 bg-[#A9AEA2]/20 rounded-sm mb-4 group-hover:bg-[#A9AEA2]/30 transition-colors duration-300">
+                  <highlight.icon className="h-6 w-6 text-[#0A4A4A] group-hover:animate-pulse transition-all duration-300" />
+                </div>
+                <h3 className="text-lg font-cormorant font-semibold text-slate-800 mb-2">
+                  {t(highlight.titleKey)}
+                </h3>
+                <p className="font-alegreya text-slate-700 text-sm">
+                  {t(highlight.descriptionKey)}
+                </p>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </section>

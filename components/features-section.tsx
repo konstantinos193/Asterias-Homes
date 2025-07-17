@@ -4,43 +4,27 @@ import { Wifi, Coffee, Car, Sparkles } from "lucide-react"
 import { useLanguage } from "@/contexts/language-context"
 
 export default function FeaturesSection() {
-  const { t, language } = useLanguage()
+  const { t } = useLanguage()
 
   const features = [
     {
-      name: "Δωρεάν Wi-Fi",
-      englishName: "Free Wi-Fi",
-      germanName: "Kostenloses WLAN",
-      description: "Υψηλής ταχύτητας σύνδεση σε όλους τους χώρους",
-      englishDescription: "High-speed connection throughout the premises",
-      germanDescription: "Hochgeschwindigkeitsverbindung im gesamten Gebäude",
+      nameKey: "featuresSection.item1.title",
+      descriptionKey: "featuresSection.item1.description",
       icon: Wifi,
     },
     {
-      name: "Πρωινό",
-      englishName: "Breakfast",
-      germanName: "Frühstück",
-      description: "Παραδοσιακό πρωινό με τοπικά προϊόντα",
-      englishDescription: "Traditional breakfast with local products",
-      germanDescription: "Traditionelles Frühstück mit regionalen Produkten",
+      nameKey: "featuresSection.item2.title",
+      descriptionKey: "featuresSection.item2.description",
       icon: Coffee,
     },
     {
-      name: "Χώρος Στάθμευσης",
-      englishName: "Parking",
-      germanName: "Parken",
-      description: "Δωρεάν χώρος στάθμευσης",
-      englishDescription: "Free parking space",
-      germanDescription: "Kostenloser Parkplatz",
+      nameKey: "featuresSection.item3.title",
+      descriptionKey: "featuresSection.item3.description",
       icon: Car,
     },
     {
-      name: "Καθημερινή Καθαριότητα",
-      englishName: "Daily Cleaning",
-      germanName: "Tägliche Reinigung",
-      description: "Καθαρισμός δωματίων καθημερινά",
-      englishDescription: "Daily room cleaning",
-      germanDescription: "Tägliche Zimmerreinigung",
+      nameKey: "featuresSection.item4.title",
+      descriptionKey: "featuresSection.item4.description",
       icon: Sparkles,
     },
   ]
@@ -55,23 +39,22 @@ export default function FeaturesSection() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {features.map((feature) => (
+          {features.map((feature, index) => (
             <div
-              key={language === "el" ? feature.name : language === "en" ? feature.englishName : feature.germanName}
-              className="bg-white p-8 shadow-sm hover:shadow-md transition-shadow rounded-sm border-t-2 border-[#8B4B5C]"
+              key={index}
+              className="bg-white p-8 shadow-sm hover:shadow-md transition-all duration-300 rounded-sm border-t-2 border-[#8B4B5C] relative overflow-hidden group"
             >
-              <div className="inline-flex items-center justify-center p-3 bg-[#E8E2D5]/50 rounded-sm mb-6">
-                <feature.icon className="h-6 w-6 text-[#8B4B5C]" aria-hidden="true" />
+              {/* Gradient accent bar */}
+              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#8B4B5C] via-[#A9AEA2] to-[#0A4A4A]"></div>
+              
+              <div className="inline-flex items-center justify-center p-3 bg-[#E8E2D5]/50 rounded-sm mb-6 group-hover:bg-[#E8E2D5]/70 transition-colors duration-300">
+                <feature.icon className="h-6 w-6 text-[#8B4B5C] group-hover:scale-110 group-hover:text-[#040000] transition-all duration-300" aria-hidden="true" />
               </div>
               <h3 className="text-xl font-cormorant font-semibold text-slate-800 mb-3">
-                {language === "el" ? feature.name : language === "en" ? feature.englishName : feature.germanName}
+                {t(feature.nameKey)}
               </h3>
               <p className="text-slate-600 font-alegreya">
-                {language === "el"
-                  ? feature.description
-                  : language === "en"
-                    ? feature.englishDescription
-                    : feature.germanDescription}
+                {t(feature.descriptionKey)}
               </p>
             </div>
           ))}

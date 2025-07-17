@@ -6,22 +6,40 @@ import { useLanguage } from "@/contexts/language-context" // Import useLanguage
 
 interface RoomCardProps {
   id: string
-  nameKey: string // Changed from name to nameKey
-  descriptionKey: string // Changed from description to descriptionKey
   image: string
+  name?: string
+  description?: string
   price?: string
-  featureKeys?: string[] // Changed from features to featureKeys
+  features?: string[]
+  nameKey?: string
+  descriptionKey?: string
+  featureKeys?: string[]
 }
 
-export default function RoomCard({ id, nameKey, descriptionKey, image, price, featureKeys }: RoomCardProps) {
+export default function RoomCard({
+  id,
+  image,
+  name,
+  description,
+  price,
+  features,
+  nameKey,
+  descriptionKey,
+  featureKeys,
+}: RoomCardProps) {
   const { t } = useLanguage() // Get t function
+
+  const displayName = nameKey ? t(nameKey) : name;
+  const displayDescription = descriptionKey ? t(descriptionKey) : description;
+  const displayFeatures = featureKeys ? featureKeys.map(key => t(key)) : features;
+
 
   return (
     <div className="group overflow-hidden">
       <div className="relative overflow-hidden">
         <Image
           src={image || "/placeholder.svg"}
-          alt={t(nameKey)} // Translate alt text
+          alt={displayName}
           width={600}
           height={400}
           className="w-full h-80 object-cover transition-transform duration-700 group-hover:scale-110"
@@ -35,13 +53,13 @@ export default function RoomCard({ id, nameKey, descriptionKey, image, price, fe
       </div>
 
       <div className="p-6 bg-white border border-t-0 border-slate-200">
-        <h3 className="text-2xl font-cormorant font-light text-slate-800 mb-3">{t(nameKey)}</h3> {/* Translate name */}
-        <p className="text-slate-600 font-alegreya mb-4">{t(descriptionKey)}</p> {/* Translate description */}
-        {featureKeys && featureKeys.length > 0 && (
+        <h3 className="text-2xl font-cormorant font-light text-slate-800 mb-3">{displayName}</h3>
+        <p className="text-slate-600 font-alegreya mb-4">{displayDescription}</p>
+        {displayFeatures && displayFeatures.length > 0 && (
           <ul className="flex flex-wrap gap-2 mb-6">
-            {featureKeys.map((featureKey, index) => (
+            {displayFeatures.map((feature, index) => (
               <li key={index} className="text-xs bg-slate-100 px-3 py-1 text-slate-700 font-alegreya">
-                {t(featureKey)} {/* Translate feature */}
+                {feature}
               </li>
             ))}
           </ul>

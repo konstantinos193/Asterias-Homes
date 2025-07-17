@@ -1,3 +1,4 @@
+"use client"
 import React, { useState, useEffect, createContext, useContext } from 'react'
 import { authAPI } from '@/lib/api'
 
@@ -30,6 +31,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     // Check if user is logged in on app start
     const checkAuth = async () => {
+      // Only run on client side
+      if (typeof window === 'undefined') {
+        setLoading(false)
+        return
+      }
+
       const token = localStorage.getItem('authToken')
       if (token) {
         try {
