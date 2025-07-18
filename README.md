@@ -70,27 +70,27 @@ Asterias Homes offers traditional apartment rentals in the beautiful coastal vil
 ### Installation
 
 1. **Clone the repository**
-   ```bash
+```bash
    git clone <repository-url>
    cd Asteriashomes
-   ```
+```
 
 2. **Install dependencies**
    ```bash
    # Frontend dependencies
    pnpm install
-   
+
    # Backend dependencies
    cd backend
-   pnpm install
-   ```
+pnpm install
+```
 
 3. **Environment Configuration**
-   
+
    Create `.env.local` in the root:
-   ```env
+```env
    NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=your_stripe_publishable_key
-   BACKEND_URL=http://localhost:3001
+BACKEND_URL=http://localhost:3001
    ```
    
    Create `.env` in the backend folder:
@@ -107,14 +107,14 @@ Asterias Homes offers traditional apartment rentals in the beautiful coastal vil
    ```
 
 4. **Start the development servers**
-   ```bash
+```bash
    # Terminal 1: Frontend
-   pnpm dev
+pnpm dev
    
    # Terminal 2: Backend
    cd backend
-   pnpm start
-   ```
+pnpm start
+```
 
 ## 📧 Email System Setup
 
