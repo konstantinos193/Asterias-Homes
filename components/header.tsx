@@ -107,7 +107,7 @@ export default function Header() {
         <div className="flex items-center justify-between h-full">
           {/* Logo */}
           <div className="flex-shrink-0 mr-4">
-            <Link href="/" className="block">
+            <Link href={langPrefix || "/"} className="block">
               <span className="sr-only">{t("logo.altPublic", "Asterias Hotel")}</span>
               <div className={`relative transition-all duration-300 ${scrolled ? "w-48 h-20" : "w-56 h-24"}`}>
                 <Image
@@ -200,7 +200,7 @@ export default function Header() {
             </div>
 
             <Link
-              href="/bookings"
+              href={`${langPrefix}/bookings`}
               className={`px-6 py-2.5 rounded-lg text-white font-medium tracking-wide transition-all duration-200 transform hover:scale-105 ${
                 scrolled ? "bg-[#8B4B5C] hover:bg-[#7A4251] shadow-md" : "bg-[#8B4B5C]/90 hover:bg-[#8B4B5C]"
               }`}
