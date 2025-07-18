@@ -397,15 +397,15 @@ export default function AdminSettingsPage() {
                   </div>
                 </div>
 
-                <div className="flex items-center space-x-2">
-                  <Switch
+                  <div className="flex items-center space-x-2">
+                    <Switch
                     id="overbookingAllowed"
                     checked={settings.overbookingAllowed}
                     onChange={(e) => updateSetting("overbookingAllowed", e.target.checked)}
-                  />
+                    />
                   <Label htmlFor="overbookingAllowed" className="font-alegreya">
                     Επιτρέπεται υπερκράτηση (προσοχή!)
-                  </Label>
+                    </Label>
                 </div>
               </CardContent>
             </Card>
@@ -848,19 +848,19 @@ export default function AdminSettingsPage() {
                   </div>
                 </div>
 
-                <div className="flex flex-wrap gap-3">
-                  <Button variant="outline" className="font-alegreya">
-                    <Database className="h-4 w-4 mr-2" />
+                  <div className="flex flex-wrap gap-3">
+                    <Button variant="outline" className="font-alegreya">
+                      <Database className="h-4 w-4 mr-2" />
                     Άμεσο Backup
-                  </Button>
-                  <Button variant="outline" className="font-alegreya">
-                    <FileText className="h-4 w-4 mr-2" />
+                    </Button>
+                    <Button variant="outline" className="font-alegreya">
+                      <FileText className="h-4 w-4 mr-2" />
                     Αρχείο Δραστηριότητας
-                  </Button>
-                  <Button variant="outline" className="font-alegreya">
+                    </Button>
+                    <Button variant="outline" className="font-alegreya">
                     <Key className="h-4 w-4 mr-2" />
                     Ανανέωση API Keys
-                  </Button>
+                    </Button>
                 </div>
               </CardContent>
             </Card>

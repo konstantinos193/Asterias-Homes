@@ -3,7 +3,7 @@ import RoomCard from "@/components/room-card"
 
 export default function RoomsPage() {
   const roomsData = allRoomsData
-  
+
   if (!roomsData || roomsData.length === 0) {
     return (
       <div className="text-center py-20">

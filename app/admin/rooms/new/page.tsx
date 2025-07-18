@@ -70,9 +70,20 @@ export default function NewRoomPage() {
     setError('')
 
     try {
+      // Generate translation keys based on room name
+      const normalizedName = formData.name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')
+      const nameKey = `rooms.${normalizedName}.name`
+      const descriptionKey = `rooms.${normalizedName}.description`
+      
+      // Generate feature keys for selected features
+      const featureKeys = formData.features.map(feature => `rooms.feature.${feature}`)
+
       // Prepare room data
       const roomData = {
         ...formData,
+        nameKey,
+        descriptionKey,
+        featureKeys,
         price: parseFloat(formData.price),
         capacity: parseInt(formData.capacity),
         totalRooms: 1, // Always 1 room
