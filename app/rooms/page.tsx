@@ -1,27 +1,16 @@
-import { getRooms } from "@/lib/api"
+import { allRoomsData } from "@/data/rooms"
 import RoomCard from "@/components/room-card"
-import { Room } from "@/types/booking"
 
-export default async function RoomsPage() {
-  const data = await getRooms()
-  const roomType: Room | undefined = (data.rooms || [])[0]
-
-  if (!roomType) {
+export default function RoomsPage() {
+  const roomsData = allRoomsData
+  
+  if (!roomsData || roomsData.length === 0) {
     return (
       <div className="text-center py-20">
         <p>No apartments available at the moment. Please check back later.</p>
       </div>
     )
   }
-
-  // Create an array of apartments to display, one for each available room
-  const apartmentsToDisplay = Array.from({ length: roomType.totalRooms }, (_, index) => ({
-    ...roomType,
-    // Create a unique ID for the key prop for React's rendering
-    displayId: `${roomType.id}-${index}`,
-    // Cycle through the available images for variety
-    image: roomType.images[index % roomType.images.length],
-  }))
 
   return (
     <div className="bg-gray-50">
@@ -42,18 +31,15 @@ export default async function RoomsPage() {
 
       <main className="container mx-auto px-4 py-12 md:py-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {apartmentsToDisplay.map((apartment) => (
+          {roomsData.map((room) => (
             <RoomCard
-              key={apartment.displayId}
-              id={apartment.id} // The original ID for booking
-              name={apartment.name}
-              description={apartment.description}
-              image={apartment.image}
-              price={`${apartment.price}€`}
-              features={apartment.features}
-              nameKey={apartment.nameKey}
-              descriptionKey={apartment.descriptionKey}
-              featureKeys={apartment.featureKeys}
+              key={room.id}
+              id={room.id}
+              image={room.image}
+              price={room.price}
+              nameKey={room.nameKey}
+              descriptionKey={room.descriptionKey}
+              featureKeys={room.featureKeys}
             />
           ))}
         </div>

@@ -149,4 +149,19 @@ const roomsAPI = {
   }
 };
 
+export const contactAPI = {
+  submit: async (contactData: {
+    name: string;
+    email: string;
+    phone?: string;
+    subject: string;
+    message: string;
+  }) => {
+    return apiRequest('/api/contact', {
+      method: 'POST',
+      body: JSON.stringify(contactData),
+    });
+  }
+};
+
 export const getRooms = () => roomsAPI.getAll(); 
