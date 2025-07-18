@@ -44,7 +44,8 @@ export const paymentsAPI = {
     children?: number;
     currency?: string;
   }) => {
-    return apiRequest('/api/create-payment-intent', {
+    // Use backend endpoint through admin proxy for proper database integration
+    return apiRequest('/api/admin/payments/create-payment-intent', {
       method: 'POST',
       body: JSON.stringify(bookingData),
     });
