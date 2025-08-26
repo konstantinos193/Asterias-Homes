@@ -19,9 +19,9 @@
     },
     "nav": {
       "home": "Home",
-      "about": "About",
-      "rooms": "Rooms",
-      "bookings": "Bookings",
+              "about": "About",
+        "rooms": "Rooms",
+        "bookings": "Bookings",
       "contact": "Contact",
       "book": "Book Now",
       "admin": "Admin"
@@ -54,100 +54,16 @@
     },
     "welcome": {
       "subtitle": "Welcome",
-      "title": "To comfortable vacation apartments",
-      "paragraph1": "Experience authentic Greek hospitality in the serene beauty of Koronisia. Our comfortable apartments offer a perfect blend of traditional charm and modern comfort for your perfect getaway.",
-      "paragraph2": "Each apartment is uniquely designed to provide you with a home away from home experience at the Amvrakikos Gulf, where you can discover the unique tranquility our location offers.",
+      "title": "To comfortable holiday apartments",
+      "paragraph1": "Welcome to Asterias, a small, family accommodation in the coastal village of Koronisia, just 20 minutes from the city of Arta.",
+      "paragraph2": "If you are looking for tranquility, clean air, authentic hospitality and views that rest your eyes, then Asterias is the right place for you.",
+      "paragraph3": "Our rooms are bright, fully equipped and ideal for couples, families or friends who want to discover the beauty of the Ambracian Gulf and the calm waters of the lagoon.",
       "button": "Explore Our Story"
     },
     "rooms": {
-      "section": {
-        "subtitle": "Our Accommodations",
-        "title": "Our Apartments",
-        "description": "Discover our 7 luxury vacation apartments, each uniquely designed for your perfect stay in Koronisia."
-      },
-      "perNight": "/ night",
-      "viewAll": "View All Apartments",
       "standard": {
-        "name": "Cozy Studio Apartment",
-        "description": "Comfortable studio apartment with modern amenities, perfect for couples. Features kitchenette, private bathroom, and balcony with garden views."
-      },
-      "family": {
-        "name": "Family Apartment",
-        "description": "Spacious two-bedroom apartment ideal for families. Features full kitchen, living area, and balcony with stunning views of the Amvrakikos Gulf."
-      },
-      "romantic": {
-        "name": "Sea View Apartment",
-        "description": "Premium apartment with panoramic sea views, perfect for couples. Features luxury amenities, private terrace, and romantic ambiance."
-      },
-      "twin": {
-        "name": "Twin Apartment",
-        "description": "Modern apartment with twin beds, perfect for friends or colleagues. Includes full kitchen and comfortable living space."
-      },
-      "suite": {
-        "name": "Deluxe Apartment",
-        "description": "Luxurious two-bedroom apartment with separate living area, full kitchen, and premium amenities for an exceptional stay."
-      },
-      "accessible": {
-        "name": "Accessible Apartment",
-        "description": "Thoughtfully designed apartment with accessible features, ensuring a comfortable stay for all guests."
-      },
-      "feature": {
-        "entirePlace": "The entire place is yours",
-        "freeParking": {
-          "el": "Δωρεάν πάρκινγκ",
-          "en": "Free parking",
-          "de": "Kostenloses Parken"
-        },
-        "breakfastIncluded": {
-          "el": "Πρωινό",
-          "en": "Breakfast included",
-          "de": "Frühstück inklusive"
-        },
-        "balcony": {
-          "el": "Μπαλκόνι",
-          "en": "Balcony",
-          "de": "Balkon"
-        },
-        "privateBathroom": {
-          "el": "Ιδιωτικό μπάνιο",
-          "en": "Private bathroom",
-          "de": "Eigenes Badezimmer"
-        },
-        "freeWifi": {
-          "el": "Δωρεάν Wi-Fi",
-          "en": "Free Wifi",
-          "de": "Kostenloses WLAN"
-        },
-        "shower": {
-          "el": "Ντουζιέρα",
-          "en": "Shower",
-          "de": "Dusche"
-        },
-        "airConditioning": {
-          "el": "Κλιματισμός",
-          "en": "Air conditioning",
-          "de": "Klimaanlage"
-        },
-        "flatScreenTV": {
-          "el": "Επίπεδη τηλεόραση",
-          "en": "Flat-screen TV",
-          "de": "Flachbildfernseher"
-        },
-        "kitchenette": {
-          "el": "Μικρή Κουζίνα",
-          "en": "Kitchenette",
-          "de": "Kochnische"
-        },
-        "nonSmoking": {
-          "el": "Δωμάτια μη καπνιζόντων",
-          "en": "Non-smoking rooms",
-          "de": "Nichtraucherzimmer"
-        },
-        "familyFriendly": {
-          "el": "Οικογενειακά δωμάτια",
-          "en": "Family rooms",
-          "de": "Familienzimmer"
-        }
+        "name": "Standard Apartment",
+        "description": "A beautifully furnished apartment with modern amenities, perfect for a relaxing getaway in Koronisia. All our apartments are identical in style and layout, offering consistent comfort and quality."
       }
     },
     "roomCard": {
@@ -254,7 +170,7 @@
       },
       "item4": {
         "title": "Peaceful Retreat",
-        "description": "Escape the hustle and bustle and unwind in the tranquil surroundings of the Amvrakikos Gulf."
+        "description": "Wake up to lagoon views, walk among flamingos, and enjoy a summer without noise."
       }
     },
     "discover": {
@@ -287,19 +203,14 @@
       }
     },
     "footer": {
-      "description": "Asterias Homes, your serene getaway in Koronisia, offering 7 luxury vacation apartments with traditional charm and modern comfort by the Amvrakikos Gulf.",
+      "description": "Asterias Homes, your peaceful retreat in Koronisia, offering 7 traditional holiday apartments with authentic charm and modern comfort by the Ambracian Gulf.",
       "contact": "Contact Information",
       "links": "Quick Links",
       "copyright": "All rights reserved.",
-      "receptionHours": {
-        "title": "Contact Hours",
-        "mondayFriday": "Monday - Friday",
-        "mondayFridayHours": "08:00 - 22:00",
-        "saturday": "Saturday",
-        "saturdayHours": "09:00 - 21:00",
-        "sunday": "Sunday",
-        "sundayHours": "09:00 - 20:00"
-      },
+           "receptionHours": {
+             "title": "Contact Hours",
+             "contactHours": "Mon - Sun | 10:00 - 21:00"
+           },
       "details": {
         "phone": {
           "title": "Call Us",
@@ -328,7 +239,8 @@
         "title": "Crafting Authentic Experiences",
         "paragraph1": "Nestled in the heart of the picturesque fishing village of Koronisia, Asterias Homes began with a simple vision: to offer luxury vacation apartments that blend traditional Greek hospitality with modern comforts. Our journey started over a decade ago, driven by a deep love for this unique island and a desire to share its serene beauty with travelers seeking an authentic Greek experience.",
         "paragraph2": "From a single family property, we've carefully developed a collection of 7 unique luxury apartments, each thoughtfully designed to provide guests with a true 'home away from home' experience. We've preserved the traditional architectural charm while integrating modern amenities that ensure comfort and convenience for every guest.",
-        "paragraph3": "Our commitment is to provide exceptional vacation rental experiences where guests can unwind, reconnect with nature, and experience the timeless allure of the Amvrakikos Gulf. We believe in sustainable tourism and strive to operate in harmony with our pristine environment while supporting the local community.",
+        "paragraph3": "Our commitment is to provide exceptional vacation rental experiences where guests can unwind, reconnect with nature, and experience the timeless allure of the Amvrakikos Gulf. We believe in sustainable tourism and strive to operate in harmony with our pristine environment while supporting the local community. At Asterias you won't find luxury – but you will find tranquility, cleanliness and people who truly care.",
+        "paragraph4": "Asterias was created from our love for our place and the need to offer authentic Greek hospitality to our visitors.",
         "imageAlt1": "View of Asterias Homes apartments with lush greenery"
       },
       "mission": {
@@ -354,16 +266,16 @@
       "heroDescription": "In the heart of the Amvrakikos Gulf, the ideal place for tranquility, nature, and authentic experiences.",
       "bookNowButton": "Book Now",
       "locationTitle": "Location & Area",
-      "locationDescription": "Our rooms are just a few meters from the lagoons and the Amvrakikos Gulf, in a peaceful seaside village perfect for relaxation, romantic or family getaways.",
-      "locationTime": "Only 20 minutes from Arta and 40 minutes from Preveza. Perfect for exploring Epirus.",
+      "locationDescription": "Koronisia is a small island accessible by road, located within the lagoon. It offers rare tranquility, magical sunsets and endless nature with flamingos, herons and seabirds. Within close distance you can visit Arta and its historic bridges, Lake Voulkaria and the Ambracian Gulf, the beaches of Preveza, and fish taverns with fresh fish, 5 minutes on foot from the accommodation.",
+      "locationTime": "Just 20 minutes from Arta and 40 minutes from Preveza. Ideal for excursions to Epirus.",
       "mapAlt": "Map or location of Koronisia",
       "experiencesAlt": "Experiences/Sunset/Activities",
       "experiencesTitle": "Authentic Experiences",
       "experiences": {
-        "item1": "Walks along the seaside path or in the village",
-        "item2": "Enjoy fresh fish at the tavernas while watching the sunset",
-        "item3": "Ideal for fishing, boating, cycling",
-        "item4": "Excursions to Arta, Preveza, Ioannina, Lefkada"
+        "item1": "Arta and its historic bridges",
+        "item2": "Lake Voulkaria and the Ambracian Gulf",
+        "item3": "The beaches of Preveza",
+        "item4": "Fish taverns with fresh fish, 5 minutes on foot from the accommodation"
       },
       "forWhomTitle": "Ideal for...",
       "forWhom": {
@@ -375,12 +287,15 @@
       "amenitiesAlt": "Amenities/Rooms/Outdoor spaces",
       "amenitiesTitle": "Amenities",
       "amenities": {
-        "item1": "Free Wi-Fi",
+        "item1": "1 double or 2 single beds",
         "item2": "Air conditioning",
-        "item3": "Daily housekeeping",
-        "item4": "Comfortable parking",
-        "item5": "Family rooms",
-        "item6": "Non-smoking rooms"
+        "item3": "Wi-Fi",
+        "item4": "Small kitchen with refrigerator",
+        "item5": "Private bathroom",
+        "item6": "Private balcony with view",
+        "item7": "Television",
+        "item8": "Parking",
+        "item9": "Breakfast triple/quadruple"
       }
     },
     "admin": {
@@ -710,6 +625,80 @@
         "fullKitchen": "Full Kitchen"
       }
     },
+    "bookingWizard": {
+      "steps": {
+        "dates": "Select Dates",
+        "room": "Room Details",
+        "guestInfo": "Guest Information",
+        "payment": "Payment",
+        "confirmation": "Confirmation"
+      },
+      "navigation": {
+        "next": "Next",
+        "back": "Back",
+        "confirm": "Confirm Booking"
+      },
+      "dates": {
+        "title": "Select Your Stay Dates",
+        "subtitle": "Please select your stay dates and number of guests",
+        "checkIn": "Check-in Date",
+        "checkOut": "Check-out Date",
+        "selectDate": "Select date",
+        "adults": "Number of Adults",
+        "children": "Number of Children",
+        "nights": "Total Nights: {count}",
+        "validation": {
+          "checkInRequired": "Check-in date is required",
+          "checkOutRequired": "Check-out date is required",
+          "invalidDates": "Check-out must be after check-in",
+          "minStay": "Minimum stay is 1 night",
+          "maxStay": "Maximum stay is 30 nights"
+        }
+      },
+      "roomDetails": {
+        "title": "Room Information",
+        "roomType": "Room Type",
+        "capacity": "Capacity",
+        "size": "Size",
+        "amenities": "Amenities",
+        "totalPrice": "Total Price for {nights} nights: €{price}"
+      },
+      "guestInfo": {
+        "title": "Guest Information",
+        "firstName": "First Name",
+        "lastName": "Last Name",
+        "email": "Email Address",
+        "phone": "Phone Number",
+        "specialRequests": "Special Requests (Optional)",
+        "validation": {
+          "firstNameRequired": "First name is required",
+          "lastNameRequired": "Last name is required",
+          "emailRequired": "Email is required",
+          "emailInvalid": "Please enter a valid email address",
+          "phoneRequired": "Phone number is required"
+        }
+      },
+      "payment": {
+        "title": "Payment Method",
+        "card": "Credit/Debit Card",
+        "cash": "Cash on Arrival",
+        "cardDetails": "Card Details",
+        "cardPlaceholder": "Card number, expiry date, CVC",
+        "processing": "Processing payment...",
+        "error": "Payment failed. Please try again.",
+        "success": "Payment successful!"
+      },
+      "confirmation": {
+        "title": "Booking Confirmation",
+        "success": "Your booking has been confirmed!",
+        "bookingNumber": "Booking Number: {number}",
+        "details": "Booking Details",
+        "summary": "Booking Summary",
+        "nextSteps": "Next Steps",
+        "emailSent": "A confirmation email has been sent to {email}",
+        "contactInfo": "If you have any questions, please contact us"
+      }
+    },
     "contactPage": {
       "header": {
         "title": "Contact Us",
@@ -912,5 +901,110 @@
         "Bedroom 2: double bed (131-150cm)",
         "Outdoor spaces: veranda, yard, garden with chairs and table"
       ]
+    },
+    "gallery": {
+      "title": "Village Gallery",
+      "subtitle": "Discover the beauty of Koronisia through our photo collection",
+      "description": "Explore the picturesque fishing village, its stunning landscapes, and the authentic Greek atmosphere that makes Koronisia so special.",
+      "categories": {
+        "all": "All Photos",
+        "village": "Village Life",
+        "nature": "Nature & Landscapes",
+        "rooms": "Rooms & Accommodations",
+        "sunset": "Sunsets & Views",
+        "activities": "Activities & Experiences"
+      },
+      "viewImage": "View Image",
+      "closeImage": "Close",
+      "previousImage": "Previous",
+      "nextImage": "Next",
+      "noImagesFound": "No images found for this category.",
+      "imageCounter": "Image {current} of {total}",
+      "images": {
+        "villagePanorama": {
+          "title": "Village Panorama",
+          "description": "Breathtaking view of the traditional fishing village",
+          "location": "Koronisia Village",
+          "date": "Summer 2024"
+        },
+        "lagoonView": {
+          "title": "Lagoon View",
+          "description": "The serene waters of Amvrakikos Gulf",
+          "location": "Amvrakikos Lagoon",
+          "date": "Spring 2024"
+        },
+        "gulfSunset": {
+          "title": "Gulf Sunset",
+          "description": "Magical sunset colors over the gulf",
+          "location": "Amvrakikos Gulf",
+          "date": "Autumn 2024"
+        },
+        "fishingBoats": {
+          "title": "Fishing Boats",
+          "description": "Traditional fishing boats in the harbor",
+          "location": "Koronisia Harbor",
+          "date": "Summer 2024"
+        },
+        "traditionalHouses": {
+          "title": "Traditional Houses",
+          "description": "Charming white-washed houses with blue accents",
+          "location": "Koronisia Village",
+          "date": "Spring 2024"
+        },
+        "asteriasHomes": {
+          "title": "Asterias Homes",
+          "description": "Our cozy family accommodation",
+          "location": "Koronisia Village",
+          "date": "Year-round"
+        },
+        "tranquilSunset": {
+          "title": "Koronisia Waters at Dusk",
+          "description": "Calm waters reflect sunset rays. Mirror-like surface.",
+          "location": "Koronisia Bay",
+          "date": "2024"
+        },
+        "ruggedSunset": {
+          "title": "Wild Koronisia Sunset",
+          "description": "Untamed landscape with power lines. Rugged terrain at sunset.",
+          "location": "Koronisia Wilderness",
+          "date": "2024"
+        },
+        "urbanCoastalSunset": {
+          "title": "Koronisia Rooftops at Sunset",
+          "description": "Mediterranean architecture with terracotta tiles. Glowing in sunset light.",
+          "location": "Koronisia Village Center",
+          "date": "2024"
+        },
+        "hillsideSunset": {
+          "title": "Koronisia Hillside Vista",
+          "description": "Elevated view over residential areas. Majestic tree frames sunset.",
+          "location": "Koronisia Hills",
+          "date": "2024"
+        },
+        "daytimeResidential": {
+          "title": "Koronisia from Above",
+          "description": "Aerial view of red-tiled rooftops. Sparkling waters beyond.",
+          "location": "Koronisia Heights",
+          "date": "2024"
+        },
+        "bellTowerView": {
+          "title": "Koronisia Bell Tower Vista",
+          "description": "Historic stone bell tower. Overlooks residential areas and distant waters.",
+          "location": "Koronisia Church Hill",
+          "date": "2024"
+        },
+        "elevatedCoastalView": {
+          "title": "Elevated Terrace View",
+          "description": "Panoramic view from elevated terrace. Stone wall and paved area overlook tiled-roof house. Gulf waters and mountains visible on horizon.",
+          "location": "Koronisia Terrace",
+          "date": "2024"
+        },
+                  "naturalPerspective": {
+            "title": "Natural Coastal Perspective",
+            "description": "Waterfront scene with sunset sky on left. Blue gradient to orange-pink horizon. Water reflection. Right side shows rocky shoreline with road. Large rocks and sparse vegetation below.",
+            "location": "Koronisia",
+            "date": "2024"
+          }
+      }
     }
   }

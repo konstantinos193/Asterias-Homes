@@ -2,6 +2,7 @@
 
 import { useLanguage } from "@/contexts/language-context"
 import Image from "next/image"
+import Link from "next/link"
 
 const AboutPage = () => {
   const { t, language } = useLanguage()
@@ -115,6 +116,41 @@ const AboutPage = () => {
               className="w-full h-full"
               title={t("about.findUs.mapTitle")}
             ></iframe>
+          </div>
+        </section>
+
+        {/* Gallery Section */}
+        <section className="mt-20">
+          <div className="text-center max-w-3xl mx-auto mb-10">
+            <h2 className="text-sm font-alegreya uppercase tracking-wider text-[#0A4A4A] mb-2">
+              {t("gallery.subtitle")}
+            </h2>
+            <h3 className="text-3xl md:text-4xl font-cormorant font-light text-slate-800 mb-6">
+              {t("gallery.title")}
+            </h3>
+            <p className="text-slate-600 leading-relaxed font-alegreya mb-8">
+              {t("gallery.description")}
+            </p>
+            <Link
+              href={`/${language}/gallery`}
+              className="inline-flex items-center px-8 py-4 bg-[#0A4A4A] text-white font-alegreya rounded-lg hover:bg-[#0A3A3A] transition-colors duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+            >
+              {t("gallery.title")}
+              <svg
+                className="ml-2 w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M17 8l4 4m0 0l-4 4m4-4H3"
+                />
+              </svg>
+            </Link>
           </div>
         </section>
       </div>

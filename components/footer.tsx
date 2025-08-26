@@ -80,26 +80,13 @@ export default function Footer() {
               <h3 className="text-lg font-alegreya font-light mb-4 text-[#E8E2D5]">
                 {t("footer.receptionHours.title")}
               </h3>
-              <ul className="space-y-3">
+              <ul className="space-y-4">
                 <li className="flex items-start">
                   <Clock className="h-5 w-5 text-[#8B4B5C] mt-0.5 mr-3 flex-shrink-0" />
-                  <div>
-                    <p className="text-white font-alegreya font-light">{t("footer.receptionHours.mondayFriday")}</p>
-                    <p className="text-slate-300 font-alegreya font-light">{t("footer.receptionHours.mondayFridayHours")}</p>
-                  </div>
-                </li>
-                <li className="flex items-start">
-                  <Clock className="h-5 w-5 text-[#8B4B5C] mt-0.5 mr-3 flex-shrink-0 opacity-0 md:opacity-100" />{" "}
-                  <div>
-                    <p className="text-white font-alegreya font-light">{t("footer.receptionHours.saturday")}</p>
-                    <p className="text-slate-300 font-alegreya font-light">{t("footer.receptionHours.saturdayHours")}</p>
-                  </div>
-                </li>
-                <li className="flex items-start">
-                  <Clock className="h-5 w-5 text-[#8B4B5C] mt-0.5 mr-3 flex-shrink-0 opacity-0 md:opacity-100" />{" "}
-                  <div>
-                    <p className="text-white font-alegreya font-light">{t("footer.receptionHours.sunday")}</p>
-                    <p className="text-slate-300 font-alegreya font-light">{t("footer.receptionHours.sundayHours")}</p>
+                  <div className="flex-1">
+                    <p className="text-slate-300 font-alegreya font-light leading-relaxed">
+                      {t("footer.receptionHours.contactHours")}
+                    </p>
                   </div>
                 </li>
               </ul>

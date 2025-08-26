@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { format, differenceInDays } from "date-fns"
 import { CalendarIcon, Users, Baby } from "lucide-react"
 import type { BookingData } from "@/types/booking"
+import { useLanguage } from "@/contexts/language-context"
 
 interface StepDatesProps {
   bookingData: BookingData
@@ -14,6 +15,7 @@ interface StepDatesProps {
 }
 
 export default function StepDates({ bookingData, updateBookingData }: StepDatesProps) {
+  const { t } = useLanguage()
   const nights =
     bookingData.checkIn && bookingData.checkOut ? differenceInDays(bookingData.checkOut, bookingData.checkIn) : 0
 
@@ -21,21 +23,23 @@ export default function StepDates({ bookingData, updateBookingData }: StepDatesP
     <div className="space-y-6">
       <div>
         <h2 className="text-2xl font-cormorant font-semibold text-slate-800 mb-2">
-          Επιλέξτε ημερομηνίες και επισκέπτες
+          {t("bookingWizard.dates.title")}
         </h2>
         <p className="text-slate-600 font-alegreya">
-          Παρακαλώ επιλέξτε τις ημερομηνίες διαμονής σας και τον αριθμό των επισκεπτών
+          {t("bookingWizard.dates.subtitle", "Please select your stay dates and number of guests")}
         </p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <div>
-          <label className="block text-sm font-medium text-slate-700 font-alegreya mb-2">Ημερομηνία άφιξης</label>
+          <label className="block text-sm font-medium text-slate-700 font-alegreya mb-2">
+            {t("bookingWizard.dates.checkIn")}
+          </label>
           <Popover>
             <PopoverTrigger asChild>
               <Button variant="outline" className="w-full justify-start text-left font-normal">
                 <CalendarIcon className="mr-2 h-4 w-4" />
-                {bookingData.checkIn ? format(bookingData.checkIn, "dd/MM/yyyy") : "Επιλέξτε ημερομηνία"}
+                {bookingData.checkIn ? format(bookingData.checkIn, "dd/MM/yyyy") : t("bookingWizard.dates.selectDate", "Select date")}
               </Button>
             </PopoverTrigger>
             <PopoverContent className="w-auto p-0">
@@ -51,12 +55,14 @@ export default function StepDates({ bookingData, updateBookingData }: StepDatesP
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-slate-700 font-alegreya mb-2">Ημερομηνία αναχώρησης</label>
+          <label className="block text-sm font-medium text-slate-700 font-alegreya mb-2">
+            {t("bookingWizard.dates.checkOut")}
+          </label>
           <Popover>
             <PopoverTrigger asChild>
               <Button variant="outline" className="w-full justify-start text-left font-normal">
                 <CalendarIcon className="mr-2 h-4 w-4" />
-                {bookingData.checkOut ? format(bookingData.checkOut, "dd/MM/yyyy") : "Επιλέξτε ημερομηνία"}
+                {bookingData.checkOut ? format(bookingData.checkOut, "dd/MM/yyyy") : t("bookingWizard.dates.selectDate", "Select date")}
               </Button>
             </PopoverTrigger>
             <PopoverContent className="w-auto p-0">
@@ -74,7 +80,7 @@ export default function StepDates({ bookingData, updateBookingData }: StepDatesP
         <div>
           <label className="block text-sm font-medium text-slate-700 font-alegreya mb-2">
             <Users className="inline w-4 h-4 mr-1" />
-            Ενήλικες
+            {t("bookingWizard.dates.adults")}
           </label>
           <Select
             value={bookingData.adults.toString()}
@@ -96,7 +102,7 @@ export default function StepDates({ bookingData, updateBookingData }: StepDatesP
         <div>
           <label className="block text-sm font-medium text-slate-700 font-alegreya mb-2">
             <Baby className="inline w-4 h-4 mr-1" />
-            Παιδιά
+            {t("bookingWizard.dates.children")}
           </label>
           <Select
             value={bookingData.children.toString()}

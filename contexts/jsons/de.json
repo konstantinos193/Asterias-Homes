@@ -19,9 +19,9 @@
   },
   "nav": {
     "home": "Startseite",
-    "about": "Über uns",
-    "rooms": "Zimmer",
-    "bookings": "Buchungen",
+            "about": "Über uns",
+        "rooms": "Zimmer",
+        "bookings": "Buchungen",
     "contact": "Kontakt",
     "book": "Jetzt buchen",
     "admin": "Admin"
@@ -90,6 +90,10 @@
     "accessible": {
       "name": "Barrierefreies Apartment",
       "description": "Durchdacht gestaltetes Apartment mit barrierefreien Funktionen, um einen komfortablen Aufenthalt für alle Gäste zu gewährleisten."
+    },
+    "superior": {
+      "name": "Superior-Apartment",
+      "description": "Geräumiges Apartment mit Meerblick, Kochnische und Balkon. Ideal für 2-3 Gäste."
     },
     "feature": {
       "entirePlace": {
@@ -258,7 +262,7 @@
     },
     "item4": {
       "title": "Friedliches Refugium",
-      "description": "Entfliehen Sie dem Trubel und entspannen Sie in der ruhigen Umgebung des Amvrakikos-Golfs."
+      "description": "Wachen Sie mit Blick auf die Lagune auf, spazieren Sie zwischen Flamingos und genießen Sie einen Sommer ohne Lärm."
     }
   },
   "discover": {
@@ -299,18 +303,13 @@
     }
   },
   "footer": {
-    "description": "Asterias Homes, Ihr ruhiges Refugium in Koronisia, bietet 7 luxuriöse Ferienapartments mit traditionellem Charme und modernem Komfort am Amvrakikos-Golf.",
+    "description": "Asterias Homes, Ihr ruhiger Rückzugsort in Koronisia, der 7 traditionelle Ferienwohnungen mit authentischem Charme und modernem Komfort am Ambrakischen Golf anbietet.",
     "contact": "Kontaktinformationen",
     "links": "Schnelllinks",
     "copyright": "Alle Rechte vorbehalten.",
     "receptionHours": {
       "title": "Kontaktzeiten",
-      "mondayFriday": "Montag - Freitag",
-      "mondayFridayHours": "08:00 - 22:00",
-      "saturday": "Samstag",
-      "saturdayHours": "09:00 - 21:00",
-      "sunday": "Sonntag",
-      "sundayHours": "09:00 - 20:00"
+      "contactHours": "Mo - So | 10:00 - 21:00"
     },
     "details": {
       "phone": {
@@ -340,7 +339,8 @@
       "title": "Authentische Erlebnisse schaffen",
       "paragraph1": "Im Herzen des malerischen Fischerdorfs Koronisia gelegen, begann Asterias Homes mit einer einfachen Vision: luxuriöse Ferienapartments anzubieten, die traditionelle griechische Gastfreundschaft mit modernem Komfort verbinden. Unsere Reise begann vor über einem Jahrzehnt, getrieben von einer tiefen Liebe zu dieser einzigartigen Insel und dem Wunsch, ihre ruhige Schönheit mit Reisenden zu teilen, die ein authentisches griechisches Erlebnis suchen.",
       "paragraph2": "Von einer einzigen Familienimmobilie aus haben wir sorgfältig eine Sammlung von 7 einzigartigen Luxusapartments entwickelt, die jeweils durchdacht gestaltet sind, um den Gästen ein echtes 'Zuhause fernab der Heimat'-Erlebnis zu bieten. Wir haben den traditionellen architektonischen Charme bewahrt und gleichzeitig moderne Annehmlichkeiten integriert, die Komfort und Bequemlichkeit für jeden Gast gewährleisten.",
-      "paragraph3": "Unser Engagement ist es, außergewöhnliche Ferienmiet-Erlebnisse zu bieten, bei denen die Gäste entspannen, sich mit der Natur verbinden und den zeitlosen Reiz des Amvrakikos-Golfs erleben können. Wir glauben an nachhaltigen Tourismus und streben danach, im Einklang mit unserer unberührten Umwelt zu arbeiten und die lokale Gemeinschaft zu unterstützen.",
+      "paragraph3": "Unser Engagement ist es, außergewöhnliche Ferienmiet-Erlebnisse zu bieten, bei denen die Gäste entspannen, sich mit der Natur verbinden und den zeitlosen Reiz des Amvrakikos-Golfs erleben können. Wir glauben an nachhaltigen Tourismus und streben danach, im Einklang mit unserer unberührten Umwelt zu arbeiten und die lokale Gemeinschaft zu unterstützen. Bei Asterias finden Sie keinen Luxus – aber Sie finden Ruhe, Sauberkeit und Menschen, die sich wirklich kümmern.",
+      "paragraph4": "Asterias wurde aus unserer Liebe zu unserem Ort und der Notwendigkeit geschaffen, unseren Besuchern authentische griechische Gastfreundschaft zu bieten.",
       "imageAlt1": "Blick auf die Asterias Homes Apartments mit üppigem Grün"
     },
     "mission": {
@@ -361,6 +361,41 @@
       "subtitle": "Besuchen Sie uns",
       "title": "Wie Sie Asterias Homes finden",
       "mapTitle": "Lage von Asterias Homes auf Google Maps"
+    },
+    "heroTitle": "Traditionelle Zimmer in Koronisia, Arta",
+    "heroDescription": "Im Herzen des Amvrakikos-Golfs, der ideale Ort für Ruhe, Natur und authentische Erlebnisse.",
+    "bookNowButton": "Jetzt buchen",
+    "locationTitle": "Lage & Umgebung",
+    "locationDescription": "Koronisia ist eine kleine Insel, die über die Straße erreichbar ist und sich in der Lagune befindet. Sie bietet seltene Ruhe, magische Sonnenuntergänge und endlose Natur mit Flamingos, Reihern und Seevögeln. In unmittelbarer Nähe können Sie Arta und seine historischen Brücken, den Voulkaria-See und den Amvrakikos-Golf, die Strände von Preveza und Fischtavernen mit frischem Fisch besuchen, 5 Minuten zu Fuß von der Unterkunft entfernt.",
+    "locationTime": "Nur 20 Minuten von Arta und 40 Minuten von Preveza entfernt. Ideal für Ausflüge nach Epirus.",
+    "mapAlt": "Karte oder Lage von Koronisia",
+    "experiencesAlt": "Erlebnisse/Sonnenuntergang/Aktivitäten",
+    "experiencesTitle": "Authentische Erlebnisse",
+    "experiences": {
+      "item1": "Arta und seine historischen Brücken",
+      "item2": "Voulkaria-See und der Amvrakikos-Golf",
+      "item3": "Die Strände von Preveza",
+      "item4": "Fischtavernen mit frischem Fisch, 5 Minuten zu Fuß von der Unterkunft entfernt"
+    },
+    "forWhomTitle": "Ideal für...",
+    "forWhom": {
+      "item1": "Familien",
+      "item2": "Paare",
+      "item3": "Remote-Arbeit",
+      "item4": "Naturliebhaber"
+    },
+    "amenitiesAlt": "Annehmlichkeiten/Zimmer/Außenbereiche",
+    "amenitiesTitle": "Annehmlichkeiten",
+    "amenities": {
+      "item1": "1 Doppelbett oder 2 Einzelbetten",
+      "item2": "Klimaanlage",
+      "item3": "Wi-Fi",
+      "item4": "Kleine Küche mit Kühlschrank",
+      "item5": "Eigenes Bad",
+      "item6": "Privater Balkon mit Aussicht",
+      "item7": "Fernseher",
+      "item8": "Parkplatz",
+      "item9": "Frühstück Dreier-/Viererzimmer"
     }
   },
   "admin": {
@@ -635,32 +670,8 @@
     },
     "rooms": {
       "standard": {
-        "name": "Studio-Apartment",
-        "description": "Ein gemütliches Studio, perfekt für Paare, mit Komfort und essentiellen Annehmlichkeiten sowie Küchenzeile.",
-        "bedType": "Doppelbett",
-        "view": "Gartenblick",
-        "bathroom": "Eigenes Badezimmer"
-      },
-      "family": {
-        "name": "Familien-Apartment",
-        "description": "Geräumig und komfortabel, ideal für Familien mit Kindern und voll ausgestatteten Kücheneinrichtungen.",
-        "bedType": "Doppelbett & Schlafsofa",
-        "view": "Meer- oder Gartenblick",
-        "bathroom": "Eigenes Badezimmer"
-      },
-      "romantic": {
-        "name": "Apartment mit Meerblick",
-        "description": "Speziell für Paare gestaltet, mit romantischer Atmosphäre und Premium-Annehmlichkeiten mit Meerblick.",
-        "bedType": "Kingsize-Bett",
-        "view": "Meerblick",
-        "bathroom": "Ensuite mit Premium-Armaturen"
-      },
-      "superior": {
-        "name": "Deluxe-Apartment",
-        "description": "Erleben Sie Luxus mit atemberaubendem Blick, separatem Wohnbereich und erhöhtem Komfort.",
-        "bedType": "Kingsize-Bett",
-        "view": "Panoramablick auf das Meer",
-        "bathroom": "Premium eigenes Badezimmer"
+        "name": "Standard Apartment",
+        "description": "Eine schön eingerichtete Wohnung mit modernen Annehmlichkeiten, perfekt für einen entspannenden Aufenthalt in Koronisia. Alle unsere Wohnungen sind identisch in Stil und Layout und bieten konsistenten Komfort und Qualität."
       }
     },
     "amenities": {
@@ -688,6 +699,80 @@
       "premiumBathroom": "Premium-Badezimmerausstattung",
       "kitchenette": "Kochnische",
       "fullKitchen": "Voll ausgestattete Küche"
+    },
+    "bookingWizard": {
+      "steps": {
+        "dates": "Daten auswählen",
+        "room": "Zimmerdetails",
+        "guestInfo": "Gastinformationen",
+        "payment": "Zahlung",
+        "confirmation": "Bestätigung"
+      },
+      "navigation": {
+        "next": "Weiter",
+        "back": "Zurück",
+        "confirm": "Buchung bestätigen"
+      },
+      "dates": {
+        "title": "Wählen Sie Ihre Aufenthaltsdaten",
+        "subtitle": "Bitte wählen Sie Ihre Aufenthaltsdaten und die Anzahl der Gäste",
+        "checkIn": "Check-in Datum",
+        "checkOut": "Check-out Datum",
+        "selectDate": "Datum auswählen",
+        "adults": "Anzahl Erwachsene",
+        "children": "Anzahl Kinder",
+        "nights": "Gesamt Nächte: {count}",
+        "validation": {
+          "checkInRequired": "Check-in Datum ist erforderlich",
+          "checkOutRequired": "Check-out Datum ist erforderlich",
+          "invalidDates": "Check-out muss nach Check-in sein",
+          "minStay": "Mindestaufenthalt ist 1 Nacht",
+          "maxStay": "Maximaler Aufenthalt ist 30 Nächte"
+        }
+      },
+      "roomDetails": {
+        "title": "Zimmerinformationen",
+        "roomType": "Zimmertyp",
+        "capacity": "Kapazität",
+        "size": "Größe",
+        "amenities": "Annehmlichkeiten",
+        "totalPrice": "Gesamtpreis für {nights} Nächte: €{price}"
+      },
+      "guestInfo": {
+        "title": "Gastinformationen",
+        "firstName": "Vorname",
+        "lastName": "Nachname",
+        "email": "E-Mail-Adresse",
+        "phone": "Telefonnummer",
+        "specialRequests": "Besondere Wünsche (Optional)",
+        "validation": {
+          "firstNameRequired": "Vorname ist erforderlich",
+          "lastNameRequired": "Nachname ist erforderlich",
+          "emailRequired": "E-Mail ist erforderlich",
+          "emailInvalid": "Bitte geben Sie eine gültige E-Mail-Adresse ein",
+          "phoneRequired": "Telefonnummer ist erforderlich"
+        }
+      },
+      "payment": {
+        "title": "Zahlungsmethode",
+        "card": "Kredit-/Debitkarte",
+        "cash": "Bar bei Ankunft",
+        "cardDetails": "Kartendetails",
+        "cardPlaceholder": "Kartennummer, Ablaufdatum, CVC",
+        "processing": "Zahlung wird verarbeitet...",
+        "error": "Zahlung fehlgeschlagen. Bitte versuchen Sie es erneut.",
+        "success": "Zahlung erfolgreich!"
+      },
+      "confirmation": {
+        "title": "Buchungsbestätigung",
+        "success": "Ihre Buchung wurde bestätigt!",
+        "bookingNumber": "Buchungsnummer: {number}",
+        "details": "Buchungsdetails",
+        "summary": "Buchungszusammenfassung",
+        "nextSteps": "Nächste Schritte",
+        "emailSent": "Eine Bestätigungs-E-Mail wurde an {email} gesendet",
+        "contactInfo": "Bei Fragen kontaktieren Sie uns bitte"
+      }
     }
   },
   "contactPage": {
@@ -892,5 +977,92 @@
       "Schlafzimmer 2: Doppelbett (131-150cm)",
       "Außenbereiche: Veranda, Hof, Garten mit Stühlen und Tisch"
     ]
+  },
+  "gallery": {
+    "title": "Dorfgallerie",
+    "subtitle": "Entdecken Sie die Schönheit von Koronisia durch unsere Fotosammlung",
+    "description": "Erkunden Sie das malerische Fischerdorf, seine atemberaubenden Landschaften und die authentische griechische Atmosphäre, die Koronisia so besonders macht.",
+    "categories": {
+      "all": "Alle Fotos",
+      "village": "Dorfleben",
+      "nature": "Natur & Landschaften",
+      "rooms": "Zimmer & Unterkünfte",
+      "sunset": "Sonnenuntergänge & Aussichten",
+      "activities": "Aktivitäten & Erlebnisse"
+    },
+          "viewImage": "Bild anzeigen",
+      "closeImage": "Schließen",
+      "previousImage": "Vorheriges",
+      "nextImage": "Nächstes",
+      "noImagesFound": "Keine Bilder für diese Kategorie gefunden.",
+      "imageCounter": "Bild {current} von {total}",
+      "images": {
+        "villagePanorama": {
+          "title": "Dorfpanorama",
+          "description": "Atemberaubender Blick auf das traditionelle Fischerdorf",
+          "location": "Dorf Koronisia",
+          "date": "Sommer 2024"
+        },
+        "lagoonView": {
+          "title": "Lagunenblick",
+          "description": "Die ruhigen Gewässer des Amvrakischen Golfs",
+          "location": "Amvrakische Lagune",
+          "date": "Frühling 2024"
+        },
+        "gulfSunset": {
+          "title": "Golfs Sonnenuntergang",
+          "description": "Magische Sonnenuntergangsfarben über dem Golf",
+          "location": "Amvrakischer Golf",
+          "date": "Herbst 2024"
+        },
+        "fishingBoats": {
+          "title": "Fischerboote",
+          "description": "Traditionelle Fischerboote im Hafen",
+          "location": "Hafen von Koronisia",
+          "date": "Sommer 2024"
+        },
+        "traditionalHouses": {
+          "title": "Traditionelle Häuser",
+          "description": "Charmante weißgetünchte Häuser mit blauen Akzenten",
+          "location": "Dorf Koronisia",
+          "date": "Frühling 2024"
+        },
+        "asteriasHomes": {
+          "title": "Asterias Homes",
+          "description": "Unsere gemütliche Familienunterkunft",
+          "location": "Dorf Koronisia",
+          "date": "Ganzjährig"
+        },
+        "tranquilSunset": {
+          "title": "Koronisia Gewässer in der Dämmerung",
+          "description": "Die ruhigen Gewässer von Koronisia spiegeln die letzten Sonnenstrahlen wider und schaffen eine spiegelähnliche Oberfläche",
+          "location": "Koronisia Bucht",
+          "date": "2024"
+        },
+        "ruggedSunset": {
+          "title": "Wilde Koronisia Sonnenuntergang",
+          "description": "Ungezähmte Landschaft von Koronisia mit Stromleitungen, die durch das raue Gelände schneiden, während die Sonne untergeht",
+          "location": "Koronisia Wildnis",
+          "date": "2024"
+        },
+        "urbanCoastalSunset": {
+          "title": "Koronisia Dächer beim Sonnenuntergang",
+          "description": "Traditionelle mediterrane Architektur von Koronisia mit Terrakotta-Ziegeln, die im Sonnenuntergangslicht leuchten",
+          "location": "Koronisia Dorfzentrum",
+          "date": "2024"
+        },
+        "hillsideSunset": {
+          "title": "Koronisia Hügelblick",
+          "description": "Erhöhter Blick über die Wohngebiete von Koronisia, mit einem majestätischen Baum, der den Sonnenuntergang umrahmt",
+          "location": "Koronisia Hügel",
+          "date": "2024"
+        },
+        "daytimeResidential": {
+          "title": "Koronisia von Oben",
+          "description": "Luftperspektive der roten Dächer von Koronisia und der funkelnden Gewässer dahinter",
+          "location": "Koronisia Höhen",
+          "date": "2024"
+        }
+      }
   }
 }
