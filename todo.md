@@ -23,6 +23,26 @@
 - [ ] **IMPLEMENT**: Price scaling based on number of rooms selected
 - [ ] **IMPLEMENT**: Room selection interface that shows "7 Standard Apartments available"
 
+## 🚨 **CRITICAL PRIORITIES FOR NEXT SESSION** 🔴 **IMMEDIATE ACTION REQUIRED**
+
+### **🔴 CRITICAL SECURITY FIXES (DO BEFORE ANYTHING ELSE)**
+1. **Fix Stripe Key Mismatch** - Backend has mixed live/test keys causing 502 errors
+2. **Secure CORS Configuration** - Currently allows any origin, needs restriction
+3. **Add API Rate Limiting** - Prevent abuse and DDoS attacks
+4. **Implement Input Validation** - All payment endpoints need validation
+
+### **🔴 CRITICAL PERFORMANCE FIXES**
+1. **Database Indexing** - Add indexes for checkIn, checkOut, roomId fields
+2. **API Response Caching** - Implement Redis for room availability data
+3. **Frontend Bundle Optimization** - Code splitting and lazy loading
+4. **Image Optimization** - Convert to WebP and implement lazy loading
+
+### **🟡 HIGH PRIORITY FEATURES**
+1. **Complete Payment Flow Testing** - Verify Stripe integration works end-to-end
+2. **Admin Panel for Pricing Control** - Dynamic pricing management
+3. **Room Display Fix** - Show all 7 rooms instead of just 1
+4. **Booking.com-like Room Selection** - Professional pricing interface
+
 ## 🚨 CRITICAL ISSUE: ONLY 1 ROOM DISPLAYING INSTEAD OF 7
 - [x] **INVESTIGATE**: Why only 1 room is showing in the room list instead of all 7 rooms ✅ **IDENTIFIED**: Database seeding issue with duplicate key error
 - [x] **CHECK BACKEND**: Verify database has 7 rooms and API returns all 7 ✅ **COMPLETED**: Backend now returns 7 rooms
@@ -574,6 +594,211 @@
 
 ## 🚀 **READY FOR TESTING!**
 Both repositories are now synchronized and the calendar logic fix is deployed. The calendar should now properly show availability for your 7 identical standard rooms with correct totals like "5/7" and proper color coding based on actual bookings.
+
+## 🚨 **CRITICAL PERFORMANCE & SECURITY IMPROVEMENTS NEEDED** 🔴 **IMMEDIATE PRIORITY**
+
+### **⚡ PERFORMANCE OPTIMIZATIONS**
+- [ ] **Frontend Performance**
+  - [ ] **IMPLEMENT**: Code splitting with React.lazy() and Suspense for route-based splitting
+  - [ ] **OPTIMIZE**: Bundle size analysis with webpack-bundle-analyzer (target: <500KB initial bundle)
+  - [ ] **IMPLEMENT**: Virtual scrolling for large lists (room selection, calendar)
+  - [ ] **ADD**: Service Worker for offline functionality and caching
+  - [ ] **OPTIMIZE**: Image loading with Intersection Observer API for lazy loading
+  - [ ] **IMPLEMENT**: React.memo() for expensive components (calendar, room cards)
+  - [ ] **ADD**: Debouncing for search inputs and form submissions
+  - [ ] **OPTIMIZE**: CSS-in-JS performance with emotion/styled-components optimization
+
+- [ ] **Backend Performance**
+  - [ ] **IMPLEMENT**: Database indexing for frequently queried fields (checkIn, checkOut, roomId)
+  - [ ] **ADD**: Redis caching for room availability data (cache for 5 minutes)
+  - [ ] **IMPLEMENT**: Database connection pooling optimization
+  - [ ] **ADD**: API response compression (gzip/brotli)
+  - [ ] **IMPLEMENT**: Query optimization for availability calculations
+  - [ ] **ADD**: Rate limiting with express-rate-limit (100 requests per minute per IP)
+  - [ ] **OPTIMIZE**: MongoDB aggregation pipelines for availability calculations
+
+- [ ] **Image & Asset Optimization**
+  - [ ] **IMPLEMENT**: WebP format with fallbacks for all images
+  - [ ] **ADD**: Responsive images with srcset for different screen sizes
+  - [ ] **IMPLEMENT**: Progressive image loading with blur placeholders
+  - [ ] **ADD**: Image compression optimization (target: 80% quality, <200KB per image)
+  - [ ] **IMPLEMENT**: CDN integration for static assets
+  - [ ] **ADD**: Image preloading for critical above-the-fold images
+
+### **🔒 SECURITY ENHANCEMENTS**
+- [ ] **Authentication & Authorization**
+  - [ ] **IMPLEMENT**: JWT token refresh mechanism with secure rotation
+  - [ ] **ADD**: Rate limiting for login attempts (5 attempts per 15 minutes)
+  - [ ] **IMPLEMENT**: Password complexity requirements (min 8 chars, uppercase, lowercase, number, special char)
+  - [ ] **ADD**: Account lockout after failed attempts (15 minute lockout)
+  - [ ] **IMPLEMENT**: Session timeout with automatic logout (30 minutes inactive)
+  - [ ] **ADD**: Two-factor authentication (2FA) for admin accounts
+  - [ ] **IMPLEMENT**: Secure password reset with time-limited tokens
+
+- [ ] **API Security**
+  - [ ] **IMPLEMENT**: Input validation with Joi or express-validator for all endpoints
+  - [ ] **ADD**: SQL injection prevention with parameterized queries
+  - [ ] **IMPLEMENT**: XSS protection with helmet.js and content security policy
+  - [ ] **ADD**: CSRF protection with csurf middleware
+  - [ ] **IMPLEMENT**: API key rotation mechanism for external integrations
+  - [ ] **ADD**: Request size limiting (max 10MB for file uploads)
+  - [ ] **IMPLEMENT**: Secure headers with helmet.js (HSTS, X-Frame-Options, etc.)
+
+- [ ] **Payment Security**
+  - [ ] **IMPLEMENT**: Stripe webhook signature verification
+  - [ ] **ADD**: Payment amount validation on both frontend and backend
+  - [ ] **IMPLEMENT**: PCI DSS compliance audit and documentation
+  - [ ] **ADD**: Secure storage of payment metadata (no sensitive data)
+  - [ ] **IMPLEMENT**: Payment fraud detection with basic rules
+  - [ ] **ADD**: Secure logging without sensitive payment information
+
+- [ ] **Data Protection**
+  - [ ] **IMPLEMENT**: GDPR compliance features (data export, deletion, consent)
+  - [ ] **ADD**: Data encryption at rest for sensitive information
+  - [ ] **IMPLEMENT**: Secure data backup with encryption
+  - [ ] **ADD**: Data retention policies and automatic cleanup
+  - [ ] **IMPLEMENT**: Privacy policy and cookie consent management
+  - [ ] **ADD**: Data breach notification procedures
+
+### **🛡️ INFRASTRUCTURE SECURITY**
+- [ ] **Server Security**
+  - [ ] **IMPLEMENT**: HTTPS enforcement with HSTS headers
+  - [ ] **ADD**: Security headers (X-Content-Type-Options, X-XSS-Protection)
+  - [ ] **IMPLEMENT**: CORS configuration with specific allowed origins
+  - [ ] **ADD**: Environment variable security (no secrets in code)
+  - [ ] **IMPLEMENT**: Regular security updates and dependency scanning
+  - [ ] **ADD**: Security monitoring and alerting
+
+- [ ] **Database Security**
+  - [ ] **IMPLEMENT**: MongoDB authentication with strong passwords
+  - [ ] **ADD**: Network-level access control (IP whitelisting)
+  - [ ] **IMPLEMENT**: Database user role restrictions (read-only for public data)
+  - [ ] **ADD**: Regular database backups with encryption
+  - [ ] **IMPLEMENT**: Database connection encryption (TLS)
+  - [ ] **ADD**: Database access logging and monitoring
+
+### **🔧 CODE QUALITY & MAINTENANCE**
+- [ ] **Frontend Code Quality**
+  - [ ] **IMPLEMENT**: TypeScript strict mode for better type safety
+  - [ ] **ADD**: ESLint rules for security (eslint-plugin-security)
+  - [ ] **IMPLEMENT**: Prettier for consistent code formatting
+  - [ ] **ADD**: Husky pre-commit hooks for code quality checks
+  - [ ] **IMPLEMENT**: Jest unit tests with 80%+ coverage target
+  - [ ] **ADD**: React Testing Library for component testing
+  - [ ] **IMPLEMENT**: Cypress for end-to-end testing
+
+- [ ] **Backend Code Quality**
+  - [ ] **IMPLEMENT**: Input validation middleware for all routes
+  - [ ] **ADD**: Error handling middleware with proper logging
+  - [ ] **IMPLEMENT**: Request logging with Morgan and Winston
+  - [ ] **ADD**: API documentation with Swagger/OpenAPI
+  - [ ] **IMPLEMENT**: Unit tests with Jest and Supertest
+  - [ ] **ADD**: Code coverage reporting (target: 70%+)
+  - [ ] **IMPLEMENT**: Dependency vulnerability scanning with npm audit
+
+### **📱 USER EXPERIENCE IMPROVEMENTS**
+- [ ] **Accessibility (WCAG 2.1 AA)**
+  - [ ] **IMPLEMENT**: Screen reader compatibility for all components
+  - [ ] **ADD**: Keyboard navigation support for all interactive elements
+  - [ ] **IMPLEMENT**: Color contrast compliance (4.5:1 minimum ratio)
+  - [ ] **ADD**: ARIA labels and roles for complex components
+  - [ ] **IMPLEMENT**: Focus management for modals and forms
+  - [ ] **ADD**: Alternative text for all images and icons
+
+- [ ] **Mobile Experience**
+  - [ ] **IMPLEMENT**: Progressive Web App (PWA) features
+  - [ ] **ADD**: Touch gesture support for mobile interactions
+  - [ ] **IMPLEMENT**: Mobile-first responsive design improvements
+  - [ ] **ADD**: Offline functionality for basic features
+  - [ ] **IMPLEMENT**: Mobile performance optimization (target: 90+ Lighthouse score)
+
+### **🌐 SEO & MARKETING OPTIMIZATION**
+- [ ] **Search Engine Optimization**
+  - [ ] **IMPLEMENT**: Dynamic meta tags for all pages
+  - [ ] **ADD**: Open Graph tags for social media sharing
+  - [ ] **IMPLEMENT**: Structured data (JSON-LD) for rooms and bookings
+  - [ ] **ADD**: Sitemap generation and submission
+  - [ ] **IMPLEMENT**: Robots.txt optimization
+  - [ ] **ADD**: Canonical URLs to prevent duplicate content
+
+- [ ] **Analytics & Monitoring**
+  - [ ] **IMPLEMENT**: Google Analytics 4 with enhanced ecommerce tracking
+  - [ ] **ADD**: Conversion funnel tracking for booking process
+  - [ ] **IMPLEMENT**: Real User Monitoring (RUM) with Web Vitals
+  - [ ] **ADD**: Error tracking with Sentry or similar service
+  - [ ] **IMPLEMENT**: Performance monitoring with New Relic or similar
+  - [ ] **ADD**: Uptime monitoring and alerting
+
+### **🚀 DEPLOYMENT & DEVOPS**
+- [ ] **CI/CD Pipeline**
+  - [ ] **IMPLEMENT**: GitHub Actions for automated testing and deployment
+  - [ ] **ADD**: Automated security scanning in CI pipeline
+  - [ ] **IMPLEMENT**: Staging environment for testing before production
+  - [ ] **ADD**: Automated dependency updates with Dependabot
+  - [ ] **IMPLEMENT**: Environment-specific configuration management
+
+- [ ] **Monitoring & Alerting**
+  - [ ] **IMPLEMENT**: Application performance monitoring (APM)
+  - [ ] **ADD**: Error rate monitoring and alerting
+  - [ ] **IMPLEMENT**: Database performance monitoring
+  - [ ] **ADD**: Uptime monitoring with status page
+  - [ ] **IMPLEMENT**: Log aggregation and analysis
+  - [ ] **ADD**: Automated backup verification and testing
+
+### **📊 DATA & ANALYTICS**
+- [ ] **Business Intelligence**
+  - [ ] **IMPLEMENT**: Booking analytics dashboard for admins
+  - [ ] **ADD**: Revenue tracking and reporting
+  - [ ] **IMPLEMENT**: Guest behavior analysis
+  - [ ] **ADD**: Seasonal trend analysis
+  - [ ] **IMPLEMENT**: Room utilization optimization
+  - [ ] **ADD**: Customer satisfaction metrics
+
+### **🚨 CRITICAL SECURITY FIXES FOR CURRENT SETUP**
+- [ ] **Stripe Configuration Security** 🔴 **IMMEDIATE**
+  - [ ] **FIX**: Mixed Stripe keys in backend .env (currently has live publishable + test secret)
+  - [ ] **IMPLEMENT**: Consistent test keys for both publishable and secret keys
+  - [ ] **ADD**: Environment variable validation to prevent key mismatches
+  - [ ] **IMPLEMENT**: Stripe key rotation mechanism
+  - [ ] **ADD**: Stripe webhook endpoint security verification
+
+- [ ] **API Endpoint Security** 🔴 **HIGH PRIORITY**
+  - [ ] **FIX**: CORS configuration to only allow specific origins (not * or localhost:3000)
+  - [ ] **IMPLEMENT**: API rate limiting per IP address
+  - [ ] **ADD**: Request validation middleware for all payment endpoints
+  - [ ] **IMPLEMENT**: Secure logging without sensitive data exposure
+  - [ ] **ADD**: API authentication for admin endpoints
+
+- [ ] **Database Security** 🔴 **HIGH PRIORITY**
+  - [ ] **FIX**: MongoDB connection string security (ensure no credentials in code)
+  - [ ] **IMPLEMENT**: Database user with minimal required permissions
+  - [ ] **ADD**: Network-level access control for database
+  - [ ] **IMPLEMENT**: Regular database backup with encryption
+  - [ ] **ADD**: Database connection monitoring and alerting
+
+### **⚡ CRITICAL PERFORMANCE FIXES FOR CURRENT SETUP**
+- [ ] **Frontend Performance** 🔴 **HIGH PRIORITY**
+  - [ ] **FIX**: Large bundle size from unused dependencies
+  - [ ] **IMPLEMENT**: Route-based code splitting for booking wizard steps
+  - [ ] **ADD**: Image lazy loading for room gallery images
+  - [ ] **IMPLEMENT**: React.memo() for expensive calendar and room components
+  - [ ] **ADD**: Service worker for caching static assets
+
+- [ ] **Backend Performance** 🔴 **HIGH PRIORITY**
+  - [ ] **FIX**: Database queries without proper indexing
+  - [ ] **IMPLEMENT**: Redis caching for room availability data
+  - [ ] **ADD**: Database connection pooling optimization
+  - [ ] **IMPLEMENT**: API response compression
+  - [ ] **ADD**: Query optimization for availability calculations
+
+- [ ] **Image Optimization** 🟡 **MEDIUM PRIORITY**
+  - [ ] **FIX**: Large image file sizes (currently 127 images, many over 200KB)
+  - [ ] **IMPLEMENT**: WebP format with fallbacks
+  - [ ] **ADD**: Responsive images with srcset
+  - [ ] **IMPLEMENT**: Progressive image loading
+  - [ ] **ADD**: CDN integration for static assets
+
+### **🔍 COMPREHENSIVE TESTING & QUALITY ASSURANCE** 🔴 **CRITICAL FOR PRODUCTION**
 
 ## 📅 **Calendar Logic Summary:**
 - **7 identical standard rooms**

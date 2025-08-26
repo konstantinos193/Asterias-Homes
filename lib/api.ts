@@ -78,6 +78,31 @@ export const paymentsAPI = {
     }
     
     return response.json();
+  },
+  createCashBooking: async (bookingData: {
+    roomId: string;
+    checkIn: string;
+    checkOut: string;
+    adults: number;
+    children?: number;
+    totalAmount: number;
+    guestInfo: any;
+    specialRequests?: string;
+  }) => {
+    // Call backend directly for cash booking creation
+    const response = await fetch('https://asterias-backend.onrender.com/api/payments/create-cash-booking', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(bookingData),
+    });
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
+    return response.json();
   }
 };
 

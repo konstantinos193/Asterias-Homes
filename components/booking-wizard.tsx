@@ -55,6 +55,15 @@ export default function BookingWizard({ initialRoomId, preFilledData, language }
     checkOut: preFilledData?.checkOut ? new Date(preFilledData.checkOut) : undefined,
     adults: preFilledData?.adults || 2,
     children: preFilledData?.children || 0,
+    roomQuantity: preFilledData?.rooms || 1,
+    roomPrice: preFilledData?.price && preFilledData?.checkIn && preFilledData?.checkOut
+      ? Math.ceil((new Date(preFilledData.checkOut).getTime() - new Date(preFilledData.checkIn).getTime()) / (1000 * 60 * 60 * 24)) > 0
+        ? Math.round(preFilledData.price / Math.ceil((new Date(preFilledData.checkOut).getTime() - new Date(preFilledData.checkIn).getTime()) / (1000 * 60 * 60 * 24)))
+        : preFilledData.price
+      : 0,
+    nights: preFilledData?.checkIn && preFilledData?.checkOut 
+      ? Math.ceil((new Date(preFilledData.checkOut).getTime() - new Date(preFilledData.checkIn).getTime()) / (1000 * 60 * 60 * 24))
+      : 1,
     guestInfo: {
       firstName: "",
       lastName: "",
@@ -126,8 +135,13 @@ export default function BookingWizard({ initialRoomId, preFilledData, language }
           // For cash payments, create the booking directly
           try {
             setIsProcessingPayment(true)
-            const confirmationResult = await paymentsAPI.confirmPayment({
-              paymentIntentId: null, // No payment intent for cash
+            const confirmationResult = await paymentsAPI.createCashBooking({
+              roomId: bookingData.roomId,
+              checkIn: bookingData.checkIn!.toISOString(),
+              checkOut: bookingData.checkOut!.toISOString(),
+              adults: bookingData.adults,
+              children: bookingData.children,
+              totalAmount: (bookingData.roomPrice || 0) * (bookingData.nights || 1),
               guestInfo: {
                 ...bookingData.guestInfo,
                 language: language

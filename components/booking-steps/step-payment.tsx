@@ -52,6 +52,57 @@ export default function StepPayment({ bookingData, updateBookingData, paymentErr
         <p className="text-slate-600 font-alegreya">{t("bookingWizard.payment.subtitle")}</p>
       </div>
 
+      {/* Payment Summary */}
+      <div className="bg-slate-50 border border-slate-200 rounded-xl p-6">
+        <h3 className="text-lg font-cormorant font-semibold text-slate-800 mb-4">
+          {t("bookingWizard.payment.summaryTitle", "Payment Summary")}
+        </h3>
+        
+        <div className="space-y-4">
+          {/* Room Details */}
+          <div className="flex items-center justify-between py-3 border-b border-slate-200">
+            <div>
+              <p className="font-alegreya font-medium text-slate-800">
+                {t("bookingWizard.payment.roomDetails", "Room Details")}
+              </p>
+              <p className="text-sm text-slate-600">
+                {t("bookingWizard.payment.standardApartment", "Standard Apartment")} × {bookingData.roomQuantity || 1}
+              </p>
+            </div>
+            <div className="text-right">
+              <p className="text-sm text-slate-600">
+                {bookingData.checkIn && new Date(bookingData.checkIn).toLocaleDateString()} - {bookingData.checkOut && new Date(bookingData.checkOut).toLocaleDateString()}
+              </p>
+              <p className="text-sm text-slate-600">
+                {bookingData.adults + (bookingData.children || 0)} {t("bookingWizard.payment.guests", "guests")}
+              </p>
+            </div>
+          </div>
+
+                     {/* Price Breakdown */}
+           <div className="space-y-2">
+             <div className="flex items-center justify-between">
+               <span className="text-slate-600">{t("bookingWizard.payment.roomPrice", "Room Price")}</span>
+               <span className="font-medium">€{bookingData.roomPrice || 0} × {bookingData.nights || 1} {t("bookingWizard.payment.nights", "nights")}</span>
+             </div>
+             <div className="flex items-center justify-between">
+               <span className="text-slate-600">{t("bookingWizard.payment.taxIncluded", "Tax Included (13%)")}</span>
+               <span className="font-medium text-slate-500">{t("bookingWizard.payment.alreadyIncluded", "Already included")}</span>
+             </div>
+           </div>
+
+           {/* Total Amount */}
+           <div className="flex items-center justify-between pt-3 border-t border-slate-200">
+             <span className="text-lg font-cormorant font-semibold text-slate-800">
+               {t("bookingWizard.payment.totalAmount", "Total Amount")}
+             </span>
+             <span className="text-2xl font-cormorant font-bold text-[#0A4A4A]">
+               €{((bookingData.roomPrice || 0) * (bookingData.nights || 1)).toFixed(2)}
+             </span>
+           </div>
+        </div>
+      </div>
+
       <RadioGroup
         value={bookingData.paymentMethod}
         onValueChange={(value: "card" | "cash") => updateBookingData({ paymentMethod: value })}
@@ -64,10 +115,10 @@ export default function StepPayment({ bookingData, updateBookingData, paymentErr
             <span className="font-alegreya">{t("bookingWizard.payment.creditCardLabel")}</span>
           </Label>
           <div className="flex gap-1 sm:gap-2">
-            <Image src="/visa-card-logo.png" alt="Visa" width={32} height={20} className="object-contain" />
-            <Image src="/mastercard-logo.png" alt="Mastercard" width={32} height={20} className="object-contain" />
-            <Image
-              src="/american-express-logo.png"
+            <img src="/visa-logo-new.svg" alt="Visa" width={32} height={20} className="object-contain" />
+            <img src="/mastercard-logo-new.svg" alt="Mastercard" width={32} height={20} className="object-contain" />
+            <img
+              src="/amex-logo-new.svg"
               alt="American Express"
               width={32}
               height={20}
@@ -87,15 +138,7 @@ export default function StepPayment({ bookingData, updateBookingData, paymentErr
 
       {bookingData.paymentMethod === "card" && (
         <div className="space-y-4 border-t pt-6">
-          {/* Security Notice */}
-          <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 mb-4">
-            <div className="flex items-center gap-2 text-amber-800">
-              <Shield className="w-4 h-4" />
-              <span className="text-sm font-alegreya font-medium">
-                🔒 Your payment information is protected by bank-level security
-              </span>
-            </div>
-          </div>
+          
           
           <h3 className="text-lg font-cormorant font-semibold text-slate-800">
             {t("bookingWizard.payment.cardDetailsTitle")}

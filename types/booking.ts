@@ -4,6 +4,9 @@ export interface BookingData {
   checkOut?: Date
   adults: number
   children: number
+  roomQuantity?: number
+  roomPrice?: number
+  nights?: number
   guestInfo: {
     firstName: string
     lastName: string
