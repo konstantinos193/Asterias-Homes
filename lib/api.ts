@@ -160,7 +160,11 @@ export const contactAPI = {
 
 export const roomsAPI = {
   getAll: async () => {
-    const rooms = await apiRequest('/api/rooms');
+    const response = await fetch('https://asterias-backend.onrender.com/api/rooms');
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const rooms = await response.json();
     // Map _id to id for backward compatibility
     return rooms.map((room: any) => ({
       ...room,
@@ -172,22 +176,38 @@ export const roomsAPI = {
 export const calendarAPI = {
   // Get monthly availability for a specific room
   getMonthlyAvailability: async (roomId: string, month: number, year: number) => {
-    return apiRequest(`/api/availability/monthly/${roomId}?month=${month}&year=${year}`);
+    const response = await fetch(`https://asterias-backend.onrender.com/api/availability/monthly/${roomId}?month=${month}&year=${year}`);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    return response.json();
   },
   
   // Get calendar availability data for frontend calendar component
   getCalendarAvailability: async (roomId: string, month: number, year: number) => {
-    return apiRequest(`/api/availability/calendar/${roomId}?month=${month}&year=${year}`);
+    const response = await fetch(`https://asterias-backend.onrender.com/api/availability/calendar/${roomId}?month=${month}&year=${year}`);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    return response.json();
   },
   
   // Get availability overview for dashboard
   getAvailabilityOverview: async () => {
-    return apiRequest('/api/availability/overview');
+    const response = await fetch('https://asterias-backend.onrender.com/api/availability/overview');
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    return response.json();
   },
   
   // Get room availability for a specific date range
   getRoomAvailability: async (roomId: string, startDate: string, endDate: string) => {
-    return apiRequest(`/api/availability/room/${roomId}?date=${startDate}`);
+    const response = await fetch(`https://asterias-backend.onrender.com/api/availability/room/${roomId}?date=${startDate}`);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    return response.json();
   }
 };
 
