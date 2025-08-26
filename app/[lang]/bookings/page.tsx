@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useMemo } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
@@ -67,68 +67,83 @@ export default function BookingsPage() {
   const dateLocale = language === "el" ? el : enUS
   const apiKey = process.env.NEXT_PUBLIC_API_KEY;
 
-  // Fetch rooms from backend
+  // Fetch rooms from backend - only once on mount
   useEffect(() => {
     async function fetchRooms() {
       setLoadingRooms(true);
       try {
+        console.log('Fetching rooms from backend...');
         const res = await fetch("https://asterias-backend.onrender.com/api/rooms");
         const data = await res.json();
-        setRooms(data.rooms);
+        console.log('Backend rooms response:', data);
+        console.log('Backend rooms data structure:', {
+          hasRooms: !!data.rooms,
+          roomsType: typeof data.rooms,
+          roomsLength: data.rooms?.length,
+          firstRoom: data.rooms?.[0],
+          fullResponse: data
+        });
+        setRooms(data.rooms || data); // Try both data.rooms and data directly
       } catch (e) {
+        console.error('Error fetching rooms:', e);
         setRooms([]);
       }
       setLoadingRooms(false);
     }
     fetchRooms();
-  }, []);
+  }, []); // Empty dependency array - only run once
 
-  // Map backend data to frontend format (if needed)
-  const availableRooms = Array.isArray(rooms) ? rooms.map((room) => ({
-    ...room,
-    name: room.name || t("rooms.standard.name"),
-    description: room.description || t("rooms.standard.description"),
-    amenities: room.amenities ? Object.keys(room.amenities).filter(key => room.amenities[key]) : [
-      'WiFi',
-      'Air Conditioning', 
-      'TV',
-      'Private Bathroom',
-      'Balcony',
-      'Safe'
-    ],
-    features: room.features || [
-      'Entire Place',
-      'Free Parking',
-      'Breakfast Included',
-      'Private Bathroom',
-      'Free Wifi',
-      'Shower',
-      'Air Conditioning',
-      'Flat-screen TV',
-      'Kitchenette',
-      'Non-smoking'
-    ],
-    bedType: room.bedType || '1 Double Bed, 1 Sofa Bed',
-    view: room.view || 'Garden or Sea View',
-    bathroom: room.bathroom || 'Private Bathroom with Shower',
-    image: room.image || (room.images && room.images[0]) || "/placeholder.svg",
-    totalRooms: room.totalRooms || 1,
-    rating: room.rating || 4.8,
-    reviews: room.reviewCount || 25,
-    price: room.price || 85,
-    originalPrice: room.originalPrice || room.price || 85,
-    size: room.size || '35 sqm',
-    id: room._id || room.id,
-    // fallback for missing fields
-    maxGuests: room.maxGuests ?? room.capacity ?? 4,
-    available: true // All rooms are available by default
-  })) : [];
+  // Map backend data to frontend format (if needed) - memoized to prevent unnecessary recalculations
+  const availableRooms = useMemo(() => {
+    if (!Array.isArray(rooms)) return [];
+    
+    return rooms.map((room) => ({
+      ...room,
+      name: room.name || t("rooms.standard.name"),
+      description: room.description || t("rooms.standard.description"),
+      amenities: room.amenities ? Object.keys(room.amenities).filter(key => room.amenities[key]) : [
+        'WiFi',
+        'Air Conditioning', 
+        'TV',
+        'Private Bathroom',
+        'Balcony',
+        'Safe'
+      ],
+      features: room.features || [
+        'Entire Place',
+        'Free Parking',
+        'Breakfast Included',
+        'Private Bathroom',
+        'Free Wifi',
+        'Shower',
+        'Air Conditioning',
+        'Flat-screen TV',
+        'Kitchenette',
+        'Non-smoking'
+      ],
+      bedType: room.bedType || '1 Double Bed, 1 Sofa Bed',
+      view: room.view || 'Garden or Sea View',
+      bathroom: room.bathroom || 'Private Bathroom with Shower',
+      image: room.image || (room.images && room.images[0]) || "/placeholder.svg",
+      totalRooms: room.totalRooms || 1,
+      rating: room.rating || 4.8,
+      reviews: room.reviewCount || 25,
+      price: room.price || 85,
+      originalPrice: room.originalPrice || room.price || 85,
+      size: room.size || '35 sqm',
+      id: room._id || room.id,
+      // fallback for missing fields
+      maxGuests: room.maxGuests ?? room.capacity ?? 4,
+      available: true // All rooms are available by default
+    }));
+  }, [rooms, t]); // Only recalculate when rooms or t function changes
 
-  // Fetch availability for list view when search is performed
+  // Fetch availability for list view when search is performed - only when needed
   useEffect(() => {
-    console.log('useEffect triggered', { showResults, checkIn, checkOut, rooms, availableRooms });
+    if (!checkIn || !checkOut || !showResults || !availableRooms.length) return;
+    
     async function fetchAvailabilities() {
-      if (!checkIn || !checkOut || !showResults) return;
+      console.log('Fetching availabilities for search...');
       const checkInStr = format(checkIn, "yyyy-MM-dd");
       const checkOutStr = format(checkOut, "yyyy-MM-dd");
       const newAvailabilities: Record<string, number> = {};
@@ -136,18 +151,24 @@ export default function BookingsPage() {
       try {
         await Promise.all(
           availableRooms.map(async (room) => {
-            console.log('FETCHING AVAILABILITY', `https://asterias-backend.onrender.com/api/bookings/availability?roomId=${room.id}&checkIn=${checkInStr}&checkOut=${checkOutStr}`);
-            const res = await fetch(
-              `https://asterias-backend.onrender.com/api/bookings/availability?roomId=${room.id}&checkIn=${checkInStr}&checkOut=${checkOutStr}`,
-              {
-                headers: {
-                  'x-api-key': apiKey,
+            try {
+              console.log('FETCHING AVAILABILITY', `https://asterias-backend.onrender.com/api/bookings/availability?roomId=${room.id}&checkIn=${checkInStr}&checkOut=${checkOutStr}`);
+              const res = await fetch(
+                `https://asterias-backend.onrender.com/api/bookings/availability?roomId=${room.id}&checkIn=${checkInStr}&checkOut=${checkOutStr}`,
+                {
+                  headers: {
+                    'x-api-key': apiKey,
+                  },
                 },
-              },
-            );
-            const data = await res.json();
-            newAvailabilities[room.id] = data.available;
-            console.log('Fetched availability for', room.id, data);
+              );
+              const data = await res.json();
+              newAvailabilities[room.id] = data.available;
+              console.log('Fetched availability for', room.id, data);
+            } catch (error) {
+              console.error(`Error fetching availability for room ${room.id}:`, error);
+              // Fallback to default availability
+              newAvailabilities[room.id] = room.totalRooms || 1;
+            }
           })
         );
         setRoomAvailabilities(newAvailabilities);
@@ -161,48 +182,39 @@ export default function BookingsPage() {
         setRoomAvailabilities(newAvailabilities);
       }
     }
+    
     fetchAvailabilities();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [showResults, checkIn, checkOut, rooms]);
+  }, [checkIn, checkOut, showResults, availableRooms.length]); // Only depend on actual values, not objects
 
-  // Fetch real-time calendar availability for all rooms
+  // Fetch calendar availability for all rooms - optimized
   useEffect(() => {
-    async function fetchCalendarAvailabilities() {
-      if (!availableRooms.length) return;
-      
+    if (!availableRooms.length) return;
+    
+    async function fetchCalendarAvailability() {
       const currentDate = new Date();
       const currentMonth = currentDate.getMonth() + 1;
       const currentYear = currentDate.getFullYear();
       
       try {
-        const calendarData: Record<string, any> = {};
+        console.log('Fetching aggregated calendar availability for month:', currentMonth, 'year:', currentYear);
+        const data = await calendarAPI.getCalendarAvailability(currentMonth, currentYear);
+        console.log('Calendar availability response:', data);
         
-        await Promise.all(
-          availableRooms.map(async (room) => {
-            try {
-              const data = await calendarAPI.getCalendarAvailability(room.id, currentMonth, currentYear);
-              calendarData[room.id] = data.availability;
-            } catch (error) {
-              console.error(`Error fetching calendar availability for room ${room.id}:`, error);
-              // Fallback to default availability
-              calendarData[room.id] = {};
-            }
-          })
-        );
-        
-        setAvailability(calendarData);
+        // Set availability data
+        setAvailability(data.availability || {});
       } catch (error) {
-        console.error('Error fetching calendar availabilities:', error);
+        console.error('Error fetching calendar availability:', error);
+        setAvailability({});
       }
     }
     
-    fetchCalendarAvailabilities();
+    fetchCalendarAvailability();
     
-    // Set up real-time updates every 5 minutes
-    const interval = setInterval(fetchCalendarAvailabilities, 5 * 60 * 1000);
+    // Set up real-time updates every 10 minutes instead of 5
+    const interval = setInterval(fetchCalendarAvailability, 10 * 60 * 1000);
     
     return () => clearInterval(interval);
-  }, [availableRooms]);
+  }, [availableRooms.length]); // Only depend on length, not the array itself
 
   const nights = checkIn && checkOut
     ? differenceInDays(startOfDay(checkOut), startOfDay(checkIn))
@@ -457,7 +469,6 @@ export default function BookingsPage() {
                   minDate={new Date()}
                   language={language}
                   showAvailability={true}
-                  roomId={availableRooms.length > 0 ? availableRooms[0]?.id : undefined}
                 />
               </div>
               
@@ -473,7 +484,6 @@ export default function BookingsPage() {
                   minDate={checkIn ? addDays(checkIn, 1) : new Date()}
                   language={language}
                   showAvailability={true}
-                  roomId={availableRooms.length > 0 ? availableRooms[0]?.id : undefined}
                 />
               </div>
               

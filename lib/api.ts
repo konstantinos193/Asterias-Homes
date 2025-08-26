@@ -183,9 +183,9 @@ export const calendarAPI = {
     return response.json();
   },
   
-  // Get calendar availability data for frontend calendar component
-  getCalendarAvailability: async (roomId: string, month: number, year: number) => {
-    const response = await fetch(`https://asterias-backend.onrender.com/api/availability/calendar/${roomId}?month=${month}&year=${year}`);
+  // Get calendar availability data for frontend calendar component (aggregated across all rooms)
+  getCalendarAvailability: async (month: number, year: number) => {
+    const response = await fetch(`https://asterias-backend.onrender.com/api/availability/calendar?month=${month}&year=${year}`);
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }

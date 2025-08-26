@@ -15,7 +15,6 @@ interface DatePickerProps {
   minDate?: Date
   maxDate?: Date
   language?: 'en' | 'el' | 'de'
-  roomId?: string // Add roomId for availability data
   showAvailability?: boolean // Toggle availability display
 }
 
@@ -27,7 +26,6 @@ export function DatePicker({
   minDate = new Date(),
   maxDate,
   language = 'en',
-  roomId,
   showAvailability = true
 }: DatePickerProps) {
   const [isOpen, setIsOpen] = useState(false)
@@ -66,16 +64,16 @@ export function DatePicker({
     }
   }
 
-  // Fetch availability data when month changes or roomId changes
+  // Fetch availability data when month changes
   useEffect(() => {
-    if (!roomId || !showAvailability) return;
+    if (!showAvailability) return;
     
     async function fetchAvailability() {
       setLoadingAvailability(true);
       try {
         const currentMonthNum = currentMonth.getMonth() + 1;
         const currentYear = currentMonth.getFullYear();
-        const data = await calendarAPI.getCalendarAvailability(roomId, currentMonthNum, currentYear);
+        const data = await calendarAPI.getCalendarAvailability(currentMonthNum, currentYear);
         setAvailabilityData(data.availability || {});
       } catch (error) {
         console.error('Error fetching availability:', error);
@@ -86,7 +84,7 @@ export function DatePicker({
     }
     
     fetchAvailability();
-  }, [roomId, currentMonth, showAvailability]);
+  }, [currentMonth, showAvailability]);
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -117,8 +115,6 @@ export function DatePicker({
 
   // Get availability status for a specific date
   const getAvailabilityStatus = (date: Date) => {
-    if (!roomId || !showAvailability) return null;
-    
     const dateStr = format(date, "yyyy-MM-dd");
     const dayData = availabilityData[dateStr];
     
