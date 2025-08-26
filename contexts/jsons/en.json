@@ -633,6 +633,12 @@
         "payment": "Payment",
         "confirmation": "Confirmation"
       },
+      "buttons": {
+        "next": "Next",
+        "previous": "Previous",
+        "completeBooking": "Complete Booking",
+        "processing": "Processing..."
+      },
       "navigation": {
         "next": "Next",
         "back": "Back",
@@ -646,6 +652,8 @@
         "selectDate": "Select date",
         "adults": "Number of Adults",
         "children": "Number of Children",
+        "adultsLabel": "Adult(s)",
+        "childrenLabel": "Child(ren)",
         "nights": "Total Nights: {count}",
         "validation": {
           "checkInRequired": "Check-in date is required",
@@ -665,11 +673,22 @@
       },
       "guestInfo": {
         "title": "Guest Information",
+        "subtitle": "Please provide your details for the booking",
         "firstName": "First Name",
         "lastName": "Last Name",
         "email": "Email Address",
         "phone": "Phone Number",
         "specialRequests": "Special Requests (Optional)",
+        "firstNamePlaceholder": "Enter your first name",
+        "lastNamePlaceholder": "Enter your last name",
+        "emailPlaceholder": "example@email.com",
+        "phonePlaceholder": "+30 210 1234567",
+        "specialRequestsPlaceholder": "Please mention any special requests (e.g., floor preference, view, dietary requirements)...",
+        "importantInfo": "Important Information",
+        "checkInTime": "Check-in: 15:00 - 22:00",
+        "checkOutTime": "Check-out: 08:00 - 11:00",
+        "cancellationPolicy": "Free cancellation up to 48 hours before arrival",
+        "childrenPolicy": "Children under 12 years stay free",
         "validation": {
           "firstNameRequired": "First name is required",
           "lastNameRequired": "Last name is required",
@@ -680,23 +699,49 @@
       },
       "payment": {
         "title": "Payment Method",
-        "card": "Credit/Debit Card",
-        "cash": "Cash on Arrival",
-        "cardDetails": "Card Details",
+        "subtitle": "Choose your preferred payment method to complete your booking",
+        "creditCardLabel": "Credit/Debit Card",
+        "cashOnArrivalLabel": "Cash on Arrival",
+        "cardDetailsTitle": "Card Details",
         "cardPlaceholder": "Card number, expiry date, CVC",
+        "securePaymentTitle": "Secure Payment",
+        "securePaymentInfo": "Your payment information is encrypted and secure. We use industry-standard SSL encryption to protect your data.",
+        "cashInfo": "You can pay in cash when you arrive. No advance payment required.",
         "processing": "Processing payment...",
         "error": "Payment failed. Please try again.",
         "success": "Payment successful!"
       },
       "confirmation": {
         "title": "Booking Confirmation",
+        "subtitle": "Thank you for your booking. A confirmation email has been sent to you with all the details.",
         "success": "Your booking has been confirmed!",
         "bookingNumber": "Booking Number: {number}",
         "details": "Booking Details",
         "summary": "Booking Summary",
+        "summaryTitle": "Booking Summary",
+        "checkIn": "Check-in",
+        "checkOut": "Check-out",
+        "guests": "Guests",
+        "nights": "Nights",
+        "paymentMethod": "Payment Method",
+        "paidWithCard": "Paid with Credit Card",
+        "payOnArrival": "Pay on Arrival",
+        "totalPrice": "Total Price:",
+        "roomNotFound": "Room Not Found",
+        "anyQuestions": "If you have any questions, feel free to",
+        "contactUs": "contact us",
         "nextSteps": "Next Steps",
         "emailSent": "A confirmation email has been sent to {email}",
         "contactInfo": "If you have any questions, please contact us"
+      },
+      "errors": {
+        "stripeNotLoaded": "Payment system is loading. Please wait a moment.",
+        "cardElementNotFound": "Card details not found. Please try again.",
+        "paymentIntentCreationFailed": "Failed to create payment. Please try again.",
+        "paymentFailed": "Payment failed. Please check your card details and try again.",
+        "paymentNotSucceeded": "Payment was not completed. Status:",
+        "bookingCreationFailed": "Booking creation failed. Please try again.",
+        "unexpectedError": "An unexpected error occurred. Please try again."
       }
     },
     "contactPage": {

@@ -143,13 +143,6 @@ export const offersAPI = {
   },
 };
 
-// Minimal roomsAPI for getRooms compatibility
-const roomsAPI = {
-  getAll: async () => {
-    return apiRequest('/api/rooms');
-  }
-};
-
 export const contactAPI = {
   submit: async (contactData: {
     name: string;
@@ -162,6 +155,17 @@ export const contactAPI = {
       method: 'POST',
       body: JSON.stringify(contactData),
     });
+  }
+};
+
+export const roomsAPI = {
+  getAll: async () => {
+    const rooms = await apiRequest('/api/rooms');
+    // Map _id to id for backward compatibility
+    return rooms.map((room: any) => ({
+      ...room,
+      id: room._id
+    }));
   }
 };
 

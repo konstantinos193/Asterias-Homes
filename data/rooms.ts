@@ -1,70 +1,41 @@
-// This file should provide the data for your rooms, including translation keys.
-// Ensure the keys match those in your language-context.tsx
+// This file defines the RoomData interface that matches the backend structure
+// All room data will be fetched from the backend API
 
 export interface RoomData {
-  id: string
-  nameKey: string // e.g., "rooms.standard.name"
-  descriptionKey: string // e.g., "rooms.standard.description"
-  image: string
-  capacity?: number // e.g., 2
-  size?: string // e.g., "25 sqm" - consider if "sqm" needs translation
+  _id: string
+  id?: string // For backward compatibility - will map to _id
+  name: string
+  nameKey: string
+  description: string
+  descriptionKey: string
+  price: number
+  capacity: number
+  size?: string
+  bedType: string
+  view?: string
+  bathroom?: string
+  features: string[]
+  featureKeys: string[]
+  amenities: {
+    wifi: boolean
+    ac: boolean
+    tv: boolean
+    minibar: boolean
+    balcony: boolean
+    seaView: boolean
+    roomService: boolean
+    safe: boolean
+  }
+  totalRooms: number
+  image?: string
+  images?: string[]
+  rating: number
+  reviewCount: number
+  bookingcom_room_id?: string
+  source: 'asterias' | 'bookingcom'
+  createdAt: string
+  updatedAt: string
 }
 
-export const allRoomsData: RoomData[] = [
-  {
-    id: "standard-double",
-    nameKey: "rooms.standard.name",
-    descriptionKey: "rooms.standard.description",
-    image: "/room-1.png",
-    capacity: 2,
-    size: "25 sqm",
-  },
-  {
-    id: "family-room",
-    nameKey: "rooms.family.name",
-    descriptionKey: "rooms.family.description",
-    image: "/room-2.png",
-    capacity: 4,
-    size: "35 sqm",
-  },
-  {
-    id: "romantic-sea-view",
-    nameKey: "rooms.romantic.name",
-    descriptionKey: "rooms.romantic.description",
-    image: "/room-3.png",
-    capacity: 2,
-    size: "30 sqm",
-  },
-  {
-    id: "twin-room",
-    nameKey: "rooms.twin.name",
-    descriptionKey: "rooms.twin.description",
-    image: "/room-4.png",
-    capacity: 2,
-    size: "22 sqm",
-  },
-  {
-    id: "suite-deluxe",
-    nameKey: "rooms.suite.name",
-    descriptionKey: "rooms.suite.description",
-    image: "/room-5.png",
-    capacity: 4,
-    size: "50 sqm",
-  },
-  {
-    id: "accessible-room",
-    nameKey: "rooms.accessible.name",
-    descriptionKey: "rooms.accessible.description",
-    image: "/room-6.png",
-    capacity: 2,
-    size: "28 sqm",
-  },
-  {
-    id: "superior-apartment",
-    nameKey: "rooms.superior.name",
-    descriptionKey: "rooms.superior.description",
-    image: "/room-1.png",
-    capacity: 3,
-    size: "40 sqm",
-  },
-]
+// Export empty array - data will be fetched from backend
+export const allRoomsData: RoomData[] = []

@@ -708,6 +708,12 @@
         "payment": "Zahlung",
         "confirmation": "Bestätigung"
       },
+      "buttons": {
+        "next": "Weiter",
+        "previous": "Zurück",
+        "completeBooking": "Buchung abschließen",
+        "processing": "Wird verarbeitet..."
+      },
       "navigation": {
         "next": "Weiter",
         "back": "Zurück",
@@ -721,6 +727,8 @@
         "selectDate": "Datum auswählen",
         "adults": "Anzahl Erwachsene",
         "children": "Anzahl Kinder",
+        "adultsLabel": "Erwachsene(r)",
+        "childrenLabel": "Kind(er)",
         "nights": "Gesamt Nächte: {count}",
         "validation": {
           "checkInRequired": "Check-in Datum ist erforderlich",
@@ -740,11 +748,22 @@
       },
       "guestInfo": {
         "title": "Gastinformationen",
+        "subtitle": "Bitte geben Sie Ihre Daten für die Buchung an",
         "firstName": "Vorname",
         "lastName": "Nachname",
         "email": "E-Mail-Adresse",
         "phone": "Telefonnummer",
         "specialRequests": "Besondere Wünsche (Optional)",
+        "firstNamePlaceholder": "Geben Sie Ihren Vornamen ein",
+        "lastNamePlaceholder": "Geben Sie Ihren Nachnamen ein",
+        "emailPlaceholder": "beispiel@email.com",
+        "phonePlaceholder": "+30 210 1234567",
+        "specialRequestsPlaceholder": "Bitte erwähnen Sie besondere Wünsche (z.B. Etage, Aussicht, Ernährungsanforderungen)...",
+        "importantInfo": "Wichtige Informationen",
+        "checkInTime": "Check-in: 15:00 - 22:00",
+        "checkOutTime": "Check-out: 08:00 - 11:00",
+        "cancellationPolicy": "Kostenlose Stornierung bis 48 Stunden vor Ankunft",
+        "childrenPolicy": "Kinder unter 12 Jahren übernachten kostenlos",
         "validation": {
           "firstNameRequired": "Vorname ist erforderlich",
           "lastNameRequired": "Nachname ist erforderlich",
@@ -755,23 +774,49 @@
       },
       "payment": {
         "title": "Zahlungsmethode",
-        "card": "Kredit-/Debitkarte",
-        "cash": "Bar bei Ankunft",
-        "cardDetails": "Kartendetails",
+        "subtitle": "Wählen Sie Ihre bevorzugte Zahlungsmethode, um Ihre Buchung abzuschließen",
+        "creditCardLabel": "Kredit-/Debitkarte",
+        "cashOnArrivalLabel": "Bar bei Ankunft",
+        "cardDetailsTitle": "Kartendetails",
         "cardPlaceholder": "Kartennummer, Ablaufdatum, CVC",
+        "securePaymentTitle": "Sichere Zahlung",
+        "securePaymentInfo": "Ihre Zahlungsinformationen sind verschlüsselt und sicher. Wir verwenden branchenübliche SSL-Verschlüsselung, um Ihre Daten zu schützen.",
+        "cashInfo": "Sie können bei Ihrer Ankunft bar bezahlen. Keine Vorauszahlung erforderlich.",
         "processing": "Zahlung wird verarbeitet...",
         "error": "Zahlung fehlgeschlagen. Bitte versuchen Sie es erneut.",
         "success": "Zahlung erfolgreich!"
       },
       "confirmation": {
         "title": "Buchungsbestätigung",
+        "subtitle": "Vielen Dank für Ihre Buchung. Eine Bestätigungs-E-Mail mit allen Details wurde an Sie gesendet.",
         "success": "Ihre Buchung wurde bestätigt!",
         "bookingNumber": "Buchungsnummer: {number}",
         "details": "Buchungsdetails",
         "summary": "Buchungszusammenfassung",
+        "summaryTitle": "Buchungszusammenfassung",
+        "checkIn": "Check-in",
+        "checkOut": "Check-out",
+        "guests": "Gäste",
+        "nights": "Nächte",
+        "paymentMethod": "Zahlungsmethode",
+        "paidWithCard": "Mit Kreditkarte bezahlt",
+        "payOnArrival": "Bar bei Ankunft",
+        "totalPrice": "Gesamtpreis:",
+        "roomNotFound": "Zimmer nicht gefunden",
+        "anyQuestions": "Bei Fragen kontaktieren Sie uns gerne",
+        "contactUs": "kontaktieren Sie uns",
         "nextSteps": "Nächste Schritte",
         "emailSent": "Eine Bestätigungs-E-Mail wurde an {email} gesendet",
         "contactInfo": "Bei Fragen kontaktieren Sie uns bitte"
+      },
+      "errors": {
+        "stripeNotLoaded": "Das Zahlungssystem wird geladen. Bitte warten Sie einen Moment.",
+        "cardElementNotFound": "Kartendetails nicht gefunden. Bitte versuchen Sie es erneut.",
+        "paymentIntentCreationFailed": "Erstellung der Zahlung fehlgeschlagen. Bitte versuchen Sie es erneut.",
+        "paymentFailed": "Zahlung fehlgeschlagen. Bitte überprüfen Sie Ihre Kartendetails und versuchen Sie es erneut.",
+        "paymentNotSucceeded": "Zahlung wurde nicht abgeschlossen. Status:",
+        "bookingCreationFailed": "Erstellung der Buchung fehlgeschlagen. Bitte versuchen Sie es erneut.",
+        "unexpectedError": "Ein unerwarteter Fehler ist aufgetreten. Bitte versuchen Sie es erneut."
       }
     }
   },

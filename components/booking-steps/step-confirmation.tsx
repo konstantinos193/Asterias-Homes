@@ -15,7 +15,7 @@ interface StepConfirmationProps {
 export default function StepConfirmation({ bookingData }: StepConfirmationProps) {
   const { language, t } = useLanguage()
 
-  const selectedRoom: RoomData | undefined = allRoomsData.find((room) => room.id === bookingData.roomId)
+  const selectedRoom: RoomData | undefined = allRoomsData.find((room) => room._id === bookingData.roomId)
 
   const getDateLocale = () => {
     if (language === "el") return el
@@ -47,7 +47,8 @@ export default function StepConfirmation({ bookingData }: StepConfirmationProps)
   }
 
   const nights = calculateNights()
-  const roomPricePerNight = selectedRoom?.price ? Number.parseFloat(selectedRoom.price.replace("€", "")) : 0
+  // Get price from selected room data from backend
+  const roomPricePerNight = selectedRoom?.price || 0
   const totalPrice = nights * roomPricePerNight
 
   return (
@@ -58,14 +59,13 @@ export default function StepConfirmation({ bookingData }: StepConfirmationProps)
           {t("bookingWizard.confirmation.title") || "Booking Confirmed!"}
         </h2>
         <p className="text-slate-600 font-alegreya max-w-md">
-          {t("bookingWizard.confirmation.subtitle") ||
-            "Thank you for your booking. A confirmation email has been sent to you with all the details."}
+          {t("bookingWizard.confirmation.subtitle")}
         </p>
       </div>
 
       <div className="border border-slate-200 rounded-lg p-6 space-y-4 bg-slate-50">
         <h3 className="text-xl font-cormorant font-semibold text-slate-700">
-          {t("bookingWizard.confirmation.summaryTitle") || "Booking Summary"}
+          {t("bookingWizard.confirmation.summaryTitle")}
         </h3>
 
         {selectedRoom && (
@@ -81,8 +81,7 @@ export default function StepConfirmation({ bookingData }: StepConfirmationProps)
             <div className="flex-1">
               <h4 className="text-lg font-cormorant font-semibold text-[#0A4A4A]">{getRoomName(selectedRoom)}</h4>
               <p className="text-sm text-slate-600 font-alegreya">
-                {selectedRoom.bedsKey ? getRoomFeature(selectedRoom.bedsKey) : ""}
-                {selectedRoom.size ? ` - ${selectedRoom.size}` : ""}
+                {selectedRoom.size ? `${selectedRoom.size}` : ""}
               </p>
             </div>
           </div>
@@ -107,9 +106,9 @@ export default function StepConfirmation({ bookingData }: StepConfirmationProps)
             <p className="text-sm text-slate-500">{t("bookingWizard.confirmation.guests") || "Guests"}</p>
             <p className="text-slate-700 font-medium flex items-center">
               <Users className="w-4 h-4 mr-2 text-slate-500" />
-              {bookingData.adults} {t("bookingWizard.adults", { count: bookingData.adults }) || "Adult(s)"}
+              {bookingData.adults} {t("bookingWizard.adultsLabel")}
               {bookingData.children > 0 &&
-                `, ${bookingData.children} ${t("bookingWizard.children", { count: bookingData.children }) || "Child(ren)"}`}
+                `, ${bookingData.children} ${t("bookingWizard.childrenLabel")}`}
             </p>
           </div>
           <div>

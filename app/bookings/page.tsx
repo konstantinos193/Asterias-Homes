@@ -1272,7 +1272,7 @@ export default function BookingsPage() {
                 {t("bookingsPage.cta.contactButton")}
               </Link>
               <a
-                href="tel:+30XXXXXXXXX"
+                href="tel:+306972705881"
                 className="px-8 py-3 border-2 border-white text-white hover:bg-white hover:text-[#8B4B5C] transition-colors font-alegreya rounded-lg"
               >
                 {t("bookingsPage.cta.callButton")}
