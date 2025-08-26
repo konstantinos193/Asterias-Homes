@@ -169,4 +169,26 @@ export const roomsAPI = {
   }
 };
 
+export const calendarAPI = {
+  // Get monthly availability for a specific room
+  getMonthlyAvailability: async (roomId: string, month: number, year: number) => {
+    return apiRequest(`/api/availability/monthly/${roomId}?month=${month}&year=${year}`);
+  },
+  
+  // Get calendar availability data for frontend calendar component
+  getCalendarAvailability: async (roomId: string, month: number, year: number) => {
+    return apiRequest(`/api/availability/calendar/${roomId}?month=${month}&year=${year}`);
+  },
+  
+  // Get availability overview for dashboard
+  getAvailabilityOverview: async () => {
+    return apiRequest('/api/availability/overview');
+  },
+  
+  // Get room availability for a specific date range
+  getRoomAvailability: async (roomId: string, startDate: string, endDate: string) => {
+    return apiRequest(`/api/availability/room/${roomId}?date=${startDate}`);
+  }
+};
+
 export const getRooms = () => roomsAPI.getAll(); 

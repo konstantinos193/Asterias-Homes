@@ -5,6 +5,7 @@ import { format, addDays, isBefore, isSameDay, startOfMonth, endOfMonth, eachDay
 import { el, enUS, de } from 'date-fns/locale'
 import { CalendarIcon, ChevronLeft, ChevronRight } from 'lucide-react'
 import { Button } from './button'
+import { calendarAPI } from '@/lib/api'
 
 interface DatePickerProps {
   selectedDate?: Date
@@ -14,6 +15,8 @@ interface DatePickerProps {
   minDate?: Date
   maxDate?: Date
   language?: 'en' | 'el' | 'de'
+  roomId?: string // Add roomId for availability data
+  showAvailability?: boolean // Toggle availability display
 }
 
 export function DatePicker({
@@ -23,13 +26,67 @@ export function DatePicker({
   disabled = false,
   minDate = new Date(),
   maxDate,
-  language = 'en'
+  language = 'en',
+  roomId,
+  showAvailability = true
 }: DatePickerProps) {
   const [isOpen, setIsOpen] = useState(false)
   const [currentMonth, setCurrentMonth] = useState(selectedDate || new Date())
+  const [availabilityData, setAvailabilityData] = useState<Record<string, any>>({})
+  const [loadingAvailability, setLoadingAvailability] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
 
   const dateLocale = language === 'el' ? el : language === 'de' ? de : enUS
+
+  // Get translated day names based on language
+  const getDayNames = () => {
+    switch (language) {
+      case 'el':
+        return ['Κ', 'Δ', 'Τ', 'Τ', 'Π', 'Σ', 'Κ'] // Κυριακή, Δευτέρα, Τρίτη, Τετάρτη, Πέμπτη, Παρασκευή, Σάββατο
+      case 'de':
+        return ['S', 'M', 'D', 'M', 'D', 'F', 'S'] // Sonntag, Montag, Dienstag, Mittwoch, Donnerstag, Freitag, Samstag
+      default:
+        return ['S', 'M', 'T', 'W', 'T', 'F', 'S'] // Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday
+    }
+  }
+
+  // Get translated button text
+  const getButtonText = () => {
+    if (selectedDate) {
+      return format(selectedDate, "MMM d, yyyy", { locale: dateLocale })
+    }
+    
+    switch (language) {
+      case 'el':
+        return 'Επιλέξτε ημερομηνία'
+      case 'de':
+        return 'Datum auswählen'
+      default:
+        return placeholder
+    }
+  }
+
+  // Fetch availability data when month changes or roomId changes
+  useEffect(() => {
+    if (!roomId || !showAvailability) return;
+    
+    async function fetchAvailability() {
+      setLoadingAvailability(true);
+      try {
+        const currentMonthNum = currentMonth.getMonth() + 1;
+        const currentYear = currentMonth.getFullYear();
+        const data = await calendarAPI.getCalendarAvailability(roomId, currentMonthNum, currentYear);
+        setAvailabilityData(data.availability || {});
+      } catch (error) {
+        console.error('Error fetching availability:', error);
+        setAvailabilityData({});
+      } finally {
+        setLoadingAvailability(false);
+      }
+    }
+    
+    fetchAvailability();
+  }, [roomId, currentMonth, showAvailability]);
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -58,6 +115,25 @@ export function DatePicker({
     setCurrentMonth(prev => addDays(prev, 30))
   }
 
+  // Get availability status for a specific date
+  const getAvailabilityStatus = (date: Date) => {
+    if (!roomId || !showAvailability) return null;
+    
+    const dateStr = format(date, "yyyy-MM-dd");
+    const dayData = availabilityData[dateStr];
+    
+    if (!dayData) return null;
+    
+    return {
+      status: dayData.status,
+      color: dayData.color,
+      textColor: dayData.textColor,
+      availableRooms: dayData.availableRooms,
+      totalRooms: dayData.totalRooms,
+      isAvailable: dayData.isAvailable
+    };
+  }
+
   const renderCalendar = () => {
     const monthStart = startOfMonth(currentMonth)
     const monthEnd = endOfMonth(currentMonth)
@@ -65,7 +141,7 @@ export function DatePicker({
     const endDate = endOfWeek(monthEnd)
     const days = eachDayOfInterval({ start: startDate, end: endDate })
 
-    const dayNames = ['S', 'M', 'T', 'W', 'T', 'F', 'S']
+    const dayNames = getDayNames()
 
     return (
       <div className="bg-white border-2 border-slate-200 rounded-xl shadow-2xl p-4 min-w-[360px]">
@@ -105,7 +181,8 @@ export function DatePicker({
             const isSelected = selectedDate && isSameDay(date, selectedDate)
             const isDisabled = isBefore(date, minDate) || (maxDate && isBefore(maxDate, date))
             
-            // Mock availability colors - replace with real data later
+            // Get real availability data from backend
+            const availability = getAvailabilityStatus(date);
             let availabilityClass = ''
             let availabilityText = ''
             
@@ -115,19 +192,28 @@ export function DatePicker({
               availabilityClass = 'bg-[#8B4B5C] text-white font-semibold shadow-lg ring-2 ring-[#8B4B5C] ring-offset-1'
             } else if (isToday) {
               availabilityClass = 'bg-slate-100 text-slate-800 font-semibold ring-2 ring-[#8B4B5C] ring-offset-1'
-            } else {
-              // Random availability for demo - replace with real data
-              const random = Math.random()
-              if (random > 0.7) {
-                availabilityClass = 'bg-red-100 text-red-700 hover:bg-red-200 border border-red-200'
-                availabilityText = language === 'el' ? 'Κλεισμένο' : language === 'de' ? 'Gebucht' : 'Booked'
-              } else if (random > 0.4) {
-                availabilityClass = 'bg-yellow-100 text-yellow-700 hover:bg-yellow-200 border border-yellow-200'
-                availabilityText = language === 'el' ? 'Περιορισμένο' : language === 'de' ? 'Eingeschränkt' : 'Limited'
-              } else {
-                availabilityClass = 'bg-green-100 text-green-700 hover:bg-green-200 border border-green-200'
-                availabilityText = language === 'el' ? 'Διαθέσιμο' : language === 'de' ? 'Verfügbar' : 'Available'
+            } else if (availability && showAvailability) {
+              // Use real availability data from backend
+              switch (availability.status) {
+                case 'booked':
+                  availabilityClass = 'bg-red-100 text-red-700 hover:bg-red-200 border border-red-200'
+                  availabilityText = language === 'el' ? 'Κλεισμένο' : language === 'de' ? 'Gebucht' : 'Booked'
+                  break;
+                case 'limited':
+                  availabilityClass = 'bg-yellow-100 text-yellow-700 hover:bg-yellow-200 border border-yellow-200'
+                  availabilityText = language === 'el' ? 'Περιορισμένο' : language === 'de' ? 'Eingeschränkt' : 'Limited'
+                  break;
+                case 'available':
+                  availabilityClass = 'bg-green-100 text-green-700 hover:bg-green-200 border border-green-200'
+                  availabilityText = language === 'el' ? 'Διαθέσιμο' : language === 'de' ? 'Verfügbar' : 'Available'
+                  break;
+                default:
+                  availabilityClass = 'bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-200'
+                  availabilityText = language === 'el' ? 'Άγνωστο' : language === 'de' ? 'Unbekannt' : 'Unknown'
               }
+            } else {
+              // Fallback styling when no availability data
+              availabilityClass = 'bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-200'
             }
 
             return (
@@ -145,6 +231,11 @@ export function DatePicker({
                   {availabilityText && !isSelected && (
                     <span className="text-[8px] font-medium opacity-90 leading-none">{availabilityText}</span>
                   )}
+                  {availability && availability.availableRooms !== undefined && (
+                    <span className="text-[8px] font-medium opacity-90 leading-none">
+                      {availability.availableRooms}/{availability.totalRooms}
+                    </span>
+                  )}
                 </button>
               </div>
             )
@@ -152,22 +243,29 @@ export function DatePicker({
         </div>
 
         {/* Availability Legend */}
-        <div className="mt-4 pt-3 border-t border-slate-200">
-          <div className="flex items-center justify-center gap-3 text-xs">
-            <div className="flex items-center gap-1">
-              <div className="w-2 h-2 bg-green-100 border border-green-200 rounded"></div>
-              <span className="text-slate-600">{language === 'el' ? 'Διαθέσιμο' : language === 'de' ? 'Verfügbar' : 'Available'}</span>
+        {showAvailability && (
+          <div className="mt-4 pt-3 border-t border-slate-200">
+            <div className="flex items-center justify-center gap-3 text-xs">
+              <div className="flex items-center gap-1">
+                <div className="w-2 h-2 bg-green-100 border border-green-200 rounded"></div>
+                <span className="text-slate-600">{language === 'el' ? 'Διαθέσιμο' : language === 'de' ? 'Verfügbar' : 'Available'}</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <div className="w-2 h-2 bg-yellow-100 border border-yellow-200 rounded"></div>
+                <span className="text-slate-600">{language === 'el' ? 'Περιορισμένο' : language === 'de' ? 'Eingeschränkt' : 'Limited'}</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <div className="w-2 h-2 bg-red-100 border border-red-200 rounded"></div>
+                <span className="text-slate-600">{language === 'el' ? 'Κλεισμένο' : language === 'de' ? 'Gebucht' : 'Booked'}</span>
+              </div>
             </div>
-            <div className="flex items-center gap-1">
-              <div className="w-2 h-2 bg-yellow-100 border border-yellow-200 rounded"></div>
-              <span className="text-slate-600">{language === 'el' ? 'Περιορισμένο' : language === 'de' ? 'Eingeschränkt' : 'Limited'}</span>
-            </div>
-            <div className="flex items-center gap-1">
-              <div className="w-2 h-2 bg-red-100 border border-red-200 rounded"></div>
-              <span className="text-slate-600">{language === 'el' ? 'Κλεισμένο' : language === 'de' ? 'Gebucht' : 'Booked'}</span>
-            </div>
+            {loadingAvailability && (
+              <div className="text-center text-xs text-slate-500 mt-2">
+                {language === 'el' ? 'Φόρτωση διαθεσιμότητας...' : language === 'de' ? 'Verfügbarkeit wird geladen...' : 'Loading availability...'}
+              </div>
+            )}
           </div>
-        </div>
+        )}
       </div>
     )
   }
@@ -181,7 +279,7 @@ export function DatePicker({
         className="w-full h-12 justify-start text-left font-normal bg-white border-2 border-slate-300 hover:border-[#8B4B5C] hover:bg-slate-50 disabled:opacity-50 transition-all duration-200 shadow-sm hover:shadow-md"
       >
         <CalendarIcon className="mr-2 h-4 w-4 text-slate-500" />
-        {selectedDate ? format(selectedDate, "MMM d, yyyy", { locale: dateLocale }) : placeholder}
+        {getButtonText()}
       </Button>
       
       {isOpen && (

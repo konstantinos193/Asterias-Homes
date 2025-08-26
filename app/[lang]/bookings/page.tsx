@@ -43,6 +43,7 @@ import {
   SheetClose,
 } from "@/components/ui/sheet"
 import { DatePicker } from "@/components/ui/date-picker"
+import { calendarAPI } from "@/lib/api"
 
 export default function BookingsPage() {
   const { t, language } = useLanguage()
@@ -61,6 +62,7 @@ export default function BookingsPage() {
   const [rooms, setRooms] = useState<any[]>([]);
   const [loadingRooms, setLoadingRooms] = useState(true);
   const [roomAvailabilities, setRoomAvailabilities] = useState<Record<string, number>>({});
+  const [availability, setAvailability] = useState<Record<string, any>>({});
 
   const dateLocale = language === "el" ? el : enUS
   const apiKey = process.env.NEXT_PUBLIC_API_KEY;
@@ -130,28 +132,77 @@ export default function BookingsPage() {
       const checkInStr = format(checkIn, "yyyy-MM-dd");
       const checkOutStr = format(checkOut, "yyyy-MM-dd");
       const newAvailabilities: Record<string, number> = {};
-      await Promise.all(
-        availableRooms.map(async (room) => {
-          console.log('FETCHING AVAILABILITY', `https://asterias-backend.onrender.com/api/bookings/availability?roomId=${room.id}&checkIn=${checkInStr}&checkOut=${checkOutStr}`);
-          const res = await fetch(
-            `https://asterias-backend.onrender.com/api/bookings/availability?roomId=${room.id}&checkIn=${checkInStr}&checkOut=${checkOutStr}`,
-            {
-              headers: {
-                'x-api-key': apiKey,
+      
+      try {
+        await Promise.all(
+          availableRooms.map(async (room) => {
+            console.log('FETCHING AVAILABILITY', `https://asterias-backend.onrender.com/api/bookings/availability?roomId=${room.id}&checkIn=${checkInStr}&checkOut=${checkOutStr}`);
+            const res = await fetch(
+              `https://asterias-backend.onrender.com/api/bookings/availability?roomId=${room.id}&checkIn=${checkInStr}&checkOut=${checkOutStr}`,
+              {
+                headers: {
+                  'x-api-key': apiKey,
+                },
               },
-            }
-          );
-          const data = await res.json();
-          newAvailabilities[room.id] = data.available;
-          console.log('Fetched availability for', room.id, data);
-        })
-      );
-      setRoomAvailabilities(newAvailabilities);
-      console.log('All availabilities:', newAvailabilities);
+            );
+            const data = await res.json();
+            newAvailabilities[room.id] = data.available;
+            console.log('Fetched availability for', room.id, data);
+          })
+        );
+        setRoomAvailabilities(newAvailabilities);
+        console.log('All availabilities:', newAvailabilities);
+      } catch (error) {
+        console.error('Error fetching availabilities:', error);
+        // Fallback to default availability
+        availableRooms.forEach(room => {
+          newAvailabilities[room.id] = room.totalRooms || 1;
+        });
+        setRoomAvailabilities(newAvailabilities);
+      }
     }
     fetchAvailabilities();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [showResults, checkIn, checkOut, rooms]);
+
+  // Fetch real-time calendar availability for all rooms
+  useEffect(() => {
+    async function fetchCalendarAvailabilities() {
+      if (!availableRooms.length) return;
+      
+      const currentDate = new Date();
+      const currentMonth = currentDate.getMonth() + 1;
+      const currentYear = currentDate.getFullYear();
+      
+      try {
+        const calendarData: Record<string, any> = {};
+        
+        await Promise.all(
+          availableRooms.map(async (room) => {
+            try {
+              const data = await calendarAPI.getCalendarAvailability(room.id, currentMonth, currentYear);
+              calendarData[room.id] = data.availability;
+            } catch (error) {
+              console.error(`Error fetching calendar availability for room ${room.id}:`, error);
+              // Fallback to default availability
+              calendarData[room.id] = {};
+            }
+          })
+        );
+        
+        setAvailability(calendarData);
+      } catch (error) {
+        console.error('Error fetching calendar availabilities:', error);
+      }
+    }
+    
+    fetchCalendarAvailabilities();
+    
+    // Set up real-time updates every 5 minutes
+    const interval = setInterval(fetchCalendarAvailabilities, 5 * 60 * 1000);
+    
+    return () => clearInterval(interval);
+  }, [availableRooms]);
 
   const nights = checkIn && checkOut
     ? differenceInDays(startOfDay(checkOut), startOfDay(checkIn))
@@ -405,6 +456,8 @@ export default function BookingsPage() {
                   placeholder="Select arrival date"
                   minDate={new Date()}
                   language={language}
+                  showAvailability={true}
+                  roomId={availableRooms.length > 0 ? availableRooms[0]?.id : undefined}
                 />
               </div>
               
@@ -419,6 +472,8 @@ export default function BookingsPage() {
                   disabled={!checkIn}
                   minDate={checkIn ? addDays(checkIn, 1) : new Date()}
                   language={language}
+                  showAvailability={true}
+                  roomId={availableRooms.length > 0 ? availableRooms[0]?.id : undefined}
                 />
               </div>
               
