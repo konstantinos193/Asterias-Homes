@@ -12,6 +12,7 @@ export interface BookingData {
     specialRequests: string
   }
   paymentMethod: "card" | "cash"
+  bookingResult?: any // Store the payment confirmation result
 }
 
 export interface Room {

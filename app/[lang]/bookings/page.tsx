@@ -26,12 +26,13 @@ import {
   Star,
   ArrowRight,
   CheckCircle,
-  Filter,
   X,
   Plus,
   Minus,
   Scale,
   Snowflake,
+  Tv,
+  Shield,
 } from "lucide-react"
 import {
   Sheet,
@@ -44,6 +45,7 @@ import {
 } from "@/components/ui/sheet"
 import { DatePicker } from "@/components/ui/date-picker"
 import { calendarAPI } from "@/lib/api"
+import RoomSelection from "@/components/room-selection"
 
 export default function BookingsPage() {
   const { t, language } = useLanguage()
@@ -52,17 +54,14 @@ export default function BookingsPage() {
   const [adults, setAdults] = useState("2")
   const [children, setChildren] = useState("0")
   const [showResults, setShowResults] = useState(false)
-  const [minPrice, setMinPrice] = useState(0);
-  const [maxPrice, setMaxPrice] = useState(150);
-  const [selectedAmenities, setSelectedAmenities] = useState<string[]>([])
-  const [selectedRoomType, setSelectedRoomType] = useState<string>("all")
+  // Remove filter states since all rooms are identical
   const [compareRooms, setCompareRooms] = useState<string[]>([])
   const [showComparison, setShowComparison] = useState(false)
-  const [showFiltersSheet, setShowFiltersSheet] = useState(false);
   const [rooms, setRooms] = useState<any[]>([]);
   const [loadingRooms, setLoadingRooms] = useState(true);
   const [roomAvailabilities, setRoomAvailabilities] = useState<Record<string, number>>({});
   const [availability, setAvailability] = useState<Record<string, any>>({});
+
 
   const dateLocale = language === "el" ? el : enUS
   const apiKey = process.env.NEXT_PUBLIC_API_KEY;
@@ -93,14 +92,32 @@ export default function BookingsPage() {
     fetchRooms();
   }, []); // Empty dependency array - only run once
 
+
+
+  // Handle room selection from RoomSelection component
+  const handleRoomSelect = (quantity: number, totalPrice: number) => {
+    console.log(`Selected ${quantity} rooms for €${totalPrice}`);
+    // Navigate to booking wizard with selected room data
+    const searchParams = new URLSearchParams({
+      rooms: quantity.toString(),
+      price: totalPrice.toString(),
+      guests: (parseInt(adults) + parseInt(children)).toString(),
+      checkIn: checkIn ? format(checkIn, 'yyyy-MM-dd') : '',
+      checkOut: checkOut ? format(checkOut, 'yyyy-MM-dd') : ''
+    });
+    window.location.href = `/book?${searchParams.toString()}`;
+  };
+
+
+
   // Map backend data to frontend format (if needed) - memoized to prevent unnecessary recalculations
   const availableRooms = useMemo(() => {
     if (!Array.isArray(rooms)) return [];
     
     return rooms.map((room) => ({
       ...room,
-      name: room.name || t("rooms.standard.name"),
-      description: room.description || t("rooms.standard.description"),
+              name: t("bookingsPage.roomList.standardApartment"),
+      description: t("bookingsPage.roomList.roomDescription"),
       amenities: room.amenities ? Object.keys(room.amenities).filter(key => room.amenities[key]) : [
         'WiFi',
         'Air Conditioning', 
@@ -121,20 +138,21 @@ export default function BookingsPage() {
         'Kitchenette',
         'Non-smoking'
       ],
-      bedType: room.bedType || '1 Double Bed, 1 Sofa Bed',
-      view: room.view || 'Garden or Sea View',
-      bathroom: room.bathroom || 'Private Bathroom with Shower',
+      bedType: t("bookingsPage.roomList.bedConfiguration"),
+      view: 'Garden or Sea View',
+      bathroom: 'Private Bathroom with Shower',
       image: room.image || (room.images && room.images[0]) || "/placeholder.svg",
-      totalRooms: room.totalRooms || 1,
+      totalRooms: room.totalRooms || 7, // We have 7 identical rooms
       rating: room.rating || 4.8,
       reviews: room.reviewCount || 25,
       price: room.price || 85,
       originalPrice: room.originalPrice || room.price || 85,
-      size: room.size || '35 sqm',
+      size: room.size || 35,
       id: room._id || room.id,
-      // fallback for missing fields
-      maxGuests: room.maxGuests ?? room.capacity ?? 4,
-      available: true // All rooms are available by default
+      // Proper room configuration for 7 identical standard rooms
+      maxGuests: 4, // Each room can accommodate 4 guests (1 double + 2 single beds)
+      available: true, // All rooms are available by default
+      availableCount: room.availableCount || 0 // Add availableCount to the room object
     }));
   }, [rooms, t]); // Only recalculate when rooms or t function changes
 
@@ -245,38 +263,8 @@ export default function BookingsPage() {
 
   const allAmenities = Array.from(new Set(availableRooms.flatMap((room) => room.amenities))).sort()
 
-  const roomTypes = [
-    { id: "all", nameKey: "bookingsPage.filters.roomType.all" },
-    { id: "standard", nameKey: "bookingsPage.filters.roomType.standard" },
-    { id: "family", nameKey: "bookingsPage.filters.roomType.family" },
-    { id: "romantic", nameKey: "bookingsPage.filters.roomType.romantic" },
-    { id: "superior", nameKey: "bookingsPage.filters.roomType.superior" },
-  ].map((rt) => ({ ...rt, name: t(rt.nameKey) }))
-
-  const filteredRooms = availableRooms.filter((room) => {
-    const matchesPrice = room.price >= minPrice && room.price <= maxPrice
-    const matchesAmenities =
-      selectedAmenities.length === 0 || selectedAmenities.every((amenity) => room.amenities.includes(amenity))
-    const matchesType = selectedRoomType === "all" || room.id.includes(selectedRoomType)
-    return matchesPrice && matchesAmenities && matchesType
-  })
-
-  const getAmenityIcon = (amenity: string) => {
-    if (typeof amenity !== "string") return null;
-    // These checks should ideally use keys or more robust identifiers if amenities are diverse
-    if (amenity.toLowerCase().includes(t("bookingsPage.amenities.wifi").toLowerCase()))
-      return <Wifi className="h-4 w-4" />
-    if (amenity.toLowerCase().includes(t("bookingsPage.amenities.ac").toLowerCase()))
-      return <Snowflake className="h-4 w-4" />
-    if (amenity.toLowerCase().includes(t("bookingsPage.amenities.privateBathroom").toLowerCase()))
-      return <Bath className="h-4 w-4" />
-    if (
-      amenity.toLowerCase().includes(t("bookingsPage.amenities.breakfast").toLowerCase()) ||
-      amenity.toLowerCase().includes(t("bookingsPage.amenities.coffeemaker").toLowerCase())
-    )
-      return <Coffee className="h-4 w-4" />
-    return <CheckCircle className="h-4 w-4" />
-  }
+  // No filtering needed since all rooms are identical
+  const filteredRooms = availableRooms; // Show all rooms directly
 
   const ComparisonModal = () => {
     const roomsToCompare = availableRooms.filter((room) => compareRooms.includes(room.id))
@@ -567,426 +555,53 @@ export default function BookingsPage() {
 
       <section className="py-16 bg-slate-50">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-8">
-            <h2 className="text-3xl font-cormorant font-light text-slate-800 mb-4">
-              {t("bookingsPage.viewToggle.listTitle")}
-            </h2>
-            <div className="w-16 h-0.5 bg-[#8B4B5C] mx-auto mb-6"></div>
-            <p className="text-slate-600 font-alegreya mb-6">
-              {t("bookingsPage.viewToggle.listSubtitle")}
-            </p>
-          </div>
+          
           <div className="max-w-7xl mx-auto">
-            {showResults && (
-              <div className="mb-6">
-                <Sheet open={showFiltersSheet} onOpenChange={setShowFiltersSheet}>
-                  <SheetTrigger
-                    onClick={() => setShowFiltersSheet(true)}
-                    className="flex items-center gap-2 text-slate-700 border border-slate-300 rounded-md px-4 py-2 hover:border-[#8B4B5C] hover:text-[#8B4B5C] bg-white font-alegreya"
-                  >
-                    <Filter className="h-5 w-5" />
-                    {t("bookingsPage.filters.openButton")}
-                  </SheetTrigger>
-                  <SheetContent className="w-[350px] sm:w-[400px] flex flex-col p-0">
-                    <SheetHeader className="p-6 pb-4 border-b">
-                      <SheetTitle className="text-xl font-cormorant font-semibold text-slate-800">
-                        {t("bookingsPage.filters.title")}
-                      </SheetTitle>
-                    </SheetHeader>
-                    <div className="flex-grow overflow-y-auto p-6 space-y-8">
-                      {/* Price Range Filter */}
-                      <div>
-                        <h4 className="text-sm font-medium text-slate-700 font-alegreya mb-3">
-                          {t("bookingsPage.filters.priceRangeLabel")}
-                        </h4>
-                        <div className="px-1">
-                          <Slider
-                            value={minPrice}
-                            onChange={e => setMinPrice(Number(e.target.value))}
-                            min={0}
-                            max={maxPrice}
-                            step={10}
-                            className="mb-2"
-                          />
-                          <Slider
-                            value={maxPrice}
-                            onChange={e => setMaxPrice(Number(e.target.value))}
-                            min={minPrice}
-                            max={200}
-                            step={10}
-                            className="mb-2"
-                          />
-                          <div className="flex justify-between text-xs text-slate-500 font-alegreya">
-                            <span>{minPrice}€</span>
-                            <span>{maxPrice}€</span>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Room Type Filter */}
-                      <div>
-                        <h4 className="text-sm font-medium text-slate-700 font-alegreya mb-3">
-                          {t("bookingsPage.filters.roomTypeLabel")}
-                        </h4>
-                        <div className="space-y-2">
-                          {roomTypes.map((type) => (
-                            <button
-                              key={type.id}
-                              onClick={() => setSelectedRoomType(type.id)}
-                              className={`block w-full text-left px-3 py-2 rounded-md text-sm font-alegreya transition-colors ${
-                                selectedRoomType === type.id
-                                  ? "bg-[#8B4B5C]/10 text-[#8B4B5C] font-medium"
-                                  : "text-slate-700 hover:bg-slate-100"
-                              }`}
-                            >
-                              {type.name}
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-
-                      {/* Amenities Filter */}
-                      <div>
-                        <h4 className="text-sm font-medium text-slate-700 font-alegreya mb-3">
-                          {t("bookingsPage.filters.amenitiesLabel")}
-                        </h4>
-                        <div className="space-y-3">
-                          {allAmenities.map((amenity) => (
-                            <div key={amenity} className="flex items-center">
-                              <input
-                                type="checkbox"
-                                id={`sheet-amenity-${amenity}`} // Ensure unique ID for sheet
-                                checked={selectedAmenities.includes(amenity)}
-                                onChange={(e) => {
-                                  if (e.target.checked) {
-                                    setSelectedAmenities([...selectedAmenities, amenity])
-                                  } else {
-                                    setSelectedAmenities(selectedAmenities.filter((a) => a !== amenity))
-                                  }
-                                }}
-                                className="border-slate-300 data-[state=checked]:bg-[#8B4B5C] data-[state=checked]:border-[#8B4B5C]"
-                              />
-                              <label
-                                htmlFor={`sheet-amenity-${amenity}`}
-                                className="ml-2 text-sm font-alegreya text-slate-700 cursor-pointer"
-                              >
-                                {amenity}
-                              </label>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-                    <SheetFooter className="p-6 pt-4 border-t bg-slate-50">
-                      <div className="flex flex-col gap-3 w-full">
-                        <div className="text-xs text-slate-600 font-alegreya">
-                          <span className="font-medium text-slate-800">{filteredRooms.length}</span>{" "}
-                          {t("bookingsPage.filters.resultsSummary")
-                            .replace("{count}", filteredRooms.length.toString())
-                            .replace("{total}", availableRooms.length.toString())}
-                        </div>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => {
-                            setMinPrice(0)
-                            setMaxPrice(150)
-                            setSelectedAmenities([])
-                            setSelectedRoomType("all")
-                          }}
-                          className="w-full text-[#8B4B5C] border-[#8B4B5C] hover:bg-[#8B4B5C]/10 font-alegreya"
-                        >
-                          {t("bookingsPage.filters.clearButton")}
-                        </Button>
-                        <SheetClose onClick={() => setShowFiltersSheet(false)}>
-                          <Button
-                            size="sm"
-                            className="w-full bg-[#8B4B5C] hover:bg-[#7A4251] text-white font-alegreya"
-                          >
-                            {t("bookingsPage.filters.applyButton")}
-                          </Button>
-                        </SheetClose>
-                      </div>
-                    </SheetFooter>
-                  </SheetContent>
-                </Sheet>
-              </div>
-            )}
-            {showResults && (
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                {filteredRooms.map((room) => (
-                  roomAvailabilities[room.id] > 0 ? (
-                    <div
-                      key={room.id}
-                      className={`bg-white rounded-lg shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl ${!room.available ? "opacity-75" : ""}`}
-                    >
-                      <div className="relative h-64">
-                        <Image
-                          src={room.image || "/placeholder.svg"}
-                          alt={room.name}
-                          fill
-                          className="object-cover"
-                        />
-                        {!room.available && (
-                          <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
-                            <span className="bg-white text-slate-800 px-4 py-2 rounded-full font-alegreya font-medium">
-                              {t("bookingsPage.roomList.unavailableOverlay")}
-                            </span>
-                          </div>
-                        )}
-                        <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm rounded-lg px-3 py-2">
-                          <div className="flex items-center gap-1">
-                            <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                            <span className="text-sm font-medium">{room.rating}</span>
-                            <span className="text-xs text-slate-500">({room.reviews})</span>
-                          </div>
-                        </div>
-                        <div className="absolute top-4 left-4">
-                          <Button
-                            onClick={() => toggleCompareRoom(room.id)}
-                            size="sm"
-                            variant={compareRooms.includes(room.id) ? "default" : "outline"}
-                            className={`${compareRooms.includes(room.id) ? "bg-[#8B4B5C] text-white" : "bg-white/90 text-slate-700 hover:bg-white"} backdrop-blur-sm`}
-                            disabled={!compareRooms.includes(room.id) && compareRooms.length >= 3}
-                          >
-                            {compareRooms.includes(room.id) ? (
-                              <Minus className="h-4 w-4" />
-                            ) : (
-                              <Plus className="h-4 w-4" />
-                            )}
-                          </Button>
-                        </div>
-                      </div>
-                      <div className="p-6">
-                        <div className="flex justify-between items-start mb-4">
-                          <div>
-                            <h3 className="text-xl font-cormorant font-semibold text-slate-800 mb-2">
-                              {room.name}
-                            </h3>
-                            <p className="text-slate-600 font-alegreya text-sm mb-3">{room.description}</p>
-                            <div className="flex items-center gap-4 text-sm text-slate-500 font-alegreya">
-                              <div className="flex items-center gap-1">
-                                <Users className="h-4 w-4" />
-                                <span>
-                                  {t("bookingsPage.roomList.capacityText").replace(
-                                    "{count}",
-                                    (room.maxGuests ?? room.capacity ?? 0).toString()
-                                  )}
-                                </span>
-                              </div>
-                              <div className="flex items-center gap-1">
-                                <Bed className="h-4 w-4" />
-                                <span>{room.size}m²</span>
-                              </div>
-                            </div>
-                          </div>
-                          <div className="text-right">
-                            {room.originalPrice > room.price && (
-                              <div className="text-sm text-slate-400 line-through font-alegreya">
-                                {room.originalPrice}€
-                              </div>
-                            )}
-                            <div className="text-2xl font-cormorant font-bold text-[#8B4B5C]">{room.price}€</div>
-                            <div className="text-xs text-slate-500 font-alegreya">
-                              {t("bookingsPage.roomList.pricePerNight")}
-                            </div>
-                            {nights > 0 && (
-                              <div className="text-sm font-medium text-slate-700 font-alegreya mt-1">
-                                {t("bookingsPage.roomList.totalPrice").replace(
-                                  "{price}",
-                                  (room.price * nights).toFixed(0),
-                                )}
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                        <div className="mb-4">
-                          <div className="flex flex-wrap gap-2">
-                            {room.amenities.slice(0, 4).map((amenity, index) => (
-                              <div
-                                key={index}
-                                className="flex items-center gap-1 text-xs bg-slate-100 px-2 py-1 rounded-full"
-                              >
-                                {getAmenityIcon(amenity)}
-                                <span className="font-alegreya">{amenity}</span>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                        <div className="mb-6">
-                          <div className="flex flex-wrap gap-2">
-                            {room.features.map((feature, index) => (
-                              <span
-                                key={index}
-                                className="text-xs text-slate-600 bg-[#E8E2D5]/50 px-2 py-1 rounded font-alegreya"
-                              >
-                                {feature}
-                              </span>
-                            ))}
-                          </div>
-                        </div>
-                        <div className="flex gap-3">
-                          <Link
-                            href={`/rooms/${room.id}`}
-                            className="flex-1 text-center py-2 border border-[#8B4B5C] text-[#8B4B5C] hover:bg-[#8B4B5C] hover:text-white transition-colors font-alegreya rounded-lg"
-                          >
-                            {t("bookingsPage.roomList.detailsButton")}
-                          </Link>
-                          {room.available ? (
-                            <Link
-                              href={`/book/${room.id}`}
-                              className="flex-1 text-center py-2 bg-[#8B4B5C] text-white hover:bg-[#7A4251] transition-colors font-alegreya rounded-lg"
-                            >
-                              {t("bookingsPage.roomList.bookButton")}
-                            </Link>
-                          ) : (
-                            <button
-                              disabled
-                              className="flex-1 py-2 bg-slate-300 text-slate-500 cursor-not-allowed font-alegreya rounded-lg"
-                            >
-                              {t("bookingsPage.roomList.unavailableButton")}
-                            </button>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  ) : (
-                    <div
-                      key={room.id}
-                      className={`bg-white rounded-lg shadow-lg overflow-hidden transition-all duration-300 opacity-75`}
-                    >
-                      <div className="relative h-64">
-                        <Image
-                          src={room.image || "/placeholder.svg"}
-                          alt={room.name}
-                          fill
-                          className="object-cover"
-                        />
-                        <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
-                          <span className="bg-white text-slate-800 px-4 py-2 rounded-full font-alegreya font-medium">
-                            {t("bookingsPage.roomList.unavailableOverlay")}
-                          </span>
-                        </div>
-                        <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm rounded-lg px-3 py-2">
-                          <div className="flex items-center gap-1">
-                            <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                            <span className="text-sm font-medium">{room.rating}</span>
-                            <span className="text-xs text-slate-500">({room.reviews})</span>
-                          </div>
-                        </div>
-                        <div className="absolute top-4 left-4">
-                      <Button
-                            onClick={() => toggleCompareRoom(room.id)}
-                            size="sm"
-                            variant={compareRooms.includes(room.id) ? "default" : "outline"}
-                            className={`${compareRooms.includes(room.id) ? "bg-[#8B4B5C] text-white" : "bg-white/90 text-slate-700 hover:bg-white"} backdrop-blur-sm`}
-                            disabled={!compareRooms.includes(room.id) && compareRooms.length >= 3}
-                          >
-                            {compareRooms.includes(room.id) ? (
-                              <Minus className="h-4 w-4" />
-                            ) : (
-                              <Plus className="h-4 w-4" />
-                            )}
-                      </Button>
-                    </div>
+            {/* Show rooms both before and after search */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              
+              {/* Loading state when searching */}
+              {showResults && Object.keys(roomAvailabilities).length === 0 && (
+                <div className="col-span-2 text-center py-8">
+                  <div className="text-slate-600 font-alegreya">
+                    🔍 Checking room availability for your dates...
                   </div>
-                        <div className="p-6">
-                          <div className="flex justify-between items-start mb-4">
-                            <div>
-                              <h3 className="text-xl font-cormorant font-semibold text-slate-800 mb-2">
-                                {room.name}
-                              </h3>
-                              <p className="text-slate-600 font-alegreya text-sm mb-3">{room.description}</p>
-                              <div className="flex items-center gap-4 text-sm text-slate-500 font-alegreya">
-                                <div className="flex items-center gap-1">
-                                  <Users className="h-4 w-4" />
-                                  <span>
-                                    {t("bookingsPage.roomList.capacityText").replace(
-                                      "{count}",
-                                      (room.maxGuests ?? room.capacity ?? 0).toString()
-                                    )}
-                                  </span>
-                                </div>
-                                <div className="flex items-center gap-1">
-                                  <Bed className="h-4 w-4" />
-                                  <span>{room.size}m²</span>
-                                </div>
-                              </div>
-                            </div>
-                            <div className="text-right">
-                              {room.originalPrice > room.price && (
-                                <div className="text-sm text-slate-400 line-through font-alegreya">
-                                  {room.originalPrice}€
-                                </div>
-                              )}
-                              <div className="text-2xl font-cormorant font-bold text-[#8B4B5C]">{room.price}€</div>
-                              <div className="text-xs text-slate-500 font-alegreya">
-                                {t("bookingsPage.roomList.pricePerNight")}
-                              </div>
-                              {nights > 0 && (
-                                <div className="text-sm font-medium text-slate-700 font-alegreya mt-1">
-                                  {t("bookingsPage.roomList.totalPrice").replace(
-                                    "{price}",
-                                    (room.price * nights).toFixed(0),
-                                  )}
-                                </div>
-                              )}
-                            </div>
-                          </div>
-                          <div className="mb-4">
-                            <div className="flex flex-wrap gap-2">
-                              {room.amenities.slice(0, 4).map((amenity, index) => (
-                                <div
-                                  key={index}
-                                  className="flex items-center gap-1 text-xs bg-slate-100 px-2 py-1 rounded-full"
-                                >
-                                  {getAmenityIcon(amenity)}
-                                  <span className="font-alegreya">{amenity}</span>
-                                </div>
-                              ))}
-                            </div>
-                          </div>
-                          <div className="mb-6">
-                            <div className="flex flex-wrap gap-2">
-                              {room.features.map((feature, index) => (
-                                <span
-                                  key={index}
-                                  className="text-xs text-slate-600 bg-[#E8E2D5]/50 px-2 py-1 rounded font-alegreya"
-                                >
-                                  {feature}
-                                </span>
-                              ))}
-                            </div>
-                          </div>
-                          <div className="flex gap-3">
-                            <Link
-                              href={`/rooms/${room.id}`}
-                              className="flex-1 text-center py-2 border border-[#8B4B5C] text-[#8B4B5C] hover:bg-[#8B4B5C] hover:text-white transition-colors font-alegreya rounded-lg"
-                            >
-                              {t("bookingsPage.roomList.detailsButton")}
-                            </Link>
-                            {room.available ? (
-                              <Link
-                                href={`/book/${room.id}`}
-                                className="flex-1 text-center py-2 bg-[#8B4B5C] text-white hover:bg-[#7A4251] transition-colors font-alegreya rounded-lg"
-                              >
-                                {t("bookingsPage.roomList.bookButton")}
-                              </Link>
-                            ) : (
-                              <button
-                                disabled
-                                className="flex-1 py-2 bg-slate-300 text-slate-500 cursor-not-allowed font-alegreya rounded-lg"
-                              >
-                                {t("bookingsPage.roomList.unavailableButton")}
-                              </button>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                    )
-                  ))}
                 </div>
               )}
+              
+              {/* Show loading state */}
+              {loadingRooms && (
+                <div className="col-span-2 text-center py-8">
+                  <div className="text-slate-600 font-alegreya">
+                    ⏳ {t('loading.rooms')}
+                  </div>
+                </div>
+              )}
+              
+              {/* Show no rooms message */}
+              {!loadingRooms && filteredRooms.length === 0 && (
+                <div className="col-span-2 text-center py-8">
+                  <div className="text-slate-600 font-alegreya">
+                    ❌ No rooms found. Check console for errors.
+                  </div>
+                </div>
+              )}
+              
+              {/* Replace duplicate room cards with consolidated RoomSelection component */}
+              {!loadingRooms && filteredRooms.length > 0 && (
+                <div className="col-span-2">
+                  <RoomSelection
+                    onRoomSelect={handleRoomSelect}
+                    guestCount={parseInt(adults) + parseInt(children)}
+                    checkIn={checkIn}
+                    checkOut={checkOut}
+                    rooms={rooms}
+                  />
+                  
+
+                </div>
+              )}
+              </div>
             </div>
           </div>
         </section>

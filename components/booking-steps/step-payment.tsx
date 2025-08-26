@@ -11,6 +11,7 @@ interface StepPaymentProps {
   bookingData: BookingData
   updateBookingData: (data: Partial<BookingData>) => void
   paymentError?: string | null // To display payment errors
+  setIsCardComplete?: (complete: boolean) => void // To track card completion
 }
 
 const CARD_ELEMENT_OPTIONS = {
@@ -32,8 +33,15 @@ const CARD_ELEMENT_OPTIONS = {
   hidePostalCode: true, // You can configure this as needed
 }
 
-export default function StepPayment({ bookingData, updateBookingData, paymentError }: StepPaymentProps) {
+export default function StepPayment({ bookingData, updateBookingData, paymentError, setIsCardComplete }: StepPaymentProps) {
   const { t } = useLanguage()
+
+  // Handle card element change to track completion
+  const handleCardChange = (event: any) => {
+    if (setIsCardComplete) {
+      setIsCardComplete(event.complete)
+    }
+  }
 
   return (
     <div className="space-y-6">
@@ -85,8 +93,15 @@ export default function StepPayment({ bookingData, updateBookingData, paymentErr
 
           {/* Stripe Card Element */}
           <div className="p-3 border rounded-md bg-slate-50">
-            <CardElement options={CARD_ELEMENT_OPTIONS} />
+            <CardElement options={CARD_ELEMENT_OPTIONS} onChange={handleCardChange} />
           </div>
+
+          {/* Card completion status */}
+          {setIsCardComplete && (
+            <div className="text-sm text-slate-600 font-alegreya">
+              {t("bookingWizard.payment.cardStatus", "Please complete your card details to proceed")}
+            </div>
+          )}
 
           {paymentError && <p className="text-sm text-red-600 font-alegreya">{paymentError}</p>}
 

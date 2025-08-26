@@ -621,8 +621,9 @@
       "viewAvailableRoomsButton": "Verfügbare Apartments für diese Daten ansehen"
     },
     "filters": {
-      "title": "Ihre Ergebnisse filtern",
-      "priceRangeLabel": "Preisspanne (pro Nacht)",
+      "title": "Filtern Sie Ihre Ergebnisse",
+      "openButton": "Filter",
+      "priceRangeLabel": "Preisbereich (pro Nacht)",
       "roomTypeLabel": "Apartmenttyp",
       "roomType": {
         "all": "Alle Apartmenttypen",
@@ -637,15 +638,23 @@
     },
     "roomList": {
       "unavailableOverlay": "Derzeit nicht verfügbar",
-      "capacityText": "Bis zu {count} Gäste",
-      "pricePerNight": "pro Nacht",
-      "totalPrice": "Gesamt: {price}€",
-      "detailsButton": "Details ansehen",
-      "bookButton": "Jetzt buchen",
-      "unavailableButton": "Nicht verfügbar",
-      "noRoomsFoundTitle": "Keine Apartments gefunden",
-      "noRoomsFoundSubtitle": "Versuchen Sie, Ihre Suchkriterien oder Filter anzupassen.",
-      "clearFiltersButton": "Alle Filter löschen"
+      "availableText": "Verfügbar",
+      "roomConfiguration": "Zimmerkonfiguration",
+      "bedConfiguration": "Bettkonfiguration",
+      "kitchenIncluded": "Private Küche inklusive",
+      "balconyIncluded": "Balkon inklusive",
+      "roomType": "Zimmertyp",
+      "roomDescription": "Zimmerbeschreibung",
+      "standardApartment": "Standardapartment",
+      "doubleBed": "Doppelbett",
+      "singleBeds": "Einzelbetten",
+      "upToGuests": "Bis zu {count} Gäste",
+      "privateKitchen": "Private Küche inklusive",
+      "squareMeters": "{size} m²",
+              "perNight": "pro Nacht",
+        "total": "Gesamt",
+        "viewDetails": "Details anzeigen",
+      "bookNow": "Jetzt buchen"
     },
     "benefits": {
       "title": "Warum bei uns buchen?",
@@ -702,7 +711,6 @@
     },
     "bookingWizard": {
       "steps": {
-        "dates": "Daten auswählen",
         "room": "Zimmerdetails",
         "guestInfo": "Gastinformationen",
         "payment": "Zahlung",
@@ -719,32 +727,37 @@
         "back": "Zurück",
         "confirm": "Buchung bestätigen"
       },
-      "dates": {
-        "title": "Wählen Sie Ihre Aufenthaltsdaten",
-        "subtitle": "Bitte wählen Sie Ihre Aufenthaltsdaten und die Anzahl der Gäste",
-        "checkIn": "Check-in Datum",
-        "checkOut": "Check-out Datum",
-        "selectDate": "Datum auswählen",
-        "adults": "Anzahl Erwachsene",
-        "children": "Anzahl Kinder",
-        "adultsLabel": "Erwachsene(r)",
-        "childrenLabel": "Kind(er)",
-        "nights": "Gesamt Nächte: {count}",
-        "validation": {
-          "checkInRequired": "Check-in Datum ist erforderlich",
-          "checkOutRequired": "Check-out Datum ist erforderlich",
-          "invalidDates": "Check-out muss nach Check-in sein",
-          "minStay": "Mindestaufenthalt ist 1 Nacht",
-          "maxStay": "Maximaler Aufenthalt ist 30 Nächte"
-        }
-      },
+
       "roomDetails": {
-        "title": "Zimmerinformationen",
+        "title": "Ihr ausgewähltes Zimmer",
+        "confirmation": "Bestätigen Sie Ihre Zimmerauswahl",
+        "description": "Eine schön eingerichtete klassische Wohnung mit traditionellen Annehmlichkeiten, perfekt für einen entspannenden Urlaub in Koronisia. Alle unsere Wohnungen sind identisch im Stil und Layout und bieten konsistenten Komfort und authentischen lokalen Charakter.",
+        "guests": "Gäste",
+        "features": "Zimmerfunktionen",
+        "pricePerNight": "Preis pro Nacht",
+        "confirmed": "Zimmerauswahl bestätigt!",
+        "proceed": "Sie können jetzt zum nächsten Schritt übergehen, um Ihre Gastinformationen einzugeben.",
+        "view": "Garten- oder Meerblick",
+        "bathroom": "Privates Bad mit Dusche",
         "roomType": "Zimmertyp",
         "capacity": "Kapazität",
         "size": "Größe",
         "amenities": "Annehmlichkeiten",
-        "totalPrice": "Gesamtpreis für {nights} Nächte: €{price}"
+        "totalPrice": "Gesamtpreis für {nights} Nächte: €{price}",
+        "feature": {
+          "entireplace": "Ganzer Platz für Sie",
+          "freeparking": "Kostenloses Parken",
+          "breakfastincluded": "Frühstück inklusive",
+          "balcony": "Balkon",
+          "privatebathroom": "Privates Bad",
+          "freewifi": "Kostenloses WiFi",
+          "shower": "Dusche",
+          "airconditioning": "Klimaanlage",
+          "flatscreentv": "Flachbild-TV",
+          "kitchenette": "Küchenzeile",
+          "nonsmoking": "Nichtraucher",
+          "familyfriendly": "Familienfreundlich"
+        }
       },
       "guestInfo": {
         "title": "Gastinformationen",
@@ -763,7 +776,6 @@
         "checkInTime": "Check-in: 15:00 - 22:00",
         "checkOutTime": "Check-out: 08:00 - 11:00",
         "cancellationPolicy": "Kostenlose Stornierung bis 48 Stunden vor Ankunft",
-        "childrenPolicy": "Kinder unter 12 Jahren übernachten kostenlos",
         "validation": {
           "firstNameRequired": "Vorname ist erforderlich",
           "lastNameRequired": "Nachname ist erforderlich",
@@ -805,6 +817,7 @@
         "roomNotFound": "Zimmer nicht gefunden",
         "anyQuestions": "Bei Fragen kontaktieren Sie uns gerne",
         "contactUs": "kontaktieren Sie uns",
+        "bookingNumber": "Buchungsnummer",
         "nextSteps": "Nächste Schritte",
         "emailSent": "Eine Bestätigungs-E-Mail wurde an {email} gesendet",
         "contactInfo": "Bei Fragen kontaktieren Sie uns bitte"
@@ -1109,5 +1122,72 @@
           "date": "2024"
         }
       }
+  },
+  "roomSelection": {
+    "title": "Wählen Sie Ihre Zimmeroption",
+    "subtitle": "Wählen Sie die beste Option für {guests} Gäste",
+    "standardApartment": "Standard-Apartment",
+    "description": "Klassische Wohnung mit traditionellem Stil. Gleiche Einrichtung und Komfort in allen Zimmern.",
+    "guestInfo": "Für {guests} Gäste benötigen Sie {rooms} Zimmer. Jedes Zimmer bietet Platz für bis zu {capacity} Gäste.",
+    "notEnoughRooms": "Entschuldigung, Sie benötigen {required} Zimmer, aber nur {available} sind verfügbar.",
+    "features": "Features",
+          "feature1": "1 Doppelbett + 2 Einzelbetten",
+      "feature1Multiple": "{quantity} × (1 Doppelbett + 2 Einzelbetten)",
+    "feature2": "35 qm mit Balkon",
+    "feature3": "Küche + Bad mit Dusche",
+    "amenities": "Ausstattung",
+    "pricePerRoom": "€{price} pro Zimmer pro Nacht",
+    "save": "Sparen Sie €{amount}",
+    "roomsAvailable": "Verfügbare Zimmer",
+    "selectQuantity": "Anzahl der Zimmer auswählen",
+    "maxRooms": "Maximal {max} Zimmer",
+    "quantityInfo": "Sie haben {quantity} von {total} verfügbaren Zimmern ausgewählt",
+    "selectRooms": "Weiter zu den Gästedaten",
+    "insufficientRooms": "Nicht genügend Zimmer für Ihre Gruppengröße verfügbar",
+    "insufficientRoomsExplanation": "Sie benötigen {required} Zimmer, aber nur {available} sind für diese Daten verfügbar.",
+    "noRoomsAvailable": "Keine Zimmer verfügbar",
+    "noDatesTitle": "Wählen Sie zuerst Ihre Daten",
+    "noDatesDescription": "Bitte wählen Sie Ihre Ankunfts- und Abreisedaten, um verfügbare Zimmeroptionen und Preise zu sehen.",
+    "multipleRoomsExplanation": "Mehrere Zimmer sind für Ihre Gruppengröße erforderlich",
+    "multiRoomTitle": "Mehrere Zimmer erforderlich",
+    "multiRoomDescription": "Für {guests} Gäste benötigen Sie {rooms} Zimmer, da jedes Zimmer bis zu {capacity} Gäste aufnehmen kann.",
+    "understand": "Ich verstehe"
+  },
+  "bookPage": {
+    "title": "Ihre Buchung bestätigen",
+    "subtitle": "Sie sind nur einen Schritt von der Luxuserfahrung der Asterias Homes entfernt. Bitte überprüfen Sie Ihre Buchungsdetails unten.",
+    "summary": "Buchungszusammenfassung",
+    "summarySubtitle": "Ihre ausgewählten Unterkunftsdetails",
+    "accommodationDetails": "Unterkunftsdetails",
+    "stayDetails": "Aufenthaltsdetails",
+    "includedFeatures": "Inklusive Features",
+    "pricingBreakdown": "Preisaufschlüsselung",
+    "rooms": "Zimmer",
+    "guests": "Gäste",
+    "roomType": "Zimmertyp",
+    "checkIn": "Check-in",
+    "checkOut": "Check-out",
+    "nights": "Nächte",
+    "totalPrice": "Gesamtpreis",
+    "pricePerRoom": "Preis pro Zimmer/Nacht",
+    "total": "Gesamt",
+    "freeWifi": "Kostenloses WiFi",
+    "airConditioning": "Klimaanlage",
+    "flatScreenTv": "Flachbild-TV",
+    "safe": "Safe",
+    "privateBathroom": "Privates Bad",
+    "balcony": "Balkon",
+    "backButton": "Zurück zur Auswahl",
+    "startBookingButton": "Buchung starten",
+    "secureBooking": "Sicherer und einfacher Buchungsprozess",
+    "info": "Klicken Sie auf \"Buchung starten\", um mit Ihrer Reservierung fortzufahren. Sie werden Schritt für Schritt durch den Buchungsprozess mit sicheren Zahlungsoptionen geführt.",
+    "invalidData": "Ungültige Buchungsdaten",
+    "noDataFound": "Keine Buchungsinformationen gefunden. Bitte gehen Sie zurück und wählen Sie Ihr Zimmer.",
+    "backToSelection": "Zurück zur Zimmerauswahl",
+    "loading": "Buchungsdetails werden geladen",
+    "loadingMessage": "Bitte warten Sie, während wir Ihre Buchungszusammenfassung vorbereiten..."
+  },
+  "loading": {
+    "rooms": "Zimmer vom Backend werden geladen..."
   }
 }

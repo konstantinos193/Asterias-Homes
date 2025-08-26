@@ -1,29 +1,23 @@
 'use client'
 
-import { getRooms } from "@/lib/api"
-import { Room } from "@/types/booking"
-import HomePageClient from "./HomePageClient"
-import { useLanguage } from "@/contexts/language-context"
-import { useEffect, useState } from "react"
+import { useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 
-export default function Home() {
-  const { t } = useLanguage()
-  const [featuredRooms, setFeaturedRooms] = useState<Room[]>([])
+export default function RootPage() {
+  const router = useRouter()
 
   useEffect(() => {
-    getRooms().then((data) => {
-      const roomType: Room | undefined = (data.rooms || [])[0]
-      if (roomType) {
-        const numberOfFeatured = 3
-        const featured = Array.from({ length: numberOfFeatured }, (_, index) => ({
-          ...roomType,
-          displayId: `${roomType.id}-featured-${index}`,
-          image: roomType.images[index % roomType.images.length],
-        }))
-        setFeaturedRooms(featured)
-      }
-    })
-  }, [])
+    // Redirect to default language (English)
+    router.replace('/en')
+  }, [router])
 
-  return <HomePageClient featuredRooms={featuredRooms} />
+  // Show loading while redirecting
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="text-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+        <p className="text-gray-600 font-alegreya">Redirecting...</p>
+      </div>
+    </div>
+  )
 }

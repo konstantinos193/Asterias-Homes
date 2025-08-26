@@ -10,36 +10,34 @@ export default function Home() {
   const [rooms, setRooms] = useState<Room[]>([])
 
   useEffect(() => {
-    getRooms().then((data) => {
-      setRooms(data.rooms || [])
+    getRooms().then((rooms) => {
+      const roomType: Room | undefined = (rooms || [])[0]
+      if (roomType) {
+        const numberOfFeatured = 3
+        featuredRooms = Array.from({ length: numberOfFeatured }, (_, index) => ({
+          ...roomType,
+          displayId: `${roomType.id}-featured-${index}`,
+          image: roomType.images[index % roomType.images.length],
+          featureKeys: [
+            "rooms.feature.entirePlace",
+            "rooms.feature.freeParking",
+            "rooms.feature.breakfastIncluded",
+            "rooms.feature.balcony",
+            "rooms.feature.privateBathroom",
+            "rooms.feature.freeWifi",
+            "rooms.feature.shower",
+            "rooms.feature.airConditioning",
+            "rooms.feature.flatScreenTV",
+            "rooms.feature.kitchenette",
+            "rooms.feature.nonSmoking",
+            "rooms.feature.familyFriendly"
+          ]
+        }))
+      }
     })
   }, [])
 
-  const roomType: Room | undefined = rooms[0]
   let featuredRooms: Room[] = []
-
-  if (roomType) {
-    const numberOfFeatured = 3
-    featuredRooms = Array.from({ length: numberOfFeatured }, (_, index) => ({
-      ...roomType,
-      displayId: `${roomType.id}-featured-${index}`,
-      image: roomType.images[index % roomType.images.length],
-      featureKeys: [
-        "rooms.feature.entirePlace",
-        "rooms.feature.freeParking",
-        "rooms.feature.breakfastIncluded",
-        "rooms.feature.balcony",
-        "rooms.feature.privateBathroom",
-        "rooms.feature.freeWifi",
-        "rooms.feature.shower",
-        "rooms.feature.airConditioning",
-        "rooms.feature.flatScreenTV",
-        "rooms.feature.kitchenette",
-        "rooms.feature.nonSmoking",
-        "rooms.feature.familyFriendly"
-      ]
-    }))
-  }
 
   // HomePageClient will use the context for translations
   return <HomePageClient featuredRooms={featuredRooms} />

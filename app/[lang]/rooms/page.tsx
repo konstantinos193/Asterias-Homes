@@ -10,7 +10,7 @@ export default function RoomsPage({ params }: { params: { lang: string } }) {
   const [rooms, setRooms] = useState<Room[]>([])
 
   useEffect(() => {
-    getRooms().then((data) => setRooms(data.rooms || []))
+    getRooms().then((rooms) => setRooms(rooms || []))
   }, [])
 
   if (!rooms.length) {

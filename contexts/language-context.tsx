@@ -58,11 +58,14 @@ export const LanguageProvider = ({
   }, [initialLanguage]);
 
   useEffect(() => {
-    const savedLanguage = localStorage.getItem("language") as LanguageCode;
-    if (savedLanguage && ["el", "en", "de"].includes(savedLanguage)) {
-      setLanguageState(savedLanguage);
+    // Only load from localStorage if no initialLanguage is provided
+    if (!initialLanguage) {
+      const savedLanguage = localStorage.getItem("language") as LanguageCode;
+      if (savedLanguage && ["el", "en", "de"].includes(savedLanguage)) {
+        setLanguageState(savedLanguage);
+      }
     }
-  }, []);
+  }, [initialLanguage]);
 
   const setLanguage = useCallback((lang: LanguageCode) => {
     setLanguageState(lang);

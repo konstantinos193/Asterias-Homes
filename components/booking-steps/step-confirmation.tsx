@@ -139,6 +139,18 @@ export default function StepConfirmation({ bookingData }: StepConfirmationProps)
           </p>
         </div>
 
+        {/* Show booking number if available */}
+        {bookingData.bookingResult?.booking?.bookingNumber && (
+          <div className="border-t border-slate-200 pt-4">
+            <p className="text-sm text-slate-500 font-alegreya">
+              {t("bookingWizard.confirmation.bookingNumber") || "Booking Number"}
+            </p>
+            <p className="text-slate-700 font-medium font-alegreya">
+              #{bookingData.bookingResult.booking.bookingNumber}
+            </p>
+          </div>
+        )}
+
         {selectedRoom && bookingData.paymentMethod === "card" && (
           <div className="border-t border-slate-200 pt-4 mt-4">
             <div className="flex justify-between items-center font-cormorant text-lg">

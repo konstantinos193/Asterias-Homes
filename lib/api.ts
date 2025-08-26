@@ -44,29 +44,40 @@ export const paymentsAPI = {
     children?: number;
     currency?: string;
   }) => {
-    // Use backend endpoint through admin proxy for proper database integration
-    return apiRequest('/api/admin/payments/create-payment-intent', {
+    // Call backend directly for payment intent creation
+    const response = await fetch('https://asterias-backend.onrender.com/api/payments/create-payment-intent', {
       method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
       body: JSON.stringify(bookingData),
     });
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
+    return response.json();
   },
   confirmPayment: async (paymentData: {
     paymentIntentId: string;
     guestInfo: any;
     specialRequests?: string;
   }) => {
-    // Determine language from URL or use default
-    const urlPath = window.location.pathname;
-    const pathLang = urlPath.startsWith('/en') ? 'en' : urlPath.startsWith('/de') ? 'de' : 'el';
-    
-    return apiRequest('/api/confirm-payment', {
+    // Call backend directly for payment confirmation
+    const response = await fetch('https://asterias-backend.onrender.com/api/payments/confirm-payment', {
       method: 'POST',
-      body: JSON.stringify(paymentData),
       headers: {
         'Content-Type': 'application/json',
-        'Accept-Language': `${pathLang},${navigator.language || 'el'},el;q=0.9`
-      }
+      },
+      body: JSON.stringify(paymentData),
     });
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
+    return response.json();
   }
 };
 
@@ -164,9 +175,11 @@ export const roomsAPI = {
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
-    const rooms = await response.json();
+    const data = await response.json();
+    // Backend returns { rooms: [...] }, so we need to handle that structure
+    const roomsArray = data.rooms || data;
     // Map _id to id for backward compatibility
-    return rooms.map((room: any) => ({
+    return roomsArray.map((room: any) => ({
       ...room,
       id: room._id
     }));

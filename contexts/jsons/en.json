@@ -63,7 +63,7 @@
     "rooms": {
       "standard": {
         "name": "Standard Apartment",
-        "description": "A beautifully furnished apartment with modern amenities, perfect for a relaxing getaway in Koronisia. All our apartments are identical in style and layout, offering consistent comfort and quality."
+        "description": "A classically furnished apartment with traditional style, perfect for a relaxing getaway in Koronisia. All our apartments are identical in style and layout, offering comfort and authenticity of the area."
       }
     },
     "roomCard": {
@@ -149,6 +149,7 @@
       "days": "days",
       "from": "From",
       "perNight": "/night",
+      "total": "Total",
       "viewOffer": "View Offer",
       "moreDetails": "More Details",
       "viewAllOffers": "View All Offers"
@@ -522,6 +523,7 @@
       },
       "filters": {
         "title": "Filter Your Results",
+        "openButton": "Filters",
         "priceRangeLabel": "Price Range (per night)",
         "roomTypeLabel": "Apartment Type",
         "roomType": {
@@ -537,15 +539,22 @@
       },
       "roomList": {
         "unavailableOverlay": "Currently Unavailable",
-        "capacityText": "Up to {count} guests",
-        "pricePerNight": "per night",
-        "totalPrice": "Total: {price}€",
-        "detailsButton": "View Details",
-        "bookButton": "Book Now",
-        "unavailableButton": "Unavailable",
-        "noRoomsFoundTitle": "No Apartments Found",
-        "noRoomsFoundSubtitle": "Try adjusting your search criteria or filters.",
-        "clearFiltersButton": "Clear All Filters"
+        "availableText": "Available",
+        "roomConfiguration": "Room Configuration",
+        "bedConfiguration": "Bed Configuration",
+        "kitchenIncluded": "Private Kitchen Included",
+        "balconyIncluded": "Balcony Included",
+        "roomType": "Room Type",
+        "roomDescription": "Room Description",
+        "standardApartment": "Standard Apartment",
+        "doubleBed": "Double Bed",
+        "singleBeds": "Single Beds",
+        "upToGuests": "Up to {count} guests",
+        "privateKitchen": "Private Kitchen Included",
+        "squareMeters": "{size} m²",
+        "perNight": "per night",
+        "viewDetails": "View Details",
+        "bookNow": "Book Now"
       },
       "benefits": {
         "title": "Why Book With Us?",
@@ -627,7 +636,6 @@
     },
     "bookingWizard": {
       "steps": {
-        "dates": "Select Dates",
         "room": "Room Details",
         "guestInfo": "Guest Information",
         "payment": "Payment",
@@ -644,32 +652,36 @@
         "back": "Back",
         "confirm": "Confirm Booking"
       },
-      "dates": {
-        "title": "Select Your Stay Dates",
-        "subtitle": "Please select your stay dates and number of guests",
-        "checkIn": "Check-in Date",
-        "checkOut": "Check-out Date",
-        "selectDate": "Select date",
-        "adults": "Number of Adults",
-        "children": "Number of Children",
-        "adultsLabel": "Adult(s)",
-        "childrenLabel": "Child(ren)",
-        "nights": "Total Nights: {count}",
-        "validation": {
-          "checkInRequired": "Check-in date is required",
-          "checkOutRequired": "Check-out date is required",
-          "invalidDates": "Check-out must be after check-in",
-          "minStay": "Minimum stay is 1 night",
-          "maxStay": "Maximum stay is 30 nights"
-        }
-      },
       "roomDetails": {
-        "title": "Room Information",
+        "title": "Your Selected Room",
+        "confirmation": "Confirm your room selection",
+        "description": "A beautifully furnished classic apartment with traditional amenities, perfect for a relaxing getaway in Koronisia. All our apartments are identical in style and layout, offering consistent comfort and authentic local character.",
+        "guests": "guests",
+        "features": "Room Features",
+        "pricePerNight": "Price per night",
+        "confirmed": "Room selection confirmed!",
+        "proceed": "You can now proceed to the next step to enter your guest information.",
+        "view": "Garden or Sea View",
+        "bathroom": "Private Bathroom with Shower",
         "roomType": "Room Type",
         "capacity": "Capacity",
         "size": "Size",
         "amenities": "Amenities",
-        "totalPrice": "Total Price for {nights} nights: €{price}"
+        "totalPrice": "Total Price for {nights} nights: €{price}",
+        "feature": {
+          "entireplace": "Entire Place",
+          "freeparking": "Free Parking",
+          "breakfastincluded": "Breakfast Included",
+          "balcony": "Balcony",
+          "privatebathroom": "Private Bathroom",
+          "freewifi": "Free WiFi",
+          "shower": "Shower",
+          "airconditioning": "Air Conditioning",
+          "flatscreentv": "Flat-screen TV",
+          "kitchenette": "Kitchenette",
+          "nonsmoking": "Non-smoking",
+          "familyfriendly": "Family Friendly"
+        }
       },
       "guestInfo": {
         "title": "Guest Information",
@@ -688,7 +700,6 @@
         "checkInTime": "Check-in: 15:00 - 22:00",
         "checkOutTime": "Check-out: 08:00 - 11:00",
         "cancellationPolicy": "Free cancellation up to 48 hours before arrival",
-        "childrenPolicy": "Children under 12 years stay free",
         "validation": {
           "firstNameRequired": "First name is required",
           "lastNameRequired": "Last name is required",
@@ -730,6 +741,7 @@
         "roomNotFound": "Room Not Found",
         "anyQuestions": "If you have any questions, feel free to",
         "contactUs": "contact us",
+        "bookingNumber": "Booking Number",
         "nextSteps": "Next Steps",
         "emailSent": "A confirmation email has been sent to {email}",
         "contactInfo": "If you have any questions, please contact us"
@@ -1051,5 +1063,69 @@
             "date": "2024"
           }
       }
+    },
+    "roomSelection": {
+      "title": "Choose Your Room Option",
+      "subtitle": "Select the best option for {guests} guests",
+      "standardApartment": "Standard Apartment",
+      "description": "Classic apartment with traditional style. Same layout and comfort in all rooms.",
+      "guestInfo": "For {guests} guests, you need {rooms} room(s). Each room accommodates up to {capacity} guests.",
+      "notEnoughRooms": "Sorry, you need {required} rooms but only {available} are available.",
+      "features": "Features",
+      "feature1": "1 Double Bed + 2 Single Beds",
+      "feature1Multiple": "{quantity} × (1 Double Bed + 2 Single Beds)",
+      "feature2": "35 sq.m. with balcony",
+      "feature3": "Kitchen + Bathroom with shower",
+      "amenities": "Amenities",
+      "pricePerRoom": "€{price} per room per night",
+      "save": "Save €{amount}",
+
+      "selectRooms": "Continue to Guest Info",
+      "insufficientRooms": "Not enough rooms available for your group size",
+      "noRoomsAvailable": "No Rooms Available",
+      "insufficientRoomsExplanation": "You need {required} rooms but only {available} are available for these dates.",
+            "noDatesTitle": "Select Your Dates First",
+      "noDatesDescription": "Please choose your arrival and departure dates to see available room options and pricing.",
+      "multipleRoomsExplanation": "Multiple rooms required for your group size",
+      "multiRoomTitle": "Multiple Rooms Required",
+      "multiRoomDescription": "For {guests} guests, you need {rooms} rooms since each room accommodates up to {capacity} guests.",
+      "understand": "I Understand"
+    },
+    "bookPage": {
+      "title": "Confirm Your Booking",
+      "subtitle": "You're just one step away from experiencing the luxury of Asterias Homes. Please review your booking details below.",
+      "summary": "Booking Summary",
+      "summarySubtitle": "Your selected accommodation details",
+      "accommodationDetails": "Accommodation Details",
+      "stayDetails": "Stay Details",
+      "includedFeatures": "Included Features",
+      "pricingBreakdown": "Pricing Breakdown",
+      "rooms": "Rooms",
+      "guests": "Guests",
+      "roomType": "Room Type",
+      "checkIn": "Check-in",
+      "checkOut": "Check-out",
+      "nights": "Nights",
+      "totalPrice": "Total Price",
+      "pricePerRoom": "Price per room/night",
+      "total": "Total",
+      "freeWifi": "Free WiFi",
+      "airConditioning": "Air Conditioning",
+      "flatScreenTv": "Flat-screen TV",
+      "safe": "Safe",
+      "privateBathroom": "Private Bathroom",
+      "balcony": "Balcony",
+      "backButton": "Back to Selection",
+      "startBookingButton": "Start Booking",
+      "secureBooking": "Secure & Easy Booking Process",
+      "info": "Click \"Start Booking\" to proceed with your reservation. You will be guided through the booking process step by step with secure payment options.",
+      "invalidData": "Invalid Booking Data",
+      "noDataFound": "No booking information found. Please go back and select your room.",
+      "backToSelection": "Back to Room Selection",
+      "loading": "Loading Booking Details",
+      "loadingMessage": "Please wait while we prepare your booking summary..."
+    },
+    "loading": {
+      "rooms": "Loading rooms from backend..."
     }
   }

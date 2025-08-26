@@ -1,0 +1,363 @@
+{
+  "houses": [
+    {
+      "id": "cyan-house-1",
+      "backgroundColor": "cyan",
+      "description": "Cyan house with multiple room types",
+      "roomTypes": [
+        {
+          "type": "double-bed",
+          "description": "Double bed room",
+          "images": [
+            {
+              "url": "https://i.imgur.com/4NL5ksl.jpeg",
+              "description": "Double bed, cyan background"
+            },
+            {
+              "url": "https://i.imgur.com/nUevEKg.jpeg", 
+              "description": "Double bed, cyan background"
+            },
+            {
+              "url": "https://i.imgur.com/m6b1tO9.jpeg",
+              "description": "Double bed, cyan background"
+            },
+            {
+              "url": "https://i.imgur.com/9sylhCa.jpeg",
+              "description": "Double bed, cyan background"
+            },
+            {
+              "url": "https://i.imgur.com/SaUgzp5.jpeg",
+              "description": "Double bed, cyan background"
+            },
+            {
+              "url": "https://i.imgur.com/MzlE9rg.jpeg",
+              "description": "Double bed, cyan background"
+            },
+            {
+              "url": "https://i.imgur.com/Tur9rik.jpeg",
+              "description": "Double bed, cyan background"
+            }
+          ]
+        },
+        {
+          "type": "two-single-beds",
+          "description": "Two single beds room",
+          "images": [
+            {
+              "url": "https://i.imgur.com/sIO85j6.jpeg",
+              "description": "Two single beds, cyan background"
+            },
+            {
+              "url": "https://i.imgur.com/QKExnz5.jpeg",
+              "description": "Two single beds, cyan background"
+            },
+            {
+              "url": "https://i.imgur.com/WW6oIhy.jpeg",
+              "description": "Two single beds, cyan background"
+            },
+            {
+              "url": "https://i.imgur.com/Rs4ey8R.jpeg",
+              "description": "Two single beds, cyan background"
+            },
+            {
+              "url": "https://i.imgur.com/OEFGnld.jpeg",
+              "description": "Two single beds, cyan background"
+            },
+            {
+              "url": "https://i.imgur.com/dJsHNCn.jpeg",
+              "description": "Two single beds, cyan background"
+            },
+            {
+              "url": "https://i.imgur.com/HDDAUDg.jpeg",
+              "description": "Two single beds, cyan background"
+            },
+            {
+              "url": "https://i.imgur.com/EYGEw7Q.jpeg",
+              "description": "Two single beds, cyan background"
+            },
+            {
+              "url": "https://i.imgur.com/eRhxIAC.jpeg",
+              "description": "Two single beds, cyan background"
+            },
+            {
+              "url": "https://i.imgur.com/Xwukcpy.jpeg",
+              "description": "Two single beds, cyan background"
+            },
+            {
+              "url": "https://i.imgur.com/iipJIp4.jpeg",
+              "description": "Two single beds, cyan background"
+            },
+            {
+              "url": "https://i.imgur.com/VfzTS9s.jpeg",
+              "description": "Two single beds, cyan background"
+            },
+            {
+              "url": "https://i.imgur.com/vCim59r.jpeg",
+              "description": "Two single beds, cyan background"
+            }
+          ]
+        },
+        {
+          "type": "bathroom",
+          "description": "Bathroom with modern fixtures",
+          "images": [
+            {
+              "url": "https://i.imgur.com/3MkeYBa.png",
+              "description": "Cyan house bathroom overview"
+            },
+            {
+              "url": "https://i.imgur.com/5P60mSS.png",
+              "description": "Cyan house bathroom sink area"
+            },
+            {
+              "url": "https://i.imgur.com/vizCDPx.png",
+              "description": "Cyan house bathroom shower area"
+            },
+            {
+              "url": "https://i.imgur.com/cMAvMNN.png",
+              "description": "Cyan house bathroom toilet area"
+            },
+            {
+              "url": "https://i.imgur.com/CijxizR.png",
+              "description": "Cyan house bathroom detail view"
+            }
+          ]
+        }
+      ],
+      "displayLogic": "Show only 1 random image per room type to avoid duplicate house display"
+    }
+  ],
+  "standardApartments": {
+    "id": "standard-apartment-1",
+    "name": "Standard Apartment",
+    "description": "35m² apartment with 1 double bed + 2 single beds, kitchen, and bathroom",
+    "capacity": 4,
+    "totalRooms": 7,
+    "roomTypes": [
+      {
+        "type": "bedroom-main",
+        "description": "Main bedroom area with double bed",
+        "images": [
+          {
+            "url": "/compressed/4O5A9031.png",
+            "description": "Main bedroom with double bed - wide view",
+            "category": "bedroom"
+          },
+          {
+            "url": "/compressed/4O5A9030.png",
+            "description": "Main bedroom with double bed - close view",
+            "category": "bedroom"
+          },
+          {
+            "url": "/compressed/4O5A9029.png",
+            "description": "Main bedroom with double bed - side view",
+            "category": "bedroom"
+          }
+        ]
+      },
+      {
+        "type": "bedroom-secondary",
+        "description": "Secondary sleeping area with single beds",
+        "images": [
+          {
+            "url": "/compressed/4O5A9028.png",
+            "description": "Secondary bedroom with single beds",
+            "category": "bedroom"
+          },
+          {
+            "url": "/compressed/4O5A9027.png",
+            "description": "Secondary bedroom with single beds - alternate view",
+            "category": "bedroom"
+          }
+        ]
+      },
+      {
+        "type": "kitchen",
+        "description": "Kitchen area with appliances",
+        "images": [
+          {
+            "url": "/compressed/4O5A9026.png",
+            "description": "Kitchen area with counter and appliances",
+            "category": "kitchen"
+          },
+          {
+            "url": "/compressed/4O5A9025.png",
+            "description": "Kitchen with dining area",
+            "category": "kitchen"
+          },
+          {
+            "url": "/compressed/4O5A9024.png",
+            "description": "Kitchen close-up view",
+            "category": "kitchen"
+          }
+        ]
+      },
+      {
+        "type": "bathroom",
+        "description": "Private bathroom with shower",
+        "images": [
+          {
+            "url": "/compressed/4O5A9023.png",
+            "description": "Bathroom overview with shower",
+            "category": "bathroom"
+          },
+          {
+            "url": "/compressed/4O5A9022.png",
+            "description": "Bathroom sink area",
+            "category": "bathroom"
+          },
+          {
+            "url": "/compressed/4O5A9021.png",
+            "description": "Bathroom shower area",
+            "category": "bathroom"
+          }
+        ]
+      },
+      {
+        "type": "living-area",
+        "description": "Living and dining space",
+        "images": [
+          {
+            "url": "/compressed/4O5A9020.png",
+            "description": "Living area with seating",
+            "category": "living"
+          },
+          {
+            "url": "/compressed/4O5A9019.png",
+            "description": "Living area alternate view",
+            "category": "living"
+          },
+          {
+            "url": "/compressed/4O5A9018.png",
+            "description": "Dining area",
+            "category": "living"
+          }
+        ]
+      },
+      {
+        "type": "exterior-views",
+        "description": "Exterior and balcony views",
+        "images": [
+          {
+            "url": "/compressed/4O5A9017.png",
+            "description": "Balcony view",
+            "category": "exterior"
+          },
+          {
+            "url": "/compressed/4O5A9016.png",
+            "description": "Exterior building view",
+            "category": "exterior"
+          },
+          {
+            "url": "/compressed/4O5A9015.png",
+            "description": "Garden or sea view",
+            "category": "exterior"
+          }
+        ]
+      },
+      {
+        "type": "amenities",
+        "description": "Room amenities and features",
+        "images": [
+          {
+            "url": "/compressed/4O5A9014.png",
+            "description": "WiFi and TV setup",
+            "category": "amenities"
+          },
+          {
+            "url": "/compressed/4O5A9013.png",
+            "description": "Air conditioning unit",
+            "category": "amenities"
+          },
+          {
+            "url": "/compressed/4O5A9012.png",
+            "description": "Safe and storage",
+            "category": "amenities"
+          }
+        ]
+      }
+    ],
+    "features": [
+      "1 Double Bed + 2 Single Beds",
+      "Private Kitchen",
+      "Private Bathroom with Shower",
+      "Balcony with View",
+      "Free WiFi",
+      "Air Conditioning",
+      "Flat-screen TV",
+      "Safe",
+      "Free Parking",
+      "Non-smoking"
+    ],
+    "displayLogic": "Show 3-4 best images per category in room selection, full gallery in room details"
+  },
+  "additionalViews": {
+    "id": "additional-views",
+    "description": "Additional room views and angles for comprehensive display",
+    "images": [
+      {
+        "url": "/compressed/4O5A9011.png",
+        "description": "Additional room view 1",
+        "category": "additional"
+      },
+      {
+        "url": "/compressed/4O5A9010.png",
+        "description": "Additional room view 2",
+        "category": "additional"
+      },
+      {
+        "url": "/compressed/4O5A9009.png",
+        "description": "Additional room view 3",
+        "category": "additional"
+      },
+      {
+        "url": "/compressed/4O5A9008.png",
+        "description": "Additional room view 4",
+        "category": "additional"
+      },
+      {
+        "url": "/compressed/4O5A9007.png",
+        "description": "Additional room view 5",
+        "category": "additional"
+      },
+      {
+        "url": "/compressed/4O5A9006.png",
+        "description": "Additional room view 6",
+        "category": "additional"
+      },
+      {
+        "url": "/compressed/4O5A9005.png",
+        "description": "Additional room view 7",
+        "category": "additional"
+      },
+      {
+        "url": "/compressed/4O5A9004.png",
+        "description": "Additional room view 8",
+        "category": "additional"
+      },
+      {
+        "url": "/compressed/4O5A9003.png",
+        "description": "Additional room view 9",
+        "category": "additional"
+      },
+      {
+        "url": "/compressed/4O5A9002.png",
+        "description": "Additional room view 10",
+        "category": "additional"
+      }
+    ]
+  },
+  "metadata": {
+    "totalImages": 127,
+    "organizedImages": 40,
+    "remainingImages": 87,
+    "lastUpdated": "2025-01-26",
+    "description": "Comprehensive image system with both existing URL images and new compressed images, organized by room areas and features",
+    "usage": {
+      "roomSelection": "Show 3-4 best images per category",
+      "roomDetails": "Show full gallery with all images",
+      "checkout": "Show selected room images during booking process",
+      "admin": "Use for room management and updates"
+    }
+  }
+}

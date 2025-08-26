@@ -108,7 +108,6 @@ export default function StepGuestInfo({ bookingData, updateBookingData }: StepGu
           <li>• {t("bookingWizard.guestInfo.checkInTime")}</li>
           <li>• {t("bookingWizard.guestInfo.checkOutTime")}</li>
           <li>• {t("bookingWizard.guestInfo.cancellationPolicy")}</li>
-          <li>• {t("bookingWizard.guestInfo.childrenPolicy")}</li>
         </ul>
       </div>
     </div>

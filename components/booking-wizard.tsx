@@ -1,9 +1,8 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Check, ChevronLeft, ChevronRight, Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import StepDates from "./booking-steps/step-dates"
 import StepRoomDetails from "./booking-steps/step-room-details"
 import StepGuestInfo from "./booking-steps/step-guest-info"
 import StepPayment from "./booking-steps/step-payment"
@@ -15,27 +14,47 @@ import { paymentsAPI } from "@/lib/api"
 import { useStripe, useElements, CardElement } from "@stripe/react-stripe-js" // Import Stripe hooks
 
 const stepsConfig = (t: Function) => [
-  { id: 1, name: t("bookingWizard.steps.dates"), component: StepDates },
-  { id: 2, name: t("bookingWizard.steps.room"), component: StepRoomDetails },
-  { id: 3, name: t("bookingWizard.steps.guestInfo"), component: StepGuestInfo },
-  { id: 4, name: t("bookingWizard.steps.payment"), component: StepPayment },
-  { id: 5, name: t("bookingWizard.steps.confirmation"), component: StepConfirmation },
+  { id: 1, name: t("bookingWizard.steps.room"), component: StepRoomDetails },
+  { id: 2, name: t("bookingWizard.steps.guestInfo"), component: StepGuestInfo },
+  { id: 3, name: t("bookingWizard.steps.payment"), component: StepPayment },
+  { id: 4, name: t("bookingWizard.steps.confirmation"), component: StepConfirmation },
 ]
 
 interface BookingWizardProps {
   initialRoomId: string
+  preFilledData?: {
+    checkIn?: string
+    checkOut?: string
+    adults?: number
+    children?: number
+    rooms?: number
+    price?: number
+    guests?: number
+  }
+  language?: string // Add language prop to preserve context
 }
 
-export default function BookingWizard({ initialRoomId }: BookingWizardProps) {
-  const { t, language } = useLanguage()
+export default function BookingWizard({ initialRoomId, preFilledData, language }: BookingWizardProps) {
+  const { t, language: contextLanguage, setLanguage } = useLanguage()
+  
+  // Use the passed language prop to set the context language if different
+  useEffect(() => {
+    if (language && language !== contextLanguage) {
+      setLanguage(language as "el" | "en" | "de")
+    }
+  }, [language, contextLanguage, setLanguage])
+  
   const steps = stepsConfig(t)
+  
+  // Always start from step 1 (Room Details) since dates are pre-filled
   const [currentStep, setCurrentStep] = useState(1)
+  
   const [bookingData, setBookingData] = useState<BookingData>({
     roomId: initialRoomId,
-    checkIn: undefined,
-    checkOut: undefined,
-    adults: 2,
-    children: 0,
+    checkIn: preFilledData?.checkIn ? new Date(preFilledData.checkIn) : undefined,
+    checkOut: preFilledData?.checkOut ? new Date(preFilledData.checkOut) : undefined,
+    adults: preFilledData?.adults || 2,
+    children: preFilledData?.children || 0,
     guestInfo: {
       firstName: "",
       lastName: "",
@@ -46,40 +65,48 @@ export default function BookingWizard({ initialRoomId }: BookingWizardProps) {
     paymentMethod: "card", // Default to card
     // cardDetails are no longer needed here if Stripe handles them directly
   })
+  
   const [isProcessingPayment, setIsProcessingPayment] = useState(false)
   const [paymentError, setPaymentError] = useState<string | null>(null)
+  const [isCardComplete, setIsCardComplete] = useState(false) // Track card completion
 
   const stripe = useStripe()
   const elements = useElements()
 
   const updateBookingData = (data: Partial<BookingData>) => {
     setBookingData((prev) => ({ ...prev, ...data }))
-    if (data.paymentMethod) setPaymentError(null) // Clear error on payment method change
+    if (data.paymentMethod) {
+      setPaymentError(null) // Clear error on payment method change
+      setIsCardComplete(false) // Reset card completion when payment method changes
+    }
   }
 
   const isStepValid = (step: number): boolean => {
-    // ... (keep existing validation logic)
-    // For step 4 (Payment), if method is 'card', Stripe element validity is handled at submission
-    // For step 4 (Payment), if method is 'cash', it's always valid to proceed
     switch (step) {
-      case 1:
-        return !!(bookingData.checkIn && bookingData.checkOut && bookingData.adults > 0)
-      case 2:
+      case 1: // Room Details (now step 1)
         return !!bookingData.roomId
-      case 3:
+      case 2: // Guest Information (now step 2)
         return !!(
           bookingData.guestInfo.firstName &&
           bookingData.guestInfo.lastName &&
           bookingData.guestInfo.email &&
           bookingData.guestInfo.phone
         )
-      case 4: // Payment step
+      case 3: // Payment step (now step 3)
+        // For cash payment, it's always valid to proceed
         if (bookingData.paymentMethod === "cash") return true
-        // For card, Stripe element handles validation, so we assume it's valid to proceed to confirmation
-        // Actual card validation happens on final submission.
-        return true
-      case 5: // Confirmation step
-        return true
+        // For card payment, we need to validate that Stripe is loaded and card details are entered
+        if (!stripe || !elements) return false
+        // Check if card element has been interacted with (basic validation)
+        const cardElement = elements.getElement(CardElement)
+        if (!cardElement) return false
+        // Use our state variable to track card completion
+        return isCardComplete
+      case 4: // Confirmation step (now step 4)
+        // Only allow confirmation if payment is properly set up
+        if (bookingData.paymentMethod === "cash") return true
+        // For card payments, ensure Stripe is ready
+        return !!(stripe && elements)
       default:
         return false
     }
@@ -88,8 +115,47 @@ export default function BookingWizard({ initialRoomId }: BookingWizardProps) {
   const canProceed = isStepValid(currentStep)
   const canGoBack = currentStep > 1
 
-  const handleNext = () => {
+  const handleNext = async () => {
     if (canProceed && currentStep < steps.length) {
+      // If we're on the payment step (step 3), process payment before proceeding
+      if (currentStep === 3) {
+        if (bookingData.paymentMethod === "card") {
+          await handleSubmitBooking()
+          return // Don't proceed if payment is being processed
+        } else if (bookingData.paymentMethod === "cash") {
+          // For cash payments, create the booking directly
+          try {
+            setIsProcessingPayment(true)
+            const confirmationResult = await paymentsAPI.confirmPayment({
+              paymentIntentId: null, // No payment intent for cash
+              guestInfo: {
+                ...bookingData.guestInfo,
+                language: language
+              },
+              specialRequests: bookingData.guestInfo.specialRequests
+            });
+            
+            console.log("Cash booking created:", confirmationResult);
+            
+            // Proceed to confirmation step
+            setCurrentStep(currentStep + 1)
+            setIsProcessingPayment(false)
+            
+            // Store the booking result
+            setBookingData(prev => ({
+              ...prev,
+              bookingResult: confirmationResult
+            }))
+            return
+          } catch (error: any) {
+            console.error("Cash booking creation failed:", error);
+            setPaymentError(error.message || t("bookingWizard.errors.bookingCreationFailed"));
+            setIsProcessingPayment(false);
+            return;
+          }
+        }
+      }
+      
       setCurrentStep(currentStep + 1)
       setPaymentError(null) // Clear previous errors
     }
@@ -187,7 +253,16 @@ export default function BookingWizard({ initialRoomId }: BookingWizardProps) {
           });
           
           console.log("Booking created:", confirmationResult);
-          window.location.href = `/success?payment_intent=${paymentIntent.id}&payment_method=card&booking_id=${confirmationResult.booking?.bookingNumber}`; // Redirect to success page
+          
+          // Instead of redirecting, proceed to the next step (confirmation)
+          setCurrentStep(currentStep + 1)
+          setIsProcessingPayment(false)
+          
+          // Store the booking result for the confirmation step
+          setBookingData(prev => ({
+            ...prev,
+            bookingResult: confirmationResult
+          }))
         } catch (confirmError: any) {
           console.error("Booking creation failed:", confirmError);
           setPaymentError(confirmError.message || t("bookingWizard.errors.bookingCreationFailed"));
@@ -207,98 +282,106 @@ export default function BookingWizard({ initialRoomId }: BookingWizardProps) {
   const CurrentStepComponent = steps[currentStep - 1].component
 
   return (
-    <div className="max-w-4xl mx-auto">
-      {/* Progress Indicator */}
-      <div className="mb-8">
-        <div className="flex items-center justify-between overflow-x-auto pb-2">
-          {steps.map((step, index) => (
-            <div key={step.id} className={`flex items-center ${index < steps.length - 1 ? "flex-1" : ""}`}>
-              <button
-                onClick={() => handleStepClick(step.id)}
-                className={`flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 rounded-full border-2 transition-colors shrink-0 ${
-                  step.id < currentStep
-                    ? "bg-[#0A4A4A] border-[#0A4A4A] text-white cursor-pointer"
-                    : step.id === currentStep
-                      ? "border-[#0A4A4A] text-[#0A4A4A] cursor-pointer"
-                      : "border-slate-300 text-slate-400 cursor-default" // Changed to cursor-default for future steps
-                }`}
-                // disabled={step.id > currentStep && !isStepValid(step.id - 1)} // Allow clicking to current step
-              >
-                {step.id < currentStep ? (
-                  <Check className="w-4 h-4 sm:w-5 sm:h-5" />
-                ) : (
-                  <span className="font-semibold text-sm sm:text-base">{step.id}</span>
-                )}
-              </button>
-              <div className="ml-2 sm:ml-3 hidden md:block">
-                <p
-                  className={`text-xs sm:text-sm font-medium ${step.id <= currentStep ? "text-slate-800" : "text-slate-400"}`}
-                >
-                  {step.name}
-                </p>
-              </div>
-              {index < steps.length - 1 && (
-                <div
-                  className={`flex-1 h-0.5 ml-2 sm:ml-4 mr-2 sm:mr-4 ${
-                    step.id < currentStep ? "bg-[#0A4A4A]" : "bg-slate-300"
+    <>
+      {/* Background gradient matching main page */}
+      <div className="fixed inset-0 -z-10 bg-gradient-to-br from-[#f8f6f1] via-[#e8e2d5] to-[#dbe6e4]" aria-hidden="true" />
+      
+      <div className="max-w-4xl mx-auto">
+        {/* Progress Indicator */}
+        <div className="mb-8">
+          <div className="flex items-center justify-between overflow-x-auto pb-2">
+            {steps.map((step, index) => (
+              <div key={step.id} className={`flex items-center ${index < steps.length - 1 ? "flex-1" : ""}`}>
+                <button
+                  onClick={() => handleStepClick(step.id)}
+                  className={`flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 rounded-full border-2 transition-colors shrink-0 ${
+                    step.id < currentStep
+                      ? "bg-[#0A4A4A] border-[#0A4A4A] text-white cursor-pointer"
+                      : step.id === currentStep
+                        ? "border-[#0A4A4A] text-[#0A4A4A] cursor-pointer"
+                        : "border-slate-300 text-slate-400 cursor-default"
                   }`}
-                />
-              )}
-            </div>
-          ))}
+                >
+                  {step.id < currentStep ? (
+                    <Check className="w-4 h-4 sm:w-5 sm:h-5" />
+                  ) : (
+                    <span className="font-semibold text-sm sm:text-base">{step.id}</span>
+                  )}
+                </button>
+                <div className="ml-2 sm:ml-3 hidden md:block">
+                  <p
+                    className={`text-xs sm:text-sm font-medium ${step.id <= currentStep ? "text-slate-800" : "text-slate-400"}`}
+                  >
+                    {step.name}
+                  </p>
+                </div>
+                {index < steps.length - 1 && (
+                  <div
+                    className={`flex-1 h-0.5 ml-2 sm:ml-4 mr-2 sm:mr-4 ${
+                      step.id < currentStep ? "bg-[#0A4A4A]" : "bg-slate-300"
+                    }`}
+                  />
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Step Content */}
+        <div className="bg-white/80 backdrop-blur-sm border border-slate-200 rounded-lg p-4 sm:p-6 mb-6 min-h-[300px] shadow-lg">
+          <CurrentStepComponent
+            bookingData={bookingData}
+            updateBookingData={updateBookingData}
+            // Pass paymentError and setIsCardComplete to StepPayment if it's the current component
+            {...(CurrentStepComponent === StepPayment && { 
+              paymentError,
+              setIsCardComplete 
+            })}
+          />
+        </div>
+
+        {/* Navigation */}
+        <div className="flex justify-between items-center">
+          <Button
+            variant="outline"
+            onClick={handleBack}
+            disabled={!canGoBack || isProcessingPayment}
+            className="flex items-center gap-2 px-8 py-3 bg-transparent border-2 border-slate-300 text-slate-700 hover:bg-slate-100 hover:border-slate-400 transition-colors font-alegreya"
+          >
+            <ChevronLeft className="w-4 h-4" />
+            {t("bookingWizard.buttons.previous")}
+          </Button>
+
+          {currentStep < steps.length ? (
+            <Button
+              onClick={handleNext}
+              disabled={!canProceed || isProcessingPayment}
+              className="flex items-center gap-2 px-8 py-3 bg-[#0A4A4A] hover:bg-[#083a3a] text-white border-2 border-[#0A4A4A] transition-colors font-alegreya"
+            >
+              {isProcessingPayment && currentStep === steps.length - 1 ? (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              ) : null}
+              {isProcessingPayment && currentStep === steps.length - 1
+                ? t("bookingWizard.buttons.processing")
+                : t("bookingWizard.buttons.next")}
+              {!isProcessingPayment && <ChevronRight className="w-4 w-4" />}
+            </Button>
+          ) : (
+            <Button
+              onClick={handleSubmitBooking}
+              disabled={!canProceed || isProcessingPayment || !stripe || !elements}
+              className="px-8 py-3 bg-[#0A4A4A] hover:bg-[#083a3a] text-white border-2 border-[#0A4A4A] transition-colors font-alegreya min-w-[180px]"
+            >
+              {isProcessingPayment ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+              {isProcessingPayment ? t("bookingWizard.buttons.processing") : t("bookingWizard.buttons.completeBooking")}
+            </Button>
+          )}
         </div>
       </div>
-
-      {/* Step Content */}
-      <div className="bg-white border border-slate-200 rounded-lg p-4 sm:p-6 mb-6 min-h-[300px]">
-        <CurrentStepComponent
-          bookingData={bookingData}
-          updateBookingData={updateBookingData}
-          // Pass paymentError to StepPayment if it's the current component
-          {...(CurrentStepComponent === StepPayment && { paymentError })}
-        />
-      </div>
-
-      {/* Navigation */}
-      <div className="flex justify-between items-center">
-        <Button
-          variant="outline"
-          onClick={handleBack}
-          disabled={!canGoBack || isProcessingPayment}
-          className="flex items-center gap-2"
-        >
-          <ChevronLeft className="w-4 h-4" />
-          {t("bookingWizard.buttons.previous")}
-        </Button>
-
-        {currentStep < steps.length ? (
-          <Button
-            onClick={handleNext}
-            disabled={!canProceed || isProcessingPayment}
-            className="flex items-center gap-2 bg-[#0A4A4A] hover:bg-[#083a3a]"
-          >
-            {isProcessingPayment && currentStep === steps.length - 1 ? (
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            ) : null}
-            {isProcessingPayment && currentStep === steps.length - 1
-              ? t("bookingWizard.buttons.processing")
-              : t("bookingWizard.buttons.next")}
-            {!isProcessingPayment && <ChevronRight className="w-4 h-4" />}
-          </Button>
-        ) : (
-          <Button
-            onClick={handleSubmitBooking}
-            disabled={!canProceed || isProcessingPayment || !stripe || !elements}
-            className="bg-[#0A4A4A] hover:bg-[#083a3a] min-w-[180px]"
-          >
-            {isProcessingPayment ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
-            {isProcessingPayment ? t("bookingWizard.buttons.processing") : t("bookingWizard.buttons.completeBooking")}
-          </Button>
-        )}
-      </div>
+      
       {currentStep === steps.length && paymentError && bookingData.paymentMethod === "card" && (
         <p className="text-sm text-red-600 font-alegreya mt-4 text-right">{paymentError}</p>
       )}
-    </div>
+    </>
   )
 }
