@@ -7,7 +7,7 @@ import { useLanguage } from "@/contexts/language-context"
 import { usePathname } from "next/navigation" // Import usePathname
 
 export default function Footer() {
-  const { t } = useLanguage()
+  const { t, language } = useLanguage()
   const pathname = usePathname() // Get current path
 
   // Don't render the main footer on admin pages
@@ -68,9 +68,6 @@ export default function Footer() {
                 </Link>
                 <Link href={`/${language}/contact`} className="text-slate-300 hover:text-white transition-colors font-alegreya font-light">
                   {t("nav.contact")}
-                </Link>
-                <Link href="/admin" className="text-slate-300 hover:text-white transition-colors font-alegreya font-light">
-                  {t("nav.admin")}
                 </Link>
               </div>
             </div>
