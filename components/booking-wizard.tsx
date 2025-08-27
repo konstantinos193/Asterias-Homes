@@ -112,10 +112,8 @@ export default function BookingWizard({ initialRoomId, preFilledData, language }
         // Use our state variable to track card completion
         return isCardComplete
       case 4: // Confirmation step (now step 4)
-        // Only allow confirmation if payment is properly set up
-        if (bookingData.paymentMethod === "cash") return true
-        // For card payments, ensure Stripe is ready
-        return !!(stripe && elements)
+        // Confirmation step is always valid - it's just a display step
+        return true
       default:
         return false
     }
@@ -273,7 +271,8 @@ export default function BookingWizard({ initialRoomId, preFilledData, language }
           console.log("Booking created:", confirmationResult);
           
           // Instead of redirecting, proceed to the next step (confirmation)
-          setCurrentStep(currentStep + 1)
+          console.log('✅ Payment successful, advancing to confirmation step. Current step:', currentStep, '-> New step:', currentStep + 1)
+          setCurrentStep(4) // Explicitly set to step 4 (confirmation)
           setIsProcessingPayment(false)
           setPaymentError(null) // Clear any payment errors
           
@@ -308,6 +307,10 @@ export default function BookingWizard({ initialRoomId, preFilledData, language }
       <div className="max-w-4xl mx-auto">
         {/* Progress Indicator */}
         <div className="mb-8">
+          {/* Debug info */}
+          <div className="text-xs text-slate-500 mb-2 text-center">
+            Debug: Current Step: {currentStep}, Total Steps: {steps.length}
+          </div>
           <div className="flex items-center justify-between overflow-x-auto pb-2">
             {steps.map((step, index) => (
               <div key={step.id} className={`flex items-center ${index < steps.length - 1 ? "flex-1" : ""}`}>
