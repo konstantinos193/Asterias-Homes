@@ -32,7 +32,7 @@ export default function AboutPage() {
               {t("about.heroDescription")}
             </p>
             <a
-              href="/bookings"
+              href={`/${params.lang}/bookings`}
               className="inline-block bg-[#8B4B5C] text-white font-alegreya px-6 py-3 rounded shadow hover:bg-[#A9AEA2] hover:text-[#8B4B5C] transition"
             >
               {t("about.bookNowButton")}

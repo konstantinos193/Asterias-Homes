@@ -44,12 +44,41 @@ export default function BookPage() {
     const fetchRoomData = async () => {
       try {
         const roomsData = await roomsAPI.getAll()
-        // Get the first available room (standard apartment)
-        const standardRoom = roomsData.find(room => room.name.toLowerCase().includes('standard'))
-        if (standardRoom) {
-          setRoomData(standardRoom)
+        
+        // Get all standard rooms
+        const standardRooms = roomsData.filter(room => room.name.toLowerCase().includes('standard'))
+        
+        if (standardRooms.length === 0) {
+          setRoomError('No standard rooms found')
+          return
+        }
+
+        // Check availability for each room and find an available one
+        let availableRoom = null
+        for (const room of standardRooms) {
+          try {
+            // Check if this specific room is available for the selected dates
+            const response = await fetch(`https://asterias-backend.onrender.com/api/rooms/${room._id}/availability?checkIn=${checkIn}&checkOut=${checkOut}`)
+            if (response.ok) {
+              const availabilityData = await response.json()
+              if (availabilityData.isAvailable) {
+                availableRoom = room
+                break
+              }
+            }
+          } catch (err) {
+            console.error(`Failed to check availability for room ${room._id}:`, err)
+            // Continue to next room
+          }
+        }
+
+        if (availableRoom) {
+          setRoomData(availableRoom)
+          console.log(`✅ Found available room: ${availableRoom._id} for dates ${checkIn} - ${checkOut}`)
         } else {
-          setRoomError('No standard room found')
+          // If no rooms are available, show the first standard room but with availability warning
+          setRoomData(standardRooms[0])
+          setRoomError('⚠️ All rooms are currently booked for the selected dates. Please try different dates or contact us for availability.')
         }
       } catch (err) {
         console.error('Failed to fetch room data:', err)

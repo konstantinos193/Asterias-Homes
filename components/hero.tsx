@@ -68,7 +68,7 @@ export default function Hero() {
           </p>
 
           <Link
-            href="/bookings"
+            href={`/${language}/bookings`}
             className="inline-block px-8 py-3 border-2 border-[#8B4B5C] text-white bg-rose-200/30 hover:bg-[#8B4B5C] hover:text-white transition-colors font-alegreya tracking-wide text-lg"
           >
             {t("hero.book")}

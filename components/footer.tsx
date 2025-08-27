@@ -54,19 +54,19 @@ export default function Footer() {
             <div className="flex flex-col items-center md:items-start">
               <h3 className="text-lg font-alegreya font-light mb-4 text-[#E8E2D5]">{t("footer.links")}</h3>
               <div className="grid grid-cols-2 gap-x-8 gap-y-3">
-                <Link href="/" className="text-slate-300 hover:text-white transition-colors font-alegreya font-light">
+                <Link href={`/${language}`} className="text-slate-300 hover:text-white transition-colors font-alegreya font-light">
                   {t("nav.home")}
                 </Link>
-                <Link href="/rooms" className="text-slate-300 hover:text-white transition-colors font-alegreya font-light">
+                <Link href={`/${language}/rooms`} className="text-slate-300 hover:text-white transition-colors font-alegreya font-light">
                   {t("nav.rooms")}
                 </Link>
-                <Link href="/about" className="text-slate-300 hover:text-white transition-colors font-alegreya font-light">
+                <Link href={`/${language}/about`} className="text-slate-300 hover:text-white transition-colors font-alegreya font-light">
                   {t("nav.about")}
                 </Link>
-                <Link href="/bookings" className="text-slate-300 hover:text-white transition-colors font-alegreya font-light">
+                <Link href={`/${language}/bookings`} className="text-slate-300 hover:text-white transition-colors font-alegreya font-light">
                   {t("nav.bookings")}
                 </Link>
-                <Link href="/contact" className="text-slate-300 hover:text-white transition-colors font-alegreya font-light">
+                <Link href={`/${language}/contact`} className="text-slate-300 hover:text-white transition-colors font-alegreya font-light">
                   {t("nav.contact")}
                 </Link>
                 <Link href="/admin" className="text-slate-300 hover:text-white transition-colors font-alegreya font-light">
