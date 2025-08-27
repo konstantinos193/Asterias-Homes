@@ -962,7 +962,7 @@
       "buttons": {
         "next": "Επόμενο",
         "previous": "Πίσω",
-        "completeBooking": "Ολοκλήρωση Κράτησης",
+        "completeBooking": "Επιστροφή στην Αρχική",
         "processing": "Επεξεργασία..."
       },
       "navigation": {

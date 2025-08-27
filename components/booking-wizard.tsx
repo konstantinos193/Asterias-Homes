@@ -387,12 +387,13 @@ export default function BookingWizard({ initialRoomId, preFilledData, language }
             </Button>
           ) : (
             <Button
-              onClick={handleSubmitBooking}
-              disabled={!canProceed || isProcessingPayment || !stripe || !elements}
+              onClick={() => {
+                // On the last step, this button can redirect to homepage or show a success message
+                window.location.href = `/${language || contextLanguage}`
+              }}
               className="px-8 py-3 bg-[#0A4A4A] hover:bg-[#083a3a] text-white border-2 border-[#0A4A4A] transition-colors font-alegreya min-w-[180px]"
             >
-              {isProcessingPayment ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
-              {isProcessingPayment ? t("bookingWizard.buttons.processing") : t("bookingWizard.buttons.completeBooking")}
+              {t("bookingWizard.buttons.completeBooking")}
             </Button>
           )}
         </div>

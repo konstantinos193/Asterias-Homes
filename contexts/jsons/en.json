@@ -644,7 +644,7 @@
       "buttons": {
         "next": "Next",
         "previous": "Previous",
-        "completeBooking": "Complete Booking",
+        "completeBooking": "Return to Homepage",
         "processing": "Processing..."
       },
       "navigation": {

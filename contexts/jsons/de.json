@@ -719,7 +719,7 @@
       "buttons": {
         "next": "Weiter",
         "previous": "Zurück",
-        "completeBooking": "Buchung abschließen",
+        "completeBooking": "Zurück zur Startseite",
         "processing": "Wird verarbeitet..."
       },
       "navigation": {
