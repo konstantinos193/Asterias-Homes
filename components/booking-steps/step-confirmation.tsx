@@ -166,7 +166,7 @@ export default function StepConfirmation({ bookingData }: StepConfirmationProps)
       <div className="text-center font-alegreya">
         <p className="text-slate-600">
           {t("bookingWizard.confirmation.anyQuestions") || "If you have any questions, feel free to"}{" "}
-          <a href="/contact" className="text-[#0A4A4A] hover:underline">
+          <a href={`/${language}/contact`} className="text-[#0A4A4A] hover:underline">
             {t("bookingWizard.confirmation.contactUs") || "contact us"}
           </a>
           .

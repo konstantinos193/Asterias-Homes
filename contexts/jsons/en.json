@@ -734,6 +734,8 @@
         "error": "Payment failed. Please try again.",
         "success": "Payment successful!"
       },
+      "adultsLabel": "Adults",
+      "childrenLabel": "Children",
       "confirmation": {
         "title": "Booking Confirmation",
         "subtitle": "Thank you for your booking. A confirmation email has been sent to you with all the details.",

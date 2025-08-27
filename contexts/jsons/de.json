@@ -810,6 +810,8 @@
         "error": "Zahlung fehlgeschlagen. Bitte versuchen Sie es erneut.",
         "success": "Zahlung erfolgreich!"
       },
+      "adultsLabel": "Erwachsene",
+      "childrenLabel": "Kinder",
       "confirmation": {
         "title": "Buchungsbestätigung",
         "subtitle": "Vielen Dank für Ihre Buchung. Eine Bestätigungs-E-Mail mit allen Details wurde an Sie gesendet.",

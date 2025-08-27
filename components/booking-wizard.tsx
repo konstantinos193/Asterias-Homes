@@ -154,6 +154,7 @@ export default function BookingWizard({ initialRoomId, preFilledData, language }
             // Proceed to confirmation step
             setCurrentStep(currentStep + 1)
             setIsProcessingPayment(false)
+            setPaymentError(null) // Clear any payment errors
             
             // Store the booking result
             setBookingData(prev => ({
@@ -171,7 +172,10 @@ export default function BookingWizard({ initialRoomId, preFilledData, language }
       }
       
       setCurrentStep(currentStep + 1)
-      setPaymentError(null) // Clear previous errors
+      // Clear payment errors when moving to confirmation step
+      if (currentStep + 1 === 4) {
+        setPaymentError(null)
+      }
     }
   }
 
@@ -271,6 +275,7 @@ export default function BookingWizard({ initialRoomId, preFilledData, language }
           // Instead of redirecting, proceed to the next step (confirmation)
           setCurrentStep(currentStep + 1)
           setIsProcessingPayment(false)
+          setPaymentError(null) // Clear any payment errors
           
           // Store the booking result for the confirmation step
           setBookingData(prev => ({
@@ -393,7 +398,8 @@ export default function BookingWizard({ initialRoomId, preFilledData, language }
         </div>
       </div>
       
-      {currentStep === steps.length && paymentError && bookingData.paymentMethod === "card" && (
+      {/* Only show payment errors on payment step, not on confirmation */}
+      {currentStep === 3 && paymentError && (
         <p className="text-sm text-red-600 font-alegreya mt-4 text-right">{paymentError}</p>
       )}
     </>
