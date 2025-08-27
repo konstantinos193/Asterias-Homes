@@ -24,6 +24,8 @@
 - ✅ **INTEGRATE**: Stripe transaction ID and payment method in email receipts ✅ **COMPLETED**
 - ✅ **ROOM AVAILABILITY**: Fixed critical issue preventing multiple room bookings ✅ **COMPLETED**
 - ✅ **ROOM AVAILABILITY**: System now properly handles 7 individual rooms independently ✅ **COMPLETED**
+- ✅ **MONGODB INDEXES**: Fixed duplicate key error with robust index cleanup ✅ **COMPLETED**
+- ✅ **LANGUAGE ROUTING**: Fixed footer and about page language-specific navigation ✅ **COMPLETED**
 - [ ] **IMPLEMENT**: Dynamic pricing control from admin panel
 - [ ] **IMPLEMENT**: Room quantity selection (1-7 rooms) for the same room type
 - [ ] **IMPLEMENT**: Price scaling based on number of rooms selected
