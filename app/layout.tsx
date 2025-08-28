@@ -42,6 +42,12 @@ export const metadata: Metadata = {
     "Greek islands",
     "holiday apartments",
     "7 apartments",
+    "beachfront accommodation",
+    "Greek vacation rentals",
+    "Amvrakikos accommodation",
+    "Koronisia hotels",
+    "Arta tourism",
+    "Greek holiday homes"
   ],
   authors: [{ name: "adinfinity" }],
   creator: "adinfinity",
@@ -51,7 +57,7 @@ export const metadata: Metadata = {
     address: false,
     telephone: false,
   },
-  metadataBase: new URL("https://asterias-homes.com"),
+  metadataBase: new URL("https://asteriashome.gr"),
   alternates: {
     canonical: "/",
     languages: {
@@ -63,22 +69,22 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://asterias-homes.com",
+    url: "https://asteriashome.gr",
     title: "Asterias Homes | Luxury Vacation Apartments in Koronisia, Arta",
     description:
       "Experience luxury vacation apartments in Koronisia, Arta, in the heart of Amvrakikos Gulf. 7 beautifully appointed apartments with modern amenities.",
     siteName: "Asterias Homes",
     images: [
       {
-        url: "/og-image.png",
+        url: "/hero-1.png",
         width: 1200,
         height: 630,
         alt: "Asterias Homes - Luxury Vacation Apartments in Greece",
       },
       {
-        url: "/og-image-square.png",
+        url: "/hero-2.png",
         width: 1200,
-        height: 1200,
+        height: 630,
         alt: "Asterias Homes - Luxury Vacation Apartments in Greece",
       },
     ],
@@ -88,7 +94,7 @@ export const metadata: Metadata = {
     title: "Asterias Homes | Luxury Vacation Apartments in Koronisia, Arta",
     description:
       "Experience luxury vacation apartments in Koronisia, Arta, in the heart of Amvrakikos Gulf. 7 beautifully appointed apartments with modern amenities.",
-    images: ["/og-image.png"],
+    images: ["/hero-1.png"],
     creator: "@asterias_homes",
     site: "@asterias_homes",
   },
@@ -140,13 +146,13 @@ export const metadata: Metadata = {
     yandex: "your-yandex-verification-code",
     yahoo: "your-yahoo-verification-code",
   },
-    generator: 'v0.dev'
+  generator: 'Next.js'
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body>
+      <body className={`${cormorant.variable} ${alegreya.variable}`}>
         <AuthProvider>
           <LanguageProvider>
             <ThemeProvider attribute="class" defaultTheme="light" enableSystem disableTransitionOnChange>
