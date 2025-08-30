@@ -47,21 +47,25 @@ export default function Hero() {
         <div className="absolute inset-0 bg-gradient-to-b from-slate-900/60 via-transparent to-slate-900/60" />
       </div>
 
-      <div className="absolute inset-0 flex flex-col items-center justify-center text-center text-white">
-        <div className="max-w-4xl px-4 sm:px-6 lg:px-8">
+      <div className="absolute inset-0 flex flex-col items-center justify-center text-center text-white px-4 sm:px-6 lg:px-8">
+        <div className="max-w-4xl w-full">
           <h1
-            className={`font-cormorant font-light mb-4 tracking-wide ${
-              language === "de" ? "text-3xl sm:text-4xl md:text-5xl" : "text-4xl sm:text-5xl md:text-6xl"
+            className={`font-cormorant font-light mb-3 sm:mb-4 tracking-wide ${
+              language === "de" 
+                ? "text-2xl sm:text-3xl md:text-4xl lg:text-5xl" 
+                : "text-3xl sm:text-4xl md:text-5xl lg:text-6xl"
             }`}
           >
             {slides[currentSlide].title}
           </h1>
 
-          <div className="w-24 h-0.5 bg-[#8B4B5C] mx-auto mb-6"></div>
+          <div className="w-16 sm:w-20 md:w-24 h-0.5 bg-[#8B4B5C] mx-auto mb-4 sm:mb-6"></div>
 
           <p
-            className={`font-cormorant italic mb-12 tracking-wide ${
-              language === "de" ? "text-lg sm:text-xl md:text-2xl" : "text-xl sm:text-2xl md:text-3xl"
+            className={`font-cormorant italic mb-8 sm:mb-10 md:mb-12 tracking-wide ${
+              language === "de" 
+                ? "text-base sm:text-lg md:text-xl lg:text-2xl" 
+                : "text-lg sm:text-xl md:text-2xl lg:text-3xl"
             }`}
           >
             {slides[currentSlide].subtitle}
@@ -69,19 +73,19 @@ export default function Hero() {
 
           <Link
             href={`/${language}/bookings`}
-            className="inline-block px-8 py-3 border-2 border-[#8B4B5C] text-white bg-rose-200/30 hover:bg-[#8B4B5C] hover:text-white transition-colors font-alegreya tracking-wide text-lg"
+            className="inline-block px-6 sm:px-8 py-3 sm:py-4 border-2 border-[#8B4B5C] text-white bg-rose-200/30 hover:bg-[#8B4B5C] hover:text-white transition-colors font-alegreya tracking-wide text-base sm:text-lg min-h-[44px] min-w-[44px] flex items-center justify-center rounded-md"
           >
             {t("hero.book")}
           </Link>
         </div>
       </div>
 
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex space-x-3">
+      <div className="absolute bottom-4 sm:bottom-8 left-1/2 -translate-x-1/2 flex space-x-2 sm:space-x-3">
         {slides.map((_, index) => (
           <button
             key={index}
             onClick={() => setCurrentSlide(index)}
-            className={`w-2.5 h-2.5 rounded-full transition-colors ${
+            className={`w-2 sm:w-2.5 h-2 sm:h-2.5 rounded-full transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center ${
               index === currentSlide ? "bg-[#8B4B5C]" : "bg-white/50 hover:bg-white/80"
             }`}
             aria-label={`Go to slide ${index + 1}`}

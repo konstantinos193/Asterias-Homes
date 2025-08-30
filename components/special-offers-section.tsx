@@ -1,235 +1,142 @@
 "use client"
 
-import { useEffect, useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
-import { ChevronLeft, ChevronRight, Calendar, Tag, Clock } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { cn } from "@/lib/utils"
 import { useLanguage } from "@/contexts/language-context"
-import { offersAPI } from "@/lib/api"
-
-interface Offer {
-  _id: string
-  titleKey: string
-  descriptionKey: string
-  image: string
-  discount?: number
-  price?: number
-  validUntil: string
-  badgeKey?: string
-  roomTypeKey?: string
-  includesKeys?: string[]
-  featured?: boolean
-}
+import { Calendar, Star, MapPin } from "lucide-react"
 
 export default function SpecialOffersSection() {
-  const [offers, setOffers] = useState<Offer[]>([])
-  const [activeIndex, setActiveIndex] = useState(0)
-  const [loading, setLoading] = useState(true)
   const { t } = useLanguage()
 
-  useEffect(() => {
-    const fetchOffers = async () => {
-      try {
-        const response = await offersAPI.getAll()
-        const allOffers: Offer[] = response.offers || []
-        const featured = allOffers.filter((offer) => offer.featured)
-        setOffers(featured)
-      } catch (error) {
-        console.error("Failed to fetch special offers:", error)
-      } finally {
-        setLoading(false)
-      }
+  const offers = [
+    {
+      id: "summer-escape",
+      image: "/offers/summer-escape.png",
+      title: "offers.summer.title",
+      description: "offers.summer.description",
+      price: "offers.summer.price",
+      validUntil: "offers.summer.validUntil",
+      features: ["offers.summer.feature1", "offers.summer.feature2", "offers.summer.feature3"]
+    },
+    {
+      id: "honeymoon-package",
+      image: "/offers/honeymoon-package.png",
+      title: "offers.honeymoon.title",
+      description: "offers.honeymoon.description",
+      price: "offers.honeymoon.price",
+      validUntil: "offers.honeymoon.validUntil",
+      features: ["offers.honeymoon.feature1", "offers.honeymoon.feature2", "offers.honeymoon.feature3"]
+    },
+    {
+      id: "family-fun",
+      image: "/offers/family-fun.png",
+      title: "offers.family.title",
+      description: "offers.family.description",
+      price: "offers.family.price",
+      validUntil: "offers.family.validUntil",
+      features: ["offers.family.feature1", "offers.family.feature2", "offers.family.feature3"]
     }
-
-    fetchOffers()
-  }, [])
-
-  const nextSlide = () => {
-    setActiveIndex((current) => (current === offers.length - 1 ? 0 : current + 1))
-  }
-
-  const prevSlide = () => {
-    setActiveIndex((current) => (current === 0 ? offers.length - 1 : current - 1))
-  }
-
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString)
-    return new Intl.DateTimeFormat(t("locale"), { day: "2-digit", month: "2-digit", year: "numeric" }).format(date)
-  }
-
-  const getDaysRemaining = (dateString: string) => {
-    const today = new Date()
-    const expiryDate = new Date(dateString)
-    const diffTime = expiryDate.getTime() - today.getTime()
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
-    return diffDays > 0 ? diffDays : 0
-  }
-
-  if (loading) {
-    return (
-      <section className="py-20 bg-slate-50 text-center">
-        <p>{t("common.loading")}</p>
-      </section>
-    )
-  }
-
-  if (offers.length === 0) {
-    return null // Don't render anything if there are no featured offers
-  }
+  ]
 
   return (
-    <section className="py-20 bg-slate-50 overflow-hidden">
-      <div className="container mx-auto px-4">
-        <div className="text-center max-w-3xl mx-auto mb-16">
-          <h2 className="text-[#0A4A4A] font-alegreya uppercase tracking-wider text-sm mb-3">
-            {t("offers.section.subtitle")}
+    <section className="py-12 sm:py-16 md:py-20 bg-gradient-to-br from-[#E8E2D5] to-[#D4C9B8]">
+      <div className="container mx-auto container-mobile">
+        <div className="text-center max-w-3xl mx-auto mb-8 sm:mb-12 md:mb-16">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-cormorant font-light text-slate-800 mb-3 sm:mb-4">
+            {t("offersSection.title")}
           </h2>
-          <h3 className="text-3xl font-cormorant font-light text-slate-800 mb-4">{t("offers.section.title")}</h3>
-          <div className="w-16 h-0.5 bg-[#0A4A4A] mx-auto mb-6"></div>
-          <p className="text-slate-600 font-alegreya">{t("offers.section.description")}</p>
+          <div className="w-12 sm:w-16 h-0.5 bg-[#8B4B5C] mx-auto mb-4 sm:mb-6"></div>
+          <p className="text-sm sm:text-base md:text-lg text-slate-600 font-alegreya">
+            {t("offersSection.subtitle")}
+          </p>
         </div>
 
-        <div className="relative mb-16 overflow-hidden">
-          <div
-            className="flex transition-transform duration-500 ease-in-out"
-            style={{ transform: `translateX(-${activeIndex * 100}%)` }}
-          >
-            {offers.map((offer) => (
-              <div key={offer._id} className="w-full flex-shrink-0">
-                <div className="bg-white rounded-sm shadow-md overflow-hidden">
-                  <div className="flex flex-col lg:flex-row">
-                    <div className="lg:w-1/2 relative">
-                      <div className="relative h-64 lg:h-full">
-                        <Image
-                          src={offer.image || "/placeholder.svg"}
-                          alt={t(offer.titleKey)}
-                          fill
-                          className="object-cover"
-                        />
-                        {offer.badgeKey && (
-                          <div className="absolute top-4 left-4">
-                            <Badge className="bg-[#0A4A4A] hover:bg-[#0A4A4A] text-white px-3 py-1 text-sm font-alegreya">
-                              {t(offer.badgeKey)}
-                            </Badge>
-                          </div>
-                        )}
-                        {offer.discount && (
-                          <div className="absolute top-4 right-4 bg-red-600 text-white rounded-full w-16 h-16 flex items-center justify-center font-bold">
-                            <span className="text-center leading-none">-{offer.discount}%</span>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                    <div className="lg:w-1/2 p-6 lg:p-8 flex flex-col justify-between">
-                      <div>
-                        <h4 className="text-2xl font-cormorant font-light text-slate-800 mb-3">
-                          {t(offer.titleKey)}
-                        </h4>
-                        <p className="text-slate-600 font-alegreya mb-4">{t(offer.descriptionKey)}</p>
-
-                        {offer.includesKeys && offer.includesKeys.length > 0 && (
-                          <div className="mb-4">
-                            <h5 className="text-sm font-medium text-slate-700 mb-2 font-alegreya">
-                              {t("offers.includes")}
-                            </h5>
-                            <ul className="space-y-1">
-                              {offer.includesKeys.map((key, i) => (
-                                <li key={i} className="flex items-start text-sm">
-                                  <span className="text-[#0A4A4A] mr-2">✓</span>
-                                  <span className="font-alegreya text-slate-600">{t(key)}</span>
-                                </li>
-                              ))}
-                            </ul>
-                          </div>
-                        )}
-                      </div>
-
-                      <div className="mt-auto">
-                        <div className="flex items-center justify-between mb-4">
-                          <div className="flex items-center text-sm text-slate-500 font-alegreya">
-                            <Calendar className="h-4 w-4 mr-1" />
-                            <span>
-                              {t("offers.validUntil")} {formatDate(offer.validUntil)}
-                            </span>
-                          </div>
-                          <div className="flex items-center text-sm text-slate-500 font-alegreya">
-                            <Clock className="h-4 w-4 mr-1" />
-                            <span>
-                              {getDaysRemaining(offer.validUntil)} {t("offers.days")} {t("offers.daysRemaining")}
-                            </span>
-                          </div>
-                        </div>
-
-                        <div className="flex items-end justify-between">
-                          <div>
-                            <div className="flex items-center">
-                              <Tag className="h-4 w-4 mr-1 text-[#0A4A4A]" />
-                              <span className="text-sm text-slate-500 font-alegreya">{t("offers.from")}</span>
-                            </div>
-                            {offer.price && (
-                              <div className="flex items-baseline">
-                                <span className="text-2xl font-cormorant font-semibold text-[#0A4A4A]">
-                                  {offer.price}€
-                                </span>
-                                <span className="text-slate-500 text-sm font-alegreya ml-1">
-                                  {t("offers.perNight")}
-                                </span>
-                              </div>
-                            )}
-                          </div>
-
-                          <Link href={`/offers/${offer._id}`}>
-                            <Button className="bg-[#0A4A4A] hover:bg-[#083a3a] text-white font-alegreya">
-                              {t("offers.viewOffer")}
-                            </Button>
-                          </Link>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
+          {offers.map((offer) => (
+            <div
+              key={offer.id}
+              className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
+            >
+              {/* Image */}
+              <div className="relative h-48 sm:h-56 md:h-64 overflow-hidden">
+                <Image
+                  src={offer.image}
+                  alt={t(offer.title)}
+                  fill
+                  className="object-cover transition-transform duration-300 hover:scale-105"
+                />
+                <div className="absolute top-3 right-3 bg-[#8B4B5C] text-white px-2 py-1 rounded-full text-xs font-medium">
+                  {t("offersSection.special")}
                 </div>
               </div>
-            ))}
-          </div>
 
-          <button
-            onClick={prevSlide}
-            className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-slate-800 p-2 rounded-full shadow-md transition-all"
-            aria-label="Previous offer"
-          >
-            <ChevronLeft className="h-6 w-6" />
-          </button>
-          <button
-            onClick={nextSlide}
-            className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-slate-800 p-2 rounded-full shadow-md transition-all"
-            aria-label="Next offer"
-          >
-            <ChevronRight className="h-6 w-6" />
-          </button>
+              {/* Content */}
+              <div className="p-4 sm:p-6">
+                <div className="flex items-start justify-between mb-3 sm:mb-4">
+                  <h3 className="text-lg sm:text-xl font-cormorant font-semibold text-slate-800 flex-1">
+                    {t(offer.title)}
+                  </h3>
+                  <div className="flex items-center space-x-1 ml-2">
+                    <Star className="h-4 w-4 text-yellow-400 fill-current" />
+                    <Star className="h-4 w-4 text-yellow-400 fill-current" />
+                    <Star className="h-4 w-4 text-yellow-400 fill-current" />
+                    <Star className="h-4 w-4 text-yellow-400 fill-current" />
+                    <Star className="h-4 w-4 text-yellow-400 fill-current" />
+                  </div>
+                </div>
 
-          <div className="flex justify-center mt-4">
-            {offers.map((_, index) => (
-              <button
-                key={index}
-                onClick={() => setActiveIndex(index)}
-                className={cn(
-                  "w-2 h-2 mx-1 rounded-full transition-all",
-                  index === activeIndex ? "bg-[#0A4A4A] w-4" : "bg-slate-300"
-                )}
-                aria-label={`Go to slide ${index + 1}`}
-              />
-            ))}
-          </div>
+                <p className="text-sm sm:text-base text-slate-600 mb-4 sm:mb-6 line-clamp-3">
+                  {t(offer.description)}
+                </p>
+
+                {/* Features */}
+                <ul className="space-y-2 mb-4 sm:mb-6">
+                  {offer.features.map((feature, index) => (
+                    <li key={index} className="flex items-center space-x-2 text-sm text-slate-600">
+                      <div className="w-1.5 h-1.5 bg-[#8B4B5C] rounded-full flex-shrink-0"></div>
+                      <span>{t(feature)}</span>
+                    </li>
+                  ))}
+                </ul>
+
+                {/* Price and Validity */}
+                <div className="flex items-center justify-between mb-4 sm:mb-6">
+                  <div className="text-2xl sm:text-3xl font-cormorant font-bold text-[#8B4B5C]">
+                    {t(offer.price)}
+                  </div>
+                  <div className="flex items-center space-x-1 text-xs text-slate-500">
+                    <Calendar className="h-3 w-3" />
+                    <span>{t(offer.validUntil)}</span>
+                  </div>
+                </div>
+
+                {/* Action Buttons */}
+                <div className="space-y-2 sm:space-y-0 sm:space-x-2 sm:flex">
+                  <Link
+                    href={`/offers/${offer.id}`}
+                    className="block w-full sm:w-auto text-center bg-[#8B4B5C] text-white px-4 sm:px-6 py-2.5 sm:py-3 rounded-md hover:bg-[#7A4251] transition-colors font-medium text-sm sm:text-base min-h-[44px] min-w-[44px] flex items-center justify-center"
+                  >
+                    {t("offersSection.viewDetails")}
+                  </Link>
+                  <Link
+                    href="/bookings"
+                    className="block w-full sm:w-auto text-center border border-[#8B4B5C] text-[#8B4B5C] px-4 sm:px-6 py-2.5 sm:py-3 rounded-md hover:bg-[#8B4B5C] hover:text-white transition-colors font-medium text-sm sm:text-base min-h-[44px] min-w-[44px] flex items-center justify-center"
+                  >
+                    {t("offersSection.bookNow")}
+                  </Link>
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
 
-        <div className="text-center mt-12">
-          <Link href="/offers">
-            <Button className="bg-transparent border-2 border-[#0A4A4A] text-[#0A4A4A] hover:bg-[#0A4A4A] hover:text-white transition-colors font-alegreya px-8">
-              {t("offers.viewAllOffers")}
-            </Button>
+        {/* View All Offers */}
+        <div className="text-center mt-8 sm:mt-12">
+          <Link
+            href="/offers"
+            className="inline-block bg-transparent border-2 border-[#8B4B5C] text-[#8B4B5C] hover:bg-[#8B4B5C] hover:text-white transition-colors font-alegreya px-6 sm:px-8 py-3 rounded-md min-h-[44px] min-w-[44px] flex items-center justify-center text-sm sm:text-base"
+          >
+            {t("offersSection.viewAllOffers")}
           </Link>
         </div>
       </div>

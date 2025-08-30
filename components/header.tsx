@@ -54,11 +54,19 @@ export default function Header() {
     }
     document.addEventListener("mousedown", handleClickOutside)
 
+    // Prevent body scroll when mobile menu is open
+    if (mobileMenuOpen) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = 'unset'
+    }
+
     return () => {
       window.removeEventListener("scroll", handleScroll)
       document.removeEventListener("mousedown", handleClickOutside)
+      document.body.style.overflow = 'unset'
     }
-  }, [pathname]) // Add pathname to dependency array for renderHeader updates
+  }, [pathname, mobileMenuOpen]) // Add mobileMenuOpen to dependency array
 
   const selectedLang = languages.find((lang) => lang.code === language) || languages[0]
 
@@ -103,13 +111,13 @@ export default function Header() {
             : "bg-transparent py-4" // Not scrolled, on other pages (transparent)
       }`}
     >
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="container mx-auto px-3 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-full">
           {/* Logo */}
-          <div className="flex-shrink-0 mr-4">
+          <div className="flex-shrink-0 mr-2 sm:mr-4">
             <Link href={langPrefix || "/"} className="block">
               <span className="sr-only">{t("logo.altPublic", "Asterias Hotel")}</span>
-              <div className={`relative transition-all duration-300 ${scrolled ? "w-48 h-20" : "w-56 h-24"}`}>
+              <div className={`relative transition-all duration-300 ${scrolled ? "w-32 h-16 sm:w-48 sm:h-20" : "w-40 h-20 sm:w-56 sm:h-24"}`}>
                 <Image
                   src="https://i.imgur.com/leL7gRY.png"
                   alt={t("logo.altPublic", "Asterias Hotel Logo")}
@@ -121,7 +129,7 @@ export default function Header() {
             </Link>
           </div>
 
-          {/* Center Navigation */}
+          {/* Center Navigation - Hidden on mobile */}
           <div className="hidden lg:flex flex-1 items-center justify-center">
             <nav className="flex space-x-8">
               {navigation.map((item) => (
@@ -138,7 +146,7 @@ export default function Header() {
             </nav>
           </div>
 
-          {/* Right Side - Language and Booking */}
+          {/* Right Side - Language and Booking - Hidden on mobile */}
           <div className="hidden lg:flex items-center space-x-6">
             <div className="relative" ref={dropdownRef}>
               <button
@@ -213,7 +221,7 @@ export default function Header() {
           <div className="flex lg:hidden items-center">
             <button
               type="button"
-              className={`p-2 rounded-md transition-colors ${
+              className={`p-2 rounded-md transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center ${
                 useLightHeaderBg ? "text-slate-800 hover:bg-slate-100" : "text-white hover:bg-white/10"
               }`}
               onClick={() => setMobileMenuOpen(true)}
@@ -232,8 +240,8 @@ export default function Header() {
           aria-hidden="true"
           onClick={() => setMobileMenuOpen(false)}
         />
-        <div className="fixed inset-y-0 right-0 z-50 w-full overflow-y-auto bg-white px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10">
-          <div className="flex items-center justify-between">
+        <div className="fixed inset-y-0 right-0 z-50 w-full overflow-y-auto bg-white px-4 sm:px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10">
+          <div className="flex items-center justify-between mb-6">
             <Link href="/" className="flex items-center" onClick={() => setMobileMenuOpen(false)}>
               <span className="sr-only">{t("logo.altPublic", "Asterias Hotel")}</span>
               <div className="relative h-16 w-44">
@@ -248,37 +256,41 @@ export default function Header() {
             </Link>
             <button
               type="button"
-              className="rounded-md p-2.5 text-slate-700 hover:bg-slate-100"
+              className="rounded-md p-2.5 text-slate-700 hover:bg-slate-100 min-h-[44px] min-w-[44px] flex items-center justify-center"
               onClick={() => setMobileMenuOpen(false)}
               aria-label={t("header.closeMenu", "Close menu")}
             >
               <X className="h-6 w-6" />
             </button>
           </div>
-          <div className="mt-6 flow-root">
+          
+          <div className="flow-root">
             <div className="-my-6 divide-y divide-gray-200">
+              {/* Navigation Links */}
               <div className="space-y-1 py-6">
                 {navigation.map((item) => (
                   <Link
                     key={item.name}
                     href={item.href}
-                    className="block px-3 py-3 text-lg font-cormorant font-medium text-slate-800 hover:bg-[#E8E2D5] rounded-md transition-colors"
+                    className="block px-3 py-4 text-lg font-cormorant font-medium text-slate-800 hover:bg-[#E8E2D5] rounded-md transition-colors min-h-[44px] flex items-center"
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     {t(item.name)}
                   </Link>
                 ))}
               </div>
+              
+              {/* Language Selector */}
               <div className="py-6">
                 <div className="mb-6">
-                  <h3 className="text-sm font-medium text-slate-500 font-alegreya mb-3 px-3">
+                  <h3 className="text-sm font-medium text-slate-500 font-alegreya mb-4 px-3">
                     {t("languageSelector.titleMobile")}
                   </h3>
-                  <div className="space-y-1">
+                  <div className="space-y-2">
                     {languages.map((lang) => (
                       <button
                         key={lang.code}
-                        className={`flex items-center w-full text-sm font-medium px-3 py-3 rounded-lg transition-colors ${
+                        className={`flex items-center w-full text-sm font-medium px-3 py-4 rounded-lg transition-colors min-h-[44px] ${
                           lang.code === language
                             ? "bg-[#E8E2D5]/50 text-[#8B4B5C]"
                             : "text-slate-600 hover:text-[#8B4B5C] hover:bg-[#E8E2D5]/30"
@@ -306,9 +318,11 @@ export default function Header() {
                     ))}
                   </div>
                 </div>
+                
+                {/* Mobile Booking Button */}
                 <Link
                   href="/bookings"
-                  className="block w-full px-4 py-3 text-center bg-[#8B4B5C] text-white font-medium rounded-lg hover:bg-[#7A4251] transition-colors shadow-sm"
+                  className="block w-full px-4 py-4 text-center bg-[#8B4B5C] text-white font-medium rounded-lg hover:bg-[#7A4251] transition-colors shadow-sm min-h-[44px] flex items-center justify-center"
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   {t("nav.book")}

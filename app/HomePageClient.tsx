@@ -41,27 +41,27 @@ export default function HomePageClient({ featuredRooms }: HomePageClientProps) {
       <Hero />
       <WelcomeSection />
 
-      <div className="-mt-8 overflow-hidden" aria-hidden="true">
-        <svg viewBox="0 0 1440 80" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-16">
+      <div className="-mt-4 sm:-mt-8 overflow-hidden" aria-hidden="true">
+        <svg viewBox="0 0 1440 80" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-12 sm:h-16">
           <path d="M0 40 Q 360 80 720 40 T 1440 40 V80 H0V40Z" fill="#f8f6f1" />
         </svg>
       </div>
 
-      <section className="py-20 bg-slate-50 overflow-hidden mt-12">
-        <div className="container mx-auto px-4">
-          <div className="text-center max-w-3xl mx-auto mb-16">
-            <h2 className="text-[#0A4A4A] font-alegreya uppercase tracking-wider text-sm mb-3">
+      <section className="py-12 sm:py-16 md:py-20 bg-slate-50 overflow-hidden mt-8 sm:mt-12">
+        <div className="container mx-auto container-mobile">
+          <div className="text-center max-w-3xl mx-auto mb-8 sm:mb-12 md:mb-16">
+            <h2 className="text-[#0A4A4A] font-alegreya uppercase tracking-wider text-xs sm:text-sm mb-2 sm:mb-3">
               {translations.subtitle}
             </h2>
-            <h3 className="text-3xl font-cormorant font-light text-slate-800 mb-4">
+            <h3 className="text-2xl sm:text-3xl font-cormorant font-light text-slate-800 mb-3 sm:mb-4">
               {translations.title}
             </h3>
-            <div className="w-16 h-0.5 bg-[#0A4A4A] mx-auto mb-6" />
-            <p className="text-slate-600 font-alegreya">
+            <div className="w-12 sm:w-16 h-0.5 bg-[#0A4A4A] mx-auto mb-4 sm:mb-6"></div>
+            <p className="text-sm sm:text-base text-slate-600 font-alegreya">
               {translations.description}
             </p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
             {apartmentsToDisplay.map((apartment) => (
               <RoomCard
                 key={apartment.displayId}
@@ -77,10 +77,10 @@ export default function HomePageClient({ featuredRooms }: HomePageClientProps) {
               />
             ))}
           </div>
-          <div className="text-center mt-12">
+          <div className="text-center mt-8 sm:mt-12">
             <Link
               href="/rooms"
-              className="inline-block px-8 py-3 bg-transparent border-2 border-[#0A4A4A] text-[#0A4A4A] hover:bg-[#0A4A4A] hover:text-white transition-colors font-alegreya"
+              className="inline-block px-6 sm:px-8 py-3 bg-transparent border-2 border-[#0A4A4A] text-[#0A4A4A] hover:bg-[#0A4A4A] hover:text-white transition-colors font-alegreya min-h-[44px] min-w-[44px] flex items-center justify-center rounded-md text-sm sm:text-base"
             >
               {translations.viewAll}
             </Link>
@@ -88,8 +88,8 @@ export default function HomePageClient({ featuredRooms }: HomePageClientProps) {
         </div>
       </section>
 
-      <div className="-mb-8 overflow-hidden" aria-hidden="true">
-        <svg viewBox="0 0 1440 80" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-16 rotate-180">
+      <div className="-mb-4 sm:-mb-8 overflow-hidden" aria-hidden="true">
+        <svg viewBox="0 0 1440 80" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-12 sm:h-16 rotate-180">
           <path d="M0 40 Q 360 80 720 40 T 1440 40 V80 H0V40Z" fill="#f8f6f1" />
         </svg>
       </div>
@@ -97,13 +97,13 @@ export default function HomePageClient({ featuredRooms }: HomePageClientProps) {
       <SpecialOffersSection />
       <FeaturesSection />
 
-      <div className="-mt-8 overflow-hidden" aria-hidden="true">
-        <svg viewBox="0 0 1440 80" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-16">
+      <div className="-mt-4 sm:-mt-8 overflow-hidden" aria-hidden="true">
+        <svg viewBox="0 0 1440 80" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-12 sm:h-16">
           <path d="M0 40 Q 360 80 720 40 T 1440 40 V80 H0V40Z" fill="#e8e2d5" />
         </svg>
       </div>
 
-      <section className="py-20 relative">
+      <section className="py-12 sm:py-16 md:py-20 relative">
         <div className="absolute inset-0 z-0">
           <Image
             src="https://i.imgur.com/GEeXP4k.jpeg"
@@ -113,14 +113,14 @@ export default function HomePageClient({ featuredRooms }: HomePageClientProps) {
           />
           <div className="absolute inset-0 bg-slate-900/70"></div>
         </div>
-        <div className="container mx-auto px-4 relative z-10">
+        <div className="container mx-auto container-mobile relative z-10">
           <div className="max-w-3xl mx-auto text-center text-white">
-            <h2 className="text-4xl font-cormorant font-light mb-6">{translations.discoverTitle}</h2>
-            <div className="w-16 h-0.5 bg-[#0A4A4A] mx-auto mb-8"></div>
-            <p className="text-lg font-alegreya mb-10 text-slate-200">{translations.discoverDescription}</p>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-cormorant font-light mb-4 sm:mb-6">{translations.discoverTitle}</h2>
+            <div className="w-12 sm:w-16 h-0.5 bg-[#0A4A4A] mx-auto mb-6 sm:mb-8"></div>
+            <p className="text-sm sm:text-base md:text-lg font-alegreya mb-8 sm:mb-10 text-slate-200">{translations.discoverDescription}</p>
             <Link
               href="/about"
-              className="inline-block px-8 py-3 bg-[#0A4A4A] text-white font-alegreya hover:bg-[#083a3a] transition-colors"
+              className="inline-block px-6 sm:px-8 py-3 bg-[#0A4A4A] text-white font-alegreya hover:bg-[#083a3a] transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center rounded-md text-sm sm:text-base"
             >
               {translations.discoverButton}
             </Link>
