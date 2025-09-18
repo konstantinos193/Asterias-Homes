@@ -5,6 +5,11 @@ export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
   const token = request.cookies.get('authToken')?.value
 
+  // Instant root redirect to default language
+  if (pathname === '/') {
+    return NextResponse.redirect(new URL('/en', request.url))
+  }
+
   // Protect all /admin routes except /admin/login
   if (pathname.startsWith('/admin') && pathname !== '/admin/login') {
     if (!token) {
@@ -21,5 +26,5 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/admin/:path*'],
+  matcher: ['/', '/admin/:path*'],
 } 

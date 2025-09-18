@@ -5,7 +5,7 @@ import Link from "next/link"
 import { useLanguage } from "@/contexts/language-context"
 
 export default function WelcomeSection() {
-  const { t } = useLanguage()
+  const { t, language } = useLanguage()
 
   return (
     <section className="section-mobile bg-white overflow-hidden">
@@ -19,6 +19,7 @@ export default function WelcomeSection() {
                 width={500}
                 height={600}
                 className="w-full h-auto object-cover rounded-sm shadow-xl"
+                priority
               />
             </div>
             {/* Decorative elements - hidden on mobile */}
@@ -29,6 +30,7 @@ export default function WelcomeSection() {
                 width={300}
                 height={400}
                 className="w-72 h-auto object-cover border-8 border-white shadow-xl rounded-sm"
+                loading="lazy"
               />
             </div>
             <div className="absolute -top-8 -left-8 z-0 hidden lg:block">
@@ -53,7 +55,7 @@ export default function WelcomeSection() {
               <p className="text-slate-600 font-alegreya text-sm sm:text-base md:text-lg mb-6 sm:mb-8 leading-relaxed">{t("welcome.paragraph2")}</p>
 
               <Link
-                href="/about"
+                href={`/${language}/about`}
                 className="inline-block px-4 sm:px-6 py-2.5 sm:py-3 bg-[#8B4B5C] text-white font-alegreya hover:bg-[#7A4251] transition-colors rounded-sm min-h-[44px] min-w-[44px] flex items-center justify-center text-sm sm:text-base"
               >
                 {t("welcome.button")}

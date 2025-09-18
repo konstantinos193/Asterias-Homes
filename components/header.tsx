@@ -36,7 +36,8 @@ export default function Header() {
 
   const isAdminPage = pathname.startsWith("/admin")
   const [renderHeader, setRenderHeader] = useState(!pathname.startsWith("/admin"))
-  const useLightHeaderBg = scrolled || (!scrolled && pathname === "/")
+  const isHome = pathname === `/${language}` || pathname === "/"
+  const useLightHeaderBg = scrolled || (!scrolled && isHome)
 
   useEffect(() => {
     // Initialize renderHeader based on the current path
@@ -106,7 +107,7 @@ export default function Header() {
       className={`fixed w-full z-50 transition-all duration-300 ${
         scrolled
           ? "bg-[#F0F0E0] shadow-md py-2" // Scrolled state: solid color
-          : pathname === "/"
+          : isHome
             ? "bg-header-home py-4" // Not scrolled, on homepage
             : "bg-transparent py-4" // Not scrolled, on other pages (transparent)
       }`}
@@ -321,7 +322,7 @@ export default function Header() {
                 
                 {/* Mobile Booking Button */}
                 <Link
-                  href="/bookings"
+                  href={`${langPrefix}/bookings`}
                   className="block w-full px-4 py-4 text-center bg-[#8B4B5C] text-white font-medium rounded-lg hover:bg-[#7A4251] transition-colors shadow-sm min-h-[44px] flex items-center justify-center"
                   onClick={() => setMobileMenuOpen(false)}
                 >

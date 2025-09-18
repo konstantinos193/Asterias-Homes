@@ -135,19 +135,19 @@ export default function Footer() {
                 <div className="flex items-center space-x-3">
                   <Phone className="h-5 w-5 text-[#8B4B5C] flex-shrink-0" />
                   <a
-                    href="tel:+302680123456"
+                    href="tel:+306972705881"
                     className="text-sm sm:text-base text-slate-300 hover:text-white transition-colors"
                   >
-                    +30 2680 123 456
+                    +30 6972705881
                   </a>
                 </div>
                 <div className="flex items-center space-x-3">
                   <Mail className="h-5 w-5 text-[#8B4B5C] flex-shrink-0" />
                   <a
-                    href="mailto:info@asteriashome.gr"
+                    href="mailto:asterias.apartmentskoronisia@gmail.com"
                     className="text-sm sm:text-base text-slate-300 hover:text-white transition-colors"
                   >
-                    info@asteriashome.gr
+                    asterias.apartmentskoronisia@gmail.com
                   </a>
                 </div>
               </div>
@@ -159,22 +159,9 @@ export default function Footer() {
         <div className="border-t border-slate-800 py-4 sm:py-6">
           <div className="flex flex-col sm:flex-row items-center justify-between space-y-4 sm:space-y-0">
             <p className="text-sm text-slate-400 text-center sm:text-left">
-              © {currentYear} Asterias Homes. {t("footer.allRightsReserved")}
+              © {currentYear} Adinfinity. {t("footer.allRightsReserved")}
             </p>
-            <div className="flex space-x-6 text-sm text-slate-400">
-              <Link
-                href={`/${language}/privacy`}
-                className="hover:text-white transition-colors"
-              >
-                {t("footer.privacyPolicy")}
-              </Link>
-              <Link
-                href={`/${language}/terms`}
-                className="hover:text-white transition-colors"
-              >
-                {t("footer.termsOfService")}
-              </Link>
-            </div>
+            <div />
           </div>
         </div>
       </div>

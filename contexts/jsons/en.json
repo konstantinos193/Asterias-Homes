@@ -61,6 +61,27 @@
       "button": "Explore Our Story"
     },
     "rooms": {
+      "section": {
+        "subtitle": "Our Accommodation",
+        "title": "Our Apartments",
+        "description": "Discover our 7 traditional holiday apartments, each designed for a comfortable and authentic stay in Koronisia."
+      },
+      "perNight": "/night",
+      "viewAll": "View All Apartments",
+      "feature": {
+        "entirePlace": "Entire place to yourself",
+        "freeParking": "Free parking",
+        "breakfastIncluded": "Breakfast included",
+        "balcony": "Balcony",
+        "privateBathroom": "Private bathroom",
+        "freeWifi": "Free Wi‑Fi",
+        "shower": "Shower",
+        "airConditioning": "Air conditioning",
+        "flatScreenTV": "Flat‑screen TV",
+        "kitchenette": "Kitchenette",
+        "nonSmoking": "Non‑smoking rooms",
+        "familyFriendly": "Family rooms"
+      },
       "standard": {
         "name": "Standard Apartment",
         "description": "A classically furnished apartment with traditional style, perfect for a relaxing getaway in Koronisia. All our apartments are identical in style and layout, offering comfort and authenticity of the area."
@@ -207,6 +228,16 @@
       "description": "Asterias Homes, your peaceful retreat in Koronisia, offering 7 traditional holiday apartments with authentic charm and modern comfort by the Ambracian Gulf.",
       "contact": "Contact Information",
       "links": "Quick Links",
+      "quickLinks": "Quick Links",
+      "services": "Services",
+      "booking": "Bookings",
+      "specialOffers": "Special Offers",
+      "gallery": "Gallery",
+      "contactInfo": "Contact Information",
+      "address": "Koronisia, Arta",
+      "privacyPolicy": "Privacy Policy",
+      "termsOfService": "Terms of Service",
+      "allRightsReserved": "All rights reserved.",
       "copyright": "All rights reserved.",
            "receptionHours": {
              "title": "Contact Hours",
@@ -577,7 +608,7 @@
         "contactButton": "Contact Us",
         "callButton": "Call Us Now"
       },
-      "rooms": {
+      "roomsData": {
         "standard": {
           "name": "Studio Apartment",
           "description": "A cozy studio perfect for couples, offering comfort and essential amenities with kitchenette.",

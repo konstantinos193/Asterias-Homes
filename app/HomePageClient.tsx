@@ -16,7 +16,7 @@ interface HomePageClientProps {
 }
 
 export default function HomePageClient({ featuredRooms }: HomePageClientProps) {
-  const { t } = useLanguage()
+  const { t, language } = useLanguage()
 
   const apartmentsToDisplay = featuredRooms.map((roomType, index) => ({
     ...roomType,
@@ -79,7 +79,7 @@ export default function HomePageClient({ featuredRooms }: HomePageClientProps) {
           </div>
           <div className="text-center mt-8 sm:mt-12">
             <Link
-              href="/rooms"
+              href={`/${language}/rooms`}
               className="inline-block px-6 sm:px-8 py-3 bg-transparent border-2 border-[#0A4A4A] text-[#0A4A4A] hover:bg-[#0A4A4A] hover:text-white transition-colors font-alegreya min-h-[44px] min-w-[44px] flex items-center justify-center rounded-md text-sm sm:text-base"
             >
               {translations.viewAll}
@@ -119,7 +119,7 @@ export default function HomePageClient({ featuredRooms }: HomePageClientProps) {
             <div className="w-12 sm:w-16 h-0.5 bg-[#0A4A4A] mx-auto mb-6 sm:mb-8"></div>
             <p className="text-sm sm:text-base md:text-lg font-alegreya mb-8 sm:mb-10 text-slate-200">{translations.discoverDescription}</p>
             <Link
-              href="/about"
+              href={`/${language}/about`}
               className="inline-block px-6 sm:px-8 py-3 bg-[#0A4A4A] text-white font-alegreya hover:bg-[#083a3a] transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center rounded-md text-sm sm:text-base"
             >
               {translations.discoverButton}

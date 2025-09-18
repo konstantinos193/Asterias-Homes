@@ -78,6 +78,7 @@ export default function SpecialOffersSection() {
                   alt={offer.title}
                   fill
                   className="object-cover transition-transform duration-300 hover:scale-105"
+                  loading="lazy"
                 />
                 <div className="absolute top-3 right-3 bg-[#8B4B5C] text-white px-2 py-1 rounded-full text-xs font-medium">
                   Special Offer
@@ -145,13 +146,13 @@ export default function SpecialOffersSection() {
                 <div className="space-y-2 sm:space-y-0 sm:space-x-2 sm:flex">
                   <Link
                     href={`/offers/${offer._id}`}
-                    className="block w-full sm:w-auto text-center bg-[#8B4B5C] text-white px-4 sm:px-6 py-2.5 sm:py-3 rounded-md hover:bg-[#7A4251] transition-colors font-medium text-sm sm:text-base min-h-[44px] min-w-[44px] flex items-center justify-center"
+                    className="inline-flex items-center justify-center rounded-md bg-[#8B4B5C] text-white px-4 sm:px-5 py-2.5 sm:py-3 hover:bg-[#7A4251] transition-colors font-medium text-sm sm:text-base min-h-[44px] max-w-fit"
                   >
                     {t("offers.viewOffer")}
                   </Link>
                   <Link
                     href="/bookings"
-                    className="block w-full sm:w-auto text-center border border-[#8B4B5C] text-[#8B4B5C] px-4 sm:px-6 py-2.5 sm:py-3 rounded-md hover:bg-[#8B4B5C] hover:text-white transition-colors font-medium text-sm sm:text-base min-h-[44px] min-w-[44px] flex items-center justify-center"
+                    className="inline-flex items-center justify-center rounded-md border border-[#8B4B5C] text-[#8B4B5C] px-4 sm:px-5 py-2.5 sm:py-3 hover:bg-[#8B4B5C] hover:text-white transition-colors font-medium text-sm sm:text-base min-h-[44px] max-w-fit"
                   >
                     Book Now
                   </Link>
@@ -165,7 +166,7 @@ export default function SpecialOffersSection() {
         <div className="text-center mt-8 sm:mt-12">
           <Link
             href="/offers"
-            className="inline-block bg-transparent border-2 border-[#8B4B5C] text-[#8B4B5C] hover:bg-[#8B4B5C] hover:text-white transition-colors font-alegreya px-6 sm:px-8 py-3 rounded-md min-h-[44px] min-w-[44px] flex items-center justify-center text-sm sm:text-base"
+            className="inline-flex items-center justify-center rounded-md border-2 border-[#8B4B5C] text-[#8B4B5C] hover:bg-[#8B4B5C] hover:text-white transition-colors font-alegreya px-5 sm:px-6 py-3 min-h-[44px] max-w-fit text-sm sm:text-base"
           >
             {t("offers.viewAllOffers")}
           </Link>

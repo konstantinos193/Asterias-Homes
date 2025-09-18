@@ -2,10 +2,7 @@ import type { Metadata } from "next"
 import type React from "react"
 import { Cormorant, Alegreya_Sans as Alegreya } from "next/font/google"
 import "./globals.css"
-import Header from "@/components/header"
-import Footer from "@/components/footer"
 import { ThemeProvider } from "@/components/theme-provider"
-import { LanguageProvider } from "@/contexts/language-context"
 import { Toaster } from "@/components/ui/sonner"
 import { AuthProvider } from '@/hooks/use-auth'
 
@@ -24,11 +21,11 @@ const alegreya = Alegreya({
 
 export const metadata: Metadata = {
   title: {
-    default: "Asterias Homes | Luxury Vacation Apartments in Koronisia, Arta",
+    default: "Asterias Homes | Traditional Holiday Apartments in Koronisia, Arta",
     template: "%s | Asterias Homes",
   },
   description:
-    "Experience luxury vacation apartments in Koronisia, Arta, in the heart of Amvrakikos Gulf. 7 beautifully appointed apartments with modern amenities, surrounded by natural beauty and tranquility.",
+    "Stay in traditional, classic holiday apartments in Koronisia, Arta. 7 cozy, well-kept apartments with authentic charm near the Amvrakikos Gulf—quiet, clean, and welcoming.",
   keywords: [
     "Asterias Homes",
     "vacation apartments",
@@ -70,31 +67,31 @@ export const metadata: Metadata = {
     type: "website",
     locale: "en_US",
     url: "https://asteriashome.gr",
-    title: "Asterias Homes | Luxury Vacation Apartments in Koronisia, Arta",
+    title: "Asterias Homes | Traditional Holiday Apartments in Koronisia, Arta",
     description:
-      "Experience luxury vacation apartments in Koronisia, Arta, in the heart of Amvrakikos Gulf. 7 beautifully appointed apartments with modern amenities.",
+      "Traditional, classic holiday apartments in Koronisia, Arta. Authentic hospitality by the Amvrakikos Gulf.",
     siteName: "Asterias Homes",
     images: [
       {
-        url: "/hero-1.png",
+        url: "/welcome-new.jpg",
         width: 1200,
         height: 630,
-        alt: "Asterias Homes - Luxury Vacation Apartments in Greece",
+        alt: "Asterias Homes - Traditional Apartments in Koronisia",
       },
       {
         url: "/hero-2.png",
         width: 1200,
         height: 630,
-        alt: "Asterias Homes - Luxury Vacation Apartments in Greece",
+        alt: "Asterias Homes - Traditional Apartments in Koronisia",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Asterias Homes | Luxury Vacation Apartments in Koronisia, Arta",
+    title: "Asterias Homes | Traditional Holiday Apartments in Koronisia, Arta",
     description:
-      "Experience luxury vacation apartments in Koronisia, Arta, in the heart of Amvrakikos Gulf. 7 beautifully appointed apartments with modern amenities.",
-    images: ["/hero-1.png"],
+      "Traditional, classic holiday apartments in Koronisia, Arta. Authentic hospitality by the Amvrakikos Gulf.",
+    images: ["/welcome-new.jpg"],
     creator: "@asterias_homes",
     site: "@asterias_homes",
   },
@@ -154,14 +151,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en">
       <body className={`${cormorant.variable} ${alegreya.variable}`}>
         <AuthProvider>
-          <LanguageProvider>
-            <ThemeProvider attribute="class" defaultTheme="light" enableSystem disableTransitionOnChange>
-              <Header />
-              <main>{children}</main>
-              <Footer />
-              <Toaster />
-            </ThemeProvider>
-          </LanguageProvider>
+          <ThemeProvider attribute="class" defaultTheme="light" enableSystem disableTransitionOnChange>
+            <main>{children}</main>
+            <Toaster />
+          </ThemeProvider>
         </AuthProvider>
       </body>
     </html>
