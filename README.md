@@ -1,6 +1,6 @@
 # Asterias Homes - Modern Apartment Rental Platform
 
-A sophisticated, full-stack apartment rental management system featuring a Next.js 16 frontend with PostgreSQL and a separate Express.js backend with MongoDB. Features real-time booking management, multilingual support, Stripe payments, and a comprehensive admin dashboard for traditional Greek apartments in Koronisia, Arta.
+A sophisticated apartment rental management system featuring a Next.js 16 frontend with PostgreSQL and a separate Express.js backend with MongoDB. The frontend includes Next.js API routes for client-side functionality, while the main backend service is hosted separately. Features real-time booking management, multilingual support, Stripe payments, and a comprehensive admin dashboard for traditional Greek apartments in Koronisia, Arta.
 
 🌐 **Live Website**: [https://asteriashome.gr](https://asteriashome.gr)
 
@@ -350,7 +350,7 @@ Asterias-Homes/
 │   │   ├── reports/             # Analytics & reports
 │   │   ├── rooms/               # Room management
 │   │   └── settings/            # System settings
-│   └── api/                     # API routes
+│   └── api/                     # API routes (Next.js API routes)
 │       ├── admin/               # Admin API endpoints
 │       ├── auth/                # Authentication
 │       ├── confirm-payment/     # Payment confirmation
@@ -363,7 +363,7 @@ Asterias-Homes/
 │   └── ui/                      # Reusable UI components
 ├── hooks/                       # Custom React hooks
 ├── lib/                         # Utility libraries
-│   ├── api.ts                   # API service layer
+│   ├── api.ts                   # API service layer (communicates with backend)
 │   ├── database.ts              # Prisma client
 │   ├── translations.ts          # i18n translations
 │   └── utils.ts                 # Helper functions
