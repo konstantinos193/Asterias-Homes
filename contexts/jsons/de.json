@@ -306,6 +306,16 @@
     "description": "Asterias Homes, Ihr ruhiger Rückzugsort in Koronisia, der 7 traditionelle Ferienwohnungen mit authentischem Charme und modernem Komfort am Ambrakischen Golf anbietet.",
     "contact": "Kontaktinformationen",
     "links": "Schnelllinks",
+    "quickLinks": "Schnelllinks",
+    "services": "Dienstleistungen",
+    "booking": "Buchungen",
+    "specialOffers": "Sonderangebote",
+    "gallery": "Galerie",
+    "contactInfo": "Kontaktinformationen",
+    "address": "Koronisia, Arta",
+    "privacyPolicy": "Datenschutzrichtlinie",
+    "termsOfService": "Nutzungsbedingungen",
+    "allRightsReserved": "Alle Rechte vorbehalten.",
     "copyright": "Alle Rechte vorbehalten.",
     "receptionHours": {
       "title": "Kontaktzeiten",
@@ -315,6 +325,7 @@
       "phone": {
         "title": "Rufen Sie uns an",
         "number": "+30 6972705881",
+          "number2": "017663304809",
         "availability": "Täglich von 08:00 bis 22:00 verfügbar"
       },
       "email": {
@@ -871,6 +882,7 @@
       "phone": {
         "title": "Rufen Sie uns an",
         "number": "+30 2681 023456",
+          "number2": "017663304809",
         "availability": "Täglich von 08:00 bis 22:00 verfügbar"
       },
       "email": {

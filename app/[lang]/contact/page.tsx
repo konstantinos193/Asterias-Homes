@@ -35,6 +35,7 @@ export default function ContactPage() {
                     <h3 className="font-semibold text-slate-800 mb-1">{t("contact.phone")}</h3>
                     <p className="text-sm sm:text-base text-slate-600">+30 2680 123 456</p>
                     <p className="text-sm sm:text-base text-slate-600">+30 6977 123 456</p>
+                    <p className="text-sm sm:text-base text-slate-600">017663304809</p>
                   </div>
                 </div>
 

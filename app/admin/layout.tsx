@@ -4,7 +4,6 @@ import type React from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { usePathname } from "next/navigation"
-import { useLanguage } from "@/contexts/language-context"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import {
@@ -35,7 +34,6 @@ import { useRouter } from "next/navigation"
 import { useAuth, AuthProvider } from "@/hooks/use-auth"
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
-  const { t } = useLanguage()
   const pathname = usePathname()
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
   const router = useRouter()
@@ -48,7 +46,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   return (
     <AuthProvider>
       <AdminLayoutContent
-        t={t}
         pathname={pathname}
         isSidebarOpen={isSidebarOpen}
         setIsSidebarOpen={setIsSidebarOpen}
@@ -61,14 +58,12 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 }
 
 function AdminLayoutContent({ 
-  t, 
   pathname, 
   isSidebarOpen, 
   setIsSidebarOpen, 
   router, 
   children 
 }: { 
-  t: any
   pathname: string
   isSidebarOpen: boolean
   setIsSidebarOpen: (open: boolean) => void
@@ -107,8 +102,8 @@ function AdminLayoutContent({
         <div className="flex flex-col h-full">
           <div className="h-16 flex items-center px-6 border-b border-slate-200">
             <Link href="/admin" className="flex items-center gap-2">
-              <Image src="https://i.imgur.com/xgXMnQz.png" alt={t("logo.alt") || "Logo"} width={32} height={32} />
-                              <span className="font-cormorant text-xl font-semibold text-[#0A4A4A]">Πίνακας Διαχείρισης</span>
+              <Image src="https://i.imgur.com/xgXMnQz.png" alt="Logo" width={32} height={32} />
+              <span className="font-cormorant text-xl font-semibold text-[#0A4A4A]">Πίνακας Διαχείρισης</span>
             </Link>
           </div>
           <nav className="flex-grow p-4 space-y-1">
@@ -158,21 +153,21 @@ function AdminLayoutContent({
                 size="icon"
                 className="md:hidden mr-2"
                 onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-                aria-label={isSidebarOpen ? t("admin.sidebar.close") : t("admin.sidebar.open")}
+                aria-label={isSidebarOpen ? "Κλείσιμο μενού" : "Άνοιγμα μενού"}
               >
                 {isSidebarOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
               </Button>
               {/* Breadcrumbs or Page Title can go here */}
             </div>
             <div className="flex items-center gap-4">
-              <Button variant="ghost" size="icon" aria-label={t("admin.header.notifications") || "Notifications"}>
+              <Button variant="ghost" size="icon" aria-label="Ειδοποιήσεις">
                 <Bell className="h-5 w-5 text-slate-600" />
               </Button>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" className="relative h-9 w-9 rounded-full">
                     <Avatar className="h-9 w-9">
-                      <AvatarImage src="/placeholder.svg?height=36&width=36" alt={t("admin.userAvatar.alt") || "Avatar"} />
+                      <AvatarImage src="/placeholder.svg?height=36&width=36" alt="Avatar" />
                       <AvatarFallback>AD</AvatarFallback>
                     </Avatar>
                   </Button>
@@ -187,11 +182,11 @@ function AdminLayoutContent({
                   <DropdownMenuSeparator />
                   <DropdownMenuItem className="font-alegreya">
                     <UsersIcon className="mr-2 h-4 w-4" />
-                    {t("admin.header.user.profile")}
+                    Προφίλ
                   </DropdownMenuItem>
                   <DropdownMenuItem className="font-alegreya">
                     <SettingsIcon className="mr-2 h-4 w-4" />
-                    {t("admin.header.user.settings")}
+                    Ρυθμίσεις
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem
@@ -199,7 +194,7 @@ function AdminLayoutContent({
                     onClick={() => router.push('/admin/login')}
                   >
                     <LogOut className="mr-2 h-4 w-4" />
-                    {t("admin.header.user.logout")}
+                    Αποσύνδεση
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>

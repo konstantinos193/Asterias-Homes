@@ -2,11 +2,9 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { useLanguage } from "@/contexts/language-context"
 import { useAuth } from "@/hooks/use-auth"
 
 export default function AdminLogin() {
-  const { t } = useLanguage()
   const router = useRouter()
   const { login } = useAuth()
   const [formData, setFormData] = useState({

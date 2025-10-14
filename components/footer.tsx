@@ -134,12 +134,20 @@ export default function Footer() {
                 </div>
                 <div className="flex items-center space-x-3">
                   <Phone className="h-5 w-5 text-[#8B4B5C] flex-shrink-0" />
-                  <a
-                    href="tel:+306972705881"
-                    className="text-sm sm:text-base text-slate-300 hover:text-white transition-colors"
-                  >
-                    +30 6972705881
-                  </a>
+                  <div className="space-y-1">
+                    <a
+                      href="tel:+306972705881"
+                      className="text-sm sm:text-base text-slate-300 hover:text-white transition-colors block"
+                    >
+                      +30 6972705881
+                    </a>
+                    <a
+                      href="tel:017663304809"
+                      className="text-sm sm:text-base text-slate-300 hover:text-white transition-colors block"
+                    >
+                      017663304809
+                    </a>
+                  </div>
                 </div>
                 <div className="flex items-center space-x-3">
                   <Mail className="h-5 w-5 text-[#8B4B5C] flex-shrink-0" />
@@ -159,9 +167,22 @@ export default function Footer() {
         <div className="border-t border-slate-800 py-4 sm:py-6">
           <div className="flex flex-col sm:flex-row items-center justify-between space-y-4 sm:space-y-0">
             <p className="text-sm text-slate-400 text-center sm:text-left">
-              © {currentYear} Adinfinity. {t("footer.allRightsReserved")}
+              © {currentYear} adinfinity. {t("footer.allRightsReserved")}
             </p>
-            <div />
+            <div className="flex space-x-6 text-sm text-slate-400">
+              <Link
+                href={`/${language}/privacy`}
+                className="hover:text-white transition-colors"
+              >
+                {t("footer.privacyPolicy")}
+              </Link>
+              <Link
+                href={`/${language}/terms`}
+                className="hover:text-white transition-colors"
+              >
+                {t("footer.termsOfService")}
+              </Link>
+            </div>
           </div>
         </div>
       </div>

@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react"
 import { Calendar, Bed, Users, TrendingUp, Clock, CheckCircle, XCircle, AlertCircle } from "lucide-react"
-import { useLanguage } from "@/contexts/language-context"
 import Link from "next/link"
 import { adminAPI } from "@/lib/api"
 
@@ -104,7 +103,6 @@ const getStatusIcon = (status: string) => {
 }
 
 export default function AdminDashboard() {
-  const { t } = useLanguage()
   const [dashboardData, setDashboardData] = useState<any>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState("")
@@ -182,15 +180,15 @@ export default function AdminDashboard() {
   const getStatusText = (status: string) => {
     switch (status) {
       case "confirmed":
-        return t("admin.status.confirmed")
+        return "Επιβεβαιωμένη"
       case "pending":
-        return t("admin.status.pending")
+        return "Εκκρεμής"
       case "cancelled":
-        return t("admin.status.cancelled")
+        return "Ακυρωμένη"
       case "checked-in":
-        return t("admin.status.checkedIn")
+        return "Έγινε Check-in"
       case "checked-out": // Added for completeness
-        return t("admin.status.checkedOut")
+        return "Έγινε Check-out"
       default:
         return status
     }
@@ -324,7 +322,7 @@ export default function AdminDashboard() {
           </div>
           <div className="px-6 py-3 border-t border-slate-200">
             <Link href="/admin/bookings" className="text-sm text-[#0A4A4A] hover:underline font-alegreya">
-              {t("admin.dashboard.todayArrivals.manage")}
+              Διαχείριση κρατήσεων →
             </Link>
           </div>
         </div>

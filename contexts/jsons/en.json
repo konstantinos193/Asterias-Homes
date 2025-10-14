@@ -247,6 +247,7 @@
         "phone": {
           "title": "Call Us",
           "number": "+30 6972705881",
+          "number2": "017663304809",
           "availability": "Available daily from 08:00 to 22:00"
         },
         "email": {
@@ -825,6 +826,7 @@
         "phone": {
           "title": "Call Us",
           "number": "+30 2681 023456",
+          "number2": "017663304809",
           "availability": "Available daily from 08:00 to 22:00"
         },
         "email": {

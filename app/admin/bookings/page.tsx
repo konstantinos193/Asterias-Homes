@@ -7,7 +7,6 @@ import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { CheckCircle, XCircle, Clock, AlertCircle, Search, Filter, Download, Calendar, User, MapPin, Euro, Phone, Mail } from "lucide-react"
 import { adminAPI } from "@/lib/api"
-import { useLanguage } from "@/contexts/language-context"
 import * as XLSX from 'xlsx'
 
 // Mock data - in a real app, this would come from your database
@@ -169,7 +168,6 @@ const getStatusFilterText = (status: string) => {
 }
 
 export default function BookingsPage() {
-  const { t } = useLanguage()
   const [bookings, setBookings] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState("")

@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
-import { useLanguage } from "@/contexts/language-context"
 import { PlusCircle, Trash, Edit, ToggleLeft, ToggleRight } from "lucide-react"
 import Link from "next/link"
 import { offersAPI } from "@/lib/api"
@@ -18,7 +17,6 @@ interface Offer {
 }
 
 export default function AdminOffersPage() {
-  const { t } = useLanguage()
   const { toast } = useToast()
   const [offers, setOffers] = useState<Offer[]>([])
   const [loading, setLoading] = useState(true)
