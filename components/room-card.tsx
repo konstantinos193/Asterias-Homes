@@ -31,7 +31,7 @@ export default function RoomCard({
 
   const displayName = nameKey ? t(nameKey) : name;
   const displayDescription = descriptionKey ? t(descriptionKey) : description;
-  const displayFeatures = featureKeys ? featureKeys.map(key => t(key)) : features;
+  const displayFeatures = featureKeys ? featureKeys.map(key => t(key)) : (Array.isArray(features) ? features : []);
 
 
   return (

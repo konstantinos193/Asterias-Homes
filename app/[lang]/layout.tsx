@@ -1,11 +1,14 @@
+import React from "react";
 import Header from "@/components/header";
 import Footer from "@/components/footer";
-import { LanguageProvider } from "@/contexts/language-context";
+import { LanguageProvider, type LanguageCode } from "@/contexts/language-context";
 import PerformanceOptimizer from "@/components/seo/performance-optimizer";
 
-export default function LangLayout({ children, params }) {
+export default async function LangLayout({ children, params }: { children: React.ReactNode, params: Promise<{ lang: string }> }) {
+  const { lang } = await params;
+  
   return (
-    <LanguageProvider initialLanguage={params.lang}>
+    <LanguageProvider initialLanguage={lang as LanguageCode}>
       <PerformanceOptimizer
         preconnectDomains={["https://i.imgur.com", "https://asteriashome.gr", "https://www.asteriashome.gr"]}
         dnsPrefetchDomains={["https://i.imgur.com", "https://asteriashome.gr", "https://www.asteriashome.gr"]}

@@ -201,12 +201,22 @@ export const roomsAPI = {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
     const data = await response.json();
-    // Backend returns { rooms: [...] }, so we need to handle that structure
-    const roomsArray = data.rooms || data;
+    
+    // Backend returns { rooms: [...], pagination: {...} }, so we need to extract just the rooms
+    let roomsArray;
+    if (data.rooms && Array.isArray(data.rooms)) {
+      roomsArray = data.rooms;
+    } else if (Array.isArray(data)) {
+      roomsArray = data;
+    } else {
+      console.error('Unexpected API response structure:', data);
+      return [];
+    }
+    
     // Map _id to id for backward compatibility
     return roomsArray.map((room: any) => ({
       ...room,
-      id: room._id
+      id: room._id || room.id
     }));
   }
 };

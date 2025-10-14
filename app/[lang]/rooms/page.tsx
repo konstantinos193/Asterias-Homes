@@ -16,10 +16,18 @@ export default function RoomsPage() {
 
   useEffect(() => {
     getRooms().then((rooms) => {
-      if (rooms) {
+      if (rooms && Array.isArray(rooms)) {
         setRooms(rooms)
         setFilteredRooms(rooms)
+      } else {
+        console.error('Invalid rooms data received:', rooms)
+        setRooms([])
+        setFilteredRooms([])
       }
+    }).catch((error) => {
+      console.error('Error fetching rooms:', error)
+      setRooms([])
+      setFilteredRooms([])
     })
   }, [])
 
@@ -40,7 +48,9 @@ export default function RoomsPage() {
     setFilteredRooms(filtered)
   }, [rooms, searchTerm, priceRange, selectedFeatures])
 
-  const availableFeatures = Array.from(new Set(rooms.flatMap(room => room.features)))
+  const availableFeatures = Array.from(new Set(rooms.flatMap(room => 
+    room.features && Array.isArray(room.features) ? room.features : []
+  )))
 
   return (
     <main className="bg-[#A9AEA2]/30 text-slate-800 pt-20 sm:pt-24 font-alegreya">
@@ -146,7 +156,7 @@ export default function RoomsPage() {
         <div className="container mx-auto container-mobile">
           <div className="flex items-center justify-between">
             <p className="text-sm sm:text-base text-slate-600">
-              {t("rooms.showingResults", { count: filteredRooms.length, total: rooms.length })}
+              Showing {filteredRooms.length} of {rooms.length} apartments
             </p>
             <div className="flex items-center space-x-2 text-sm text-slate-500">
               <Star className="h-4 w-4 text-yellow-400" />
@@ -213,7 +223,7 @@ export default function RoomsPage() {
             href={`/${language}/contact`}
             className="inline-block bg-[#8B4B5C] text-white px-6 sm:px-8 py-3 rounded-md hover:bg-[#7A4251] transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center text-sm sm:text-base"
           >
-            {t("rooms.contactUs")}
+            {t("bookingWizard.confirmation.contactUs")}
           </a>
         </div>
       </section>

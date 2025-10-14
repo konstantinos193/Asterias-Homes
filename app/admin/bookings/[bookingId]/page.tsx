@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { useParams } from "next/navigation"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
@@ -57,7 +58,9 @@ const bookingData = {
   ],
 }
 
-export default function BookingDetailPage({ params }: { params: { bookingId: string } }) {
+export default function BookingDetailPage() {
+  const params = useParams()
+  const bookingId = params.bookingId as string
   const [status, setStatus] = useState(bookingData.status)
   const [notes, setNotes] = useState("")
 
@@ -124,7 +127,7 @@ export default function BookingDetailPage({ params }: { params: { bookingId: str
             <Link href="/admin/bookings" className="text-slate-500 hover:text-[#0A4A4A]">
               <ArrowLeft className="h-5 w-5" />
             </Link>
-            <h1 className="text-2xl font-cormorant font-light text-slate-800">Κράτηση #{params.bookingId}</h1>
+            <h1 className="text-2xl font-cormorant font-light text-slate-800">Κράτηση #{bookingId}</h1>
             <span
               className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${getStatusClass(
                 status,

@@ -151,7 +151,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en">
       <body className={`${cormorant.variable} ${alegreya.variable}`}>
         <AuthProvider>
-          <ThemeProvider attribute="class" defaultTheme="light" enableSystem disableTransitionOnChange>
+          <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false} disableTransitionOnChange>
             <main>{children}</main>
             <Toaster />
           </ThemeProvider>

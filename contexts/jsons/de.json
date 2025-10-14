@@ -67,6 +67,18 @@
     },
     "perNight": "/ Nacht",
     "viewAll": "Alle Apartments ansehen",
+    "pageTitle": "Unsere Apartments",
+    "pageDescription": "Entdecken Sie unsere Sammlung traditioneller Ferienapartments, jedes für einen komfortablen und authentischen Aufenthalt in Koronisia gestaltet.",
+    "searchPlaceholder": "Apartments suchen...",
+    "priceRange": "Preisbereich",
+    "features": "Ausstattung",
+    "clearFilters": "Filter löschen",
+    "qualityAssured": "Qualität garantiert",
+    "noResultsTitle": "Keine Apartments gefunden",
+    "noResultsDescription": "Wir konnten keine Apartments finden, die Ihren Kriterien entsprechen. Versuchen Sie, Ihre Filter oder Suchbegriffe anzupassen.",
+    "resetFilters": "Filter zurücksetzen",
+    "ctaTitle": "Brauchen Sie Hilfe bei der Auswahl?",
+    "ctaDescription": "Unser Team ist hier, um Ihnen zu helfen, das perfekte Apartment für Ihren Aufenthalt zu finden. Kontaktieren Sie uns für personalisierte Empfehlungen.",
     "standard": {
       "name": "Gemütliches Studio-Apartment",
       "description": "Komfortables Studio-Apartment mit modernen Annehmlichkeiten, perfekt für Paare. Mit Küchenzeile, eigenem Bad und Balkon mit Gartenblick."
