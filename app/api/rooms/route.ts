@@ -15,7 +15,27 @@ export async function GET(request: NextRequest) {
       throw new Error(`Backend responded with status: ${response.status}`)
     }
     
-    const data = await response.json()
+    // Check if response has content before parsing JSON
+    const text = await response.text()
+    if (!text) {
+      return NextResponse.json(
+        { error: 'Empty response from backend' },
+        { status: 500 }
+      )
+    }
+    
+    let data
+    try {
+      data = JSON.parse(text)
+    } catch (parseError) {
+      console.error('JSON parse error:', parseError)
+      console.error('Response text:', text)
+      return NextResponse.json(
+        { error: 'Invalid JSON response from backend' },
+        { status: 500 }
+      )
+    }
+    
     return NextResponse.json(data, { status: response.status })
   } catch (error) {
     console.error('Error fetching rooms:', error)

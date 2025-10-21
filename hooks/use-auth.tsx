@@ -33,8 +33,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           credentials: "include",
         })
         if (res.ok) {
-          const profile = await res.json()
-          setUser(profile.user)
+          const text = await res.text()
+          if (text) {
+            try {
+              const profile = JSON.parse(text)
+              setUser(profile.user)
+            } catch (parseError) {
+              console.error('JSON parse error in profile check:', parseError)
+              setUser(null)
+            }
+          } else {
+            setUser(null)
+          }
         } else {
           setUser(null)
         }
@@ -59,16 +69,34 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       credentials: "include",
     })
     if (!response.ok) {
-      const data = await response.json()
-      throw new Error(data.error || 'Login failed')
+      const text = await response.text()
+      let data = {}
+      if (text) {
+        try {
+          data = JSON.parse(text)
+        } catch (parseError) {
+          console.error('JSON parse error in login response:', parseError)
+        }
+      }
+      throw new Error((data as any).error || 'Login failed')
     }
     // After login, fetch profile
     const profileRes = await fetch("/api/auth/profile", {
       credentials: "include",
     })
     if (profileRes.ok) {
-      const profile = await profileRes.json()
-      setUser(profile.user)
+      const text = await profileRes.text()
+      if (text) {
+        try {
+          const profile = JSON.parse(text)
+          setUser(profile.user)
+        } catch (parseError) {
+          console.error('JSON parse error in profile fetch:', parseError)
+          setUser(null)
+        }
+      } else {
+        setUser(null)
+      }
     } else {
       setUser(null)
     }

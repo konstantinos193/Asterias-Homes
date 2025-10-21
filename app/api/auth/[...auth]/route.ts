@@ -27,7 +27,27 @@ export async function GET(
       headers,
     })
     
-    const data = await response.json()
+    // Check if response has content before parsing JSON
+    const text = await response.text()
+    if (!text) {
+      return NextResponse.json(
+        { error: 'Empty response from backend' },
+        { status: 500 }
+      )
+    }
+    
+    let data
+    try {
+      data = JSON.parse(text)
+    } catch (parseError) {
+      console.error('JSON parse error:', parseError)
+      console.error('Response text:', text)
+      return NextResponse.json(
+        { error: 'Invalid JSON response from backend' },
+        { status: 500 }
+      )
+    }
+    
     return NextResponse.json(data, { status: response.status })
   } catch (error) {
     return NextResponse.json(
@@ -54,7 +74,26 @@ export async function POST(
       body: JSON.stringify(body),
     })
     
-    const data = await response.json()
+    // Check if response has content before parsing JSON
+    const text = await response.text()
+    if (!text) {
+      return NextResponse.json(
+        { error: 'Empty response from backend' },
+        { status: 500 }
+      )
+    }
+    
+    let data
+    try {
+      data = JSON.parse(text)
+    } catch (parseError) {
+      console.error('JSON parse error:', parseError)
+      console.error('Response text:', text)
+      return NextResponse.json(
+        { error: 'Invalid JSON response from backend' },
+        { status: 500 }
+      )
+    }
     
     // If login is successful and backend returns a token, set it as a cookie
     if (response.ok && authPath === 'login' && data.token) {
