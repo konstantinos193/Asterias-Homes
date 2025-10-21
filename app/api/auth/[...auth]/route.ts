@@ -9,6 +9,12 @@ export async function GET(
   const authPath = params.auth.join('/')
   const url = `${BACKEND_URL}/${authPath}`
   
+  console.log('🔍 Auth API Debug:', {
+    authPath,
+    url,
+    method: 'GET'
+  })
+  
   // Get the authToken from cookies
   const authToken = request.cookies.get('authToken')?.value
   
@@ -22,9 +28,17 @@ export async function GET(
       headers['Authorization'] = `Bearer ${authToken}`
     }
     
+    console.log('🚀 Making request to backend:', { url, headers })
+    
     const response = await fetch(url, {
       method: 'GET',
       headers,
+    })
+    
+    console.log('📡 Backend response:', {
+      status: response.status,
+      statusText: response.statusText,
+      ok: response.ok
     })
     
     // Check if response has content before parsing JSON
@@ -65,13 +79,28 @@ export async function POST(
   const url = `${BACKEND_URL}/${authPath}`
   const body = await request.json()
   
+  console.log('🔍 Auth API Debug POST:', {
+    authPath,
+    url,
+    method: 'POST',
+    body
+  })
+  
   try {
+    console.log('🚀 Making POST request to backend:', { url, body })
+    
     const response = await fetch(url, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(body),
+    })
+    
+    console.log('📡 Backend POST response:', {
+      status: response.status,
+      statusText: response.statusText,
+      ok: response.ok
     })
     
     // Check if response has content before parsing JSON
