@@ -6,6 +6,10 @@ export async function GET(
   request: NextRequest,
   { params }: { params: { auth: string[] } }
 ) {
+  console.log('🚨 API ROUTE CALLED - GET METHOD')
+  console.log('🚨 Params:', params)
+  console.log('🚨 Request URL:', request.url)
+  
   const authPath = params.auth.join('/')
   const url = `${BACKEND_URL}/${authPath}`
   
