@@ -87,7 +87,9 @@ export async function POST(
     authPath,
     url,
     method: 'POST',
-    body
+    body,
+    bodyString: JSON.stringify(body),
+    bodyStringLength: JSON.stringify(body).length
   })
   
   try {
