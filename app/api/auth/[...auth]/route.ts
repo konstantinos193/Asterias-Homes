@@ -4,13 +4,15 @@ const BACKEND_URL = 'https://asterias-backend.onrender.com/api/auth'
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { auth: string[] } }
+  { params }: { params: Promise<{ auth: string[] }> }
 ) {
   console.log('🚨 API ROUTE CALLED - GET METHOD')
-  console.log('🚨 Params:', params)
   console.log('🚨 Request URL:', request.url)
   
-  const authPath = params.auth.join('/')
+  const resolvedParams = await params
+  console.log('🚨 Params:', resolvedParams)
+  
+  const authPath = resolvedParams.auth.join('/')
   const url = `${BACKEND_URL}/${authPath}`
   
   console.log('🔍 Auth API Debug:', {
@@ -77,9 +79,10 @@ export async function GET(
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { auth: string[] } }
+  { params }: { params: Promise<{ auth: string[] }> }
 ) {
-  const authPath = params.auth.join('/')
+  const resolvedParams = await params
+  const authPath = resolvedParams.auth.join('/')
   const url = `${BACKEND_URL}/${authPath}`
   const body = await request.json()
   

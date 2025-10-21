@@ -37,56 +37,7 @@ const mockStatsData = [
   },
 ]
 
-const recentBookingsData = [
-  {
-    id: "AST-2024-001",
-    guest: "Μαρία Παπαδοπούλου", // Guest names are dynamic data, not typically translated via i18n keys
-    room: "Standard Δωμάτιο", // Room names might be dynamic or could be keys if fixed
-    checkIn: "2024-01-15",
-    checkOut: "2024-01-17",
-    status: "confirmed",
-    total: "135.60€",
-  },
-  {
-    id: "AST-2024-002",
-    guest: "Γιάννης Κωνσταντίνου",
-    room: "Οικογενειακό Δωμάτιο",
-    checkIn: "2024-01-16",
-    checkOut: "2024-01-20",
-    status: "pending",
-    total: "361.60€",
-  },
-  {
-    id: "AST-2024-003",
-    guest: "Ελένη Μιχαηλίδου",
-    room: "Ρομαντικό Δωμάτιο",
-    checkIn: "2024-01-18",
-    checkOut: "2024-01-21",
-    status: "confirmed",
-    total: "339.00€",
-  },
-]
-
-const todayArrivalsData = [
-  {
-    guest: "Δημήτρης Αντωνίου",
-    room: "Standard Δωμάτιο",
-    time: "15:30",
-    status: "checked-in",
-  },
-  {
-    guest: "Σοφία Γεωργίου",
-    room: "Ρομαντικό Δωμάτιο",
-    time: "16:00",
-    status: "pending",
-  },
-  {
-    guest: "Νίκος Παπαδάκης",
-    room: "Οικογενειακό Δωμάτιο",
-    time: "17:30",
-    status: "pending",
-  },
-]
+// Mock data removed - using real data from backend
 
 const getStatusIcon = (status: string) => {
   switch (status) {
@@ -250,10 +201,8 @@ export default function AdminDashboard() {
             </h2>
           </div>
           <div className="divide-y divide-slate-200">
-            {(dashboardData?.recentBookings && dashboardData.recentBookings.length > 0 
-              ? dashboardData.recentBookings 
-              : recentBookingsData
-            ).map((booking: any, index: number) => (
+            {dashboardData?.recentBookings && dashboardData.recentBookings.length > 0 ? (
+              dashboardData.recentBookings.map((booking: any, index: number) => (
               <div key={booking._id || booking.id || index} className="px-6 py-4">
                 <div className="flex items-center justify-between">
                   <div className="flex-1 min-w-0">
@@ -285,7 +234,12 @@ export default function AdminDashboard() {
                   </div>
                 </div>
               </div>
-            ))}
+              ))
+            ) : (
+              <div className="px-6 py-8 text-center">
+                <p className="text-slate-500 font-alegreya">Δεν υπάρχουν πρόσφατες κρατήσεις</p>
+              </div>
+            )}
           </div>
           <div className="px-6 py-3 border-t border-slate-200">
             <Link href="/admin/bookings" className="text-sm text-[#0A4A4A] hover:underline font-alegreya">
@@ -302,23 +256,40 @@ export default function AdminDashboard() {
             </h2>
           </div>
           <div className="divide-y divide-slate-200">
-            {todayArrivalsData.map((arrival, index) => (
-              <div key={index} className="px-6 py-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-1">
-                      {getStatusIcon(arrival.status)}
-                      <p className="text-sm font-medium text-slate-900 font-alegreya truncate">{arrival.guest}</p>
+            {dashboardData?.todayArrivals && dashboardData.todayArrivals.length > 0 ? (
+              dashboardData.todayArrivals.map((arrival: any, index: number) => (
+                <div key={arrival._id || index} className="px-6 py-4">
+                  <div className="flex items-center justify-between">
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-1">
+                        {getStatusIcon(arrival.bookingStatus || arrival.status)}
+                        <p className="text-sm font-medium text-slate-900 font-alegreya truncate">
+                          {arrival.guestInfo ? `${arrival.guestInfo.firstName} ${arrival.guestInfo.lastName}` : arrival.guest || 'Guest'}
+                        </p>
+                      </div>
+                      <p className="text-sm text-slate-500 font-alegreya">
+                        {arrival.room?.name || arrival.room || 'Room'}
+                      </p>
                     </div>
-                    <p className="text-sm text-slate-500 font-alegreya">{arrival.room}</p>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-sm font-medium text-slate-900 font-alegreya">{arrival.time}</p>
-                    <p className="text-xs text-slate-500 font-alegreya">{getStatusText(arrival.status)}</p>
+                    <div className="text-right">
+                      <p className="text-sm font-medium text-slate-900 font-alegreya">
+                        {arrival.checkIn ? new Date(arrival.checkIn).toLocaleTimeString('el-GR', { hour: '2-digit', minute: '2-digit' }) : arrival.time}
+                      </p>
+                      <p className="text-xs text-slate-500 font-alegreya">
+                        {(arrival.bookingStatus || arrival.status) === "CONFIRMED" ? "Επιβεβαιωμένη" :
+                         (arrival.bookingStatus || arrival.status) === "PENDING" ? "Εκκρεμής" :
+                         (arrival.bookingStatus || arrival.status) === "CHECKED_IN" ? "Έγινε Check-in" :
+                         arrival.bookingStatus || arrival.status}
+                      </p>
+                    </div>
                   </div>
                 </div>
+              ))
+            ) : (
+              <div className="px-6 py-8 text-center">
+                <p className="text-slate-500 font-alegreya">Δεν υπάρχουν άφιξεις σήμερα</p>
               </div>
-            ))}
+            )}
           </div>
           <div className="px-6 py-3 border-t border-slate-200">
             <Link href="/admin/bookings" className="text-sm text-[#0A4A4A] hover:underline font-alegreya">

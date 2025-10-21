@@ -4,9 +4,10 @@ const BACKEND_URL = 'https://asterias-backend.onrender.com/api/admin'
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { admin: string[] } }
+  { params }: { params: Promise<{ admin: string[] }> }
 ) {
-  const adminPath = params.admin.join('/')
+  const resolvedParams = await params
+  const adminPath = resolvedParams.admin.join('/')
   const url = `${BACKEND_URL}/${adminPath}`
   
   // Get the authToken from cookies
@@ -59,9 +60,10 @@ export async function GET(
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { admin: string[] } }
+  { params }: { params: Promise<{ admin: string[] }> }
 ) {
-  const adminPath = params.admin.join('/')
+  const resolvedParams = await params
+  const adminPath = resolvedParams.admin.join('/')
   const url = `${BACKEND_URL}/${adminPath}`
   const body = await request.json()
   
@@ -115,9 +117,10 @@ export async function POST(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { admin: string[] } }
+  { params }: { params: Promise<{ admin: string[] }> }
 ) {
-  const adminPath = params.admin.join('/')
+  const resolvedParams = await params
+  const adminPath = resolvedParams.admin.join('/')
   const url = `${BACKEND_URL}/${adminPath}`
   const body = await request.json()
   
@@ -171,9 +174,10 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { admin: string[] } }
+  { params }: { params: Promise<{ admin: string[] }> }
 ) {
-  const adminPath = params.admin.join('/')
+  const resolvedParams = await params
+  const adminPath = resolvedParams.admin.join('/')
   const url = `${BACKEND_URL}/${adminPath}`
   
   // Get the authToken from cookies
