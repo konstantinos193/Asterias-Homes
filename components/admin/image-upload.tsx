@@ -129,11 +129,12 @@ export default function ImageUpload({
         const uploadedFile = result.files[0]
 
         // Update image with server URL
+        const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'https://asterias-backend.onrender.com';
         const updatedImages = images.map(img => 
           img.id === image.id 
             ? { 
                 ...img, 
-                url: `https://asterias-backend.onrender.com${uploadedFile.url}`,
+                url: `${backendUrl}${uploadedFile.url}`,
                 uploaded: true 
               }
             : img

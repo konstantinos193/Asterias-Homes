@@ -1,4 +1,6 @@
 // API utility for backend communication using Next.js API proxy routes
+import { getBackendApiUrl } from './backend-url';
+
 const API_BASE_URL = '';
 
 const apiRequest = async (endpoint: string, options: RequestInit = {}) => {
@@ -12,12 +14,30 @@ const apiRequest = async (endpoint: string, options: RequestInit = {}) => {
     ...options,
   };
   
-  const response = await fetch(url, config);
-  if (!response.ok) {
-    const errorData = await response.json().catch(() => ({}));
-    throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
+  try {
+    const response = await fetch(url, config);
+    if (!response.ok) {
+      let errorData;
+      try {
+        errorData = await response.json();
+      } catch {
+        errorData = { error: `HTTP error! status: ${response.status}` };
+      }
+      const error = new Error(errorData.error || `HTTP error! status: ${response.status}`);
+      (error as any).status = response.status;
+      (error as any).errorData = errorData;
+      throw error;
+    }
+    return response.json();
+  } catch (error: any) {
+    // Re-throw if it's already our error
+    if (error.message && error.status) {
+      throw error;
+    }
+    // Otherwise, it's a network error
+    console.error('API request failed:', endpoint, error);
+    throw new Error(error.message || 'Network error: Failed to connect to server');
   }
-  return response.json();
 };
 
 export const authAPI = {
@@ -45,7 +65,7 @@ export const paymentsAPI = {
     currency?: string;
   }) => {
     // Call backend directly for payment intent creation
-    const response = await fetch('https://asterias-backend.onrender.com/api/payments/create-payment-intent', {
+    const response = await fetch(getBackendApiUrl('/api/payments/create-payment-intent'), {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -65,7 +85,7 @@ export const paymentsAPI = {
     specialRequests?: string;
   }) => {
     // Call backend directly for payment confirmation
-    const response = await fetch('https://asterias-backend.onrender.com/api/payments/confirm-payment', {
+    const response = await fetch(getBackendApiUrl('/api/payments/confirm-payment'), {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -90,7 +110,7 @@ export const paymentsAPI = {
     specialRequests?: string;
   }) => {
     // Call backend directly for cash booking creation
-    const response = await fetch('https://asterias-backend.onrender.com/api/payments/create-cash-booking', {
+    const response = await fetch(getBackendApiUrl('/api/payments/create-cash-booking'), {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -115,6 +135,9 @@ export const adminAPI = {
   },
   getAllRooms: async () => {
     return apiRequest('/api/admin/rooms');
+  },
+  getRoomById: async (roomId: string) => {
+    return apiRequest(`/api/admin/rooms/${roomId}`);
   },
   updateBookingStatus: async (bookingId: string, status: string) => {
     return apiRequest(`/api/admin/bookings/${bookingId}/status`, {
@@ -196,7 +219,7 @@ export const contactAPI = {
 
 export const roomsAPI = {
   getAll: async () => {
-    const response = await fetch('https://asterias-backend.onrender.com/api/rooms');
+    const response = await fetch(getBackendApiUrl('/api/rooms'));
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
@@ -218,13 +241,29 @@ export const roomsAPI = {
       ...room,
       id: room._id || room.id
     }));
+  },
+  getById: async (roomId: string) => {
+    const response = await fetch(getBackendApiUrl(`/api/rooms/${roomId}`));
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const data = await response.json();
+    
+    // Backend returns { room: {...} }
+    if (data.room) {
+      return {
+        ...data.room,
+        id: data.room._id || data.room.id
+      };
+    }
+    return data;
   }
 };
 
 export const calendarAPI = {
   // Get monthly availability for a specific room
   getMonthlyAvailability: async (roomId: string, month: number, year: number) => {
-    const response = await fetch(`https://asterias-backend.onrender.com/api/availability/monthly/${roomId}?month=${month}&year=${year}`);
+    const response = await fetch(getBackendApiUrl(`/api/availability/monthly/${roomId}?month=${month}&year=${year}`));
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
@@ -233,7 +272,7 @@ export const calendarAPI = {
   
   // Get calendar availability data for frontend calendar component (aggregated across all rooms)
   getCalendarAvailability: async (month: number, year: number) => {
-    const response = await fetch(`https://asterias-backend.onrender.com/api/availability/calendar?month=${month}&year=${year}`);
+    const response = await fetch(getBackendApiUrl(`/api/availability/calendar?month=${month}&year=${year}`));
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
@@ -242,7 +281,7 @@ export const calendarAPI = {
   
   // Get availability overview for dashboard
   getAvailabilityOverview: async () => {
-    const response = await fetch('https://asterias-backend.onrender.com/api/availability/overview');
+    const response = await fetch(getBackendApiUrl('/api/availability/overview'));
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
@@ -251,7 +290,7 @@ export const calendarAPI = {
   
   // Get room availability for a specific date range
   getRoomAvailability: async (roomId: string, startDate: string, endDate: string) => {
-    const response = await fetch(`https://asterias-backend.onrender.com/api/availability/room/${roomId}?date=${startDate}`);
+    const response = await fetch(getBackendApiUrl(`/api/availability/room/${roomId}?date=${startDate}`));
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }

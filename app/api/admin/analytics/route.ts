@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-
-const BACKEND_URL = process.env.BACKEND_URL || 'https://asterias-backend.onrender.com'
+import { getBackendUrl } from '@/lib/backend-url'
 
 // Force dynamic rendering since we use cookies
 export const dynamic = 'force-dynamic'
@@ -27,7 +26,8 @@ export async function GET(request: NextRequest) {
     if (endDate) queryParams.set('endDate', endDate)
 
     const queryString = queryParams.toString()
-    const url = `${BACKEND_URL}/api/admin/analytics${queryString ? `?${queryString}` : ''}`
+    const backendUrl = getBackendUrl()
+    const url = `${backendUrl}/api/admin/analytics${queryString ? `?${queryString}` : ''}`
 
     const response = await fetch(url, {
       method: 'GET',

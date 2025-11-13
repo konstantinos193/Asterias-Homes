@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-
-const BACKEND_URL = 'https://asterias-backend.onrender.com/api/admin'
+import { getBackendApiUrl } from '@/lib/backend-url'
 
 export async function GET(
   request: NextRequest,
@@ -8,7 +7,15 @@ export async function GET(
 ) {
   const resolvedParams = await params
   const adminPath = resolvedParams.admin.join('/')
+  const BACKEND_URL = getBackendApiUrl('/api/admin')
   const url = `${BACKEND_URL}/${adminPath}`
+  
+  console.log('🔍 Admin API Route - GET:', {
+    adminPath,
+    fullUrl: url,
+    backendUrl: BACKEND_URL,
+    envVar: process.env.NEXT_PUBLIC_BACKEND_URL
+  })
   
   // Get the authToken from cookies
   const authToken = request.cookies.get('authToken')?.value
@@ -23,10 +30,13 @@ export async function GET(
       headers['Authorization'] = `Bearer ${authToken}`
     }
     
+    console.log('🚀 Making backend request to:', url)
     const response = await fetch(url, {
       method: 'GET',
       headers,
     })
+    
+    console.log('📡 Backend response status:', response.status, response.statusText)
     
     // Check if response has content before parsing JSON
     const text = await response.text()
@@ -64,6 +74,7 @@ export async function POST(
 ) {
   const resolvedParams = await params
   const adminPath = resolvedParams.admin.join('/')
+  const BACKEND_URL = getBackendApiUrl('/api/admin')
   const url = `${BACKEND_URL}/${adminPath}`
   const body = await request.json()
   
@@ -121,6 +132,7 @@ export async function PUT(
 ) {
   const resolvedParams = await params
   const adminPath = resolvedParams.admin.join('/')
+  const BACKEND_URL = getBackendApiUrl('/api/admin')
   const url = `${BACKEND_URL}/${adminPath}`
   const body = await request.json()
   
@@ -178,6 +190,7 @@ export async function DELETE(
 ) {
   const resolvedParams = await params
   const adminPath = resolvedParams.admin.join('/')
+  const BACKEND_URL = getBackendApiUrl('/api/admin')
   const url = `${BACKEND_URL}/${adminPath}`
   
   // Get the authToken from cookies

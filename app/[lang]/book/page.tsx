@@ -58,7 +58,8 @@ export default function BookPage() {
         for (const room of standardRooms) {
           try {
             // Check if this specific room is available for the selected dates
-            const response = await fetch(`https://asterias-backend.onrender.com/api/rooms/${room._id}/availability?checkIn=${checkIn}&checkOut=${checkOut}`)
+            const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'https://asterias-backend.onrender.com';
+            const response = await fetch(`${backendUrl}/api/rooms/${room._id}/availability?checkIn=${checkIn}&checkOut=${checkOut}`)
             if (response.ok) {
               const availabilityData = await response.json()
               if (availabilityData.isAvailable) {

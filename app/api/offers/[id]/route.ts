@@ -1,11 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getBackendApiUrl } from '@/lib/backend-url'
 
-const BACKEND_URL = getBackendApiUrl('/api/rooms')
+const BACKEND_URL = getBackendApiUrl('/api/offers')
 
-export async function GET(request: NextRequest) {
+export async function GET(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
   try {
-    const response = await fetch(BACKEND_URL, {
+    const { id } = await params
+    const response = await fetch(`${BACKEND_URL}/${id}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -39,10 +43,11 @@ export async function GET(request: NextRequest) {
     
     return NextResponse.json(data, { status: response.status })
   } catch (error) {
-    console.error('Error fetching rooms:', error)
+    console.error('Error fetching offer:', error)
     return NextResponse.json(
-      { error: 'Failed to fetch rooms' },
+      { error: 'Failed to fetch offer' },
       { status: 500 }
     )
   }
 }
+

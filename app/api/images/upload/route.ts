@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { getBackendApiUrl } from '@/lib/backend-url'
 
-const BACKEND_URL = 'https://asterias-backend.onrender.com/api/images'
+const BACKEND_URL = getBackendApiUrl('/api/images')
 
 export async function POST(request: NextRequest) {
   try {

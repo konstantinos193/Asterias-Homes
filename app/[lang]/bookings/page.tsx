@@ -72,7 +72,8 @@ export default function BookingsPage() {
       setLoadingRooms(true);
       try {
         console.log('Fetching rooms from backend...');
-        const res = await fetch("https://asterias-backend.onrender.com/api/rooms");
+        const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'https://asterias-backend.onrender.com';
+        const res = await fetch(`${backendUrl}/api/rooms`);
         const data = await res.json();
         console.log('Backend rooms response:', data);
         console.log('Backend rooms data structure:', {
