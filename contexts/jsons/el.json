@@ -170,7 +170,18 @@
           "en": "Family rooms",
           "de": "Familienzimmer"
         }
-      }
+      },
+      "aboutRoom": "Σχετικά με το Διαμέρισμα",
+      "maxGuests": "Μέγιστος Αριθμός Επισκεπτών",
+      "size": "Μέγεθος",
+      "view": "Θέα",
+      "bathroom": "Μπάνιο",
+      "accommodates": "Φιλοξενεί",
+      "guests": "επισκέπτες",
+      "bookNow": "Κάντε Κράτηση",
+      "contactUs": "Επικοινωνήστε Μαζί Μας",
+      "backToRooms": "Πίσω στα Διαμερίσματα",
+      "notFound": "Το διαμέρισμα που αναζητάτε δεν υπάρχει."
     },
     "roomCard": {
       "bookNow": "Κράτηση Διαμερίσματος"
@@ -613,32 +624,32 @@
         "children_other": "Παιδιά"
       },
       "comparison": {
-        "barText": "apartments selected for comparison",
-        "compareButton": "Compare",
-        "modalTitle": "Compare Apartments",
-        "removeTooltip": "Remove from comparison",
-        "pricePerNight": "per night",
-        "totalPrice": "Total for {nights} nights: {price}€",
-        "sizeLabel": "Apartment Size",
-        "capacityLabel": "Max Capacity",
-        "capacityText": "{count} guests",
-        "bedLabel": "Bed Type",
-        "viewLabel": "View",
-        "bathroomLabel": "Bathroom",
-        "amenitiesTitle": "Key Features",
+        "barText": "διαμερίσματα επιλέχθηκαν για σύγκριση",
+        "compareButton": "Σύγκριση",
+        "modalTitle": "Σύγκριση Διαμερισμάτων",
+        "removeTooltip": "Αφαίρεση από τη σύγκριση",
+        "pricePerNight": "ανά διανυκτέρευση",
+        "totalPrice": "Σύνολο για {nights} νύχτες: {price}€",
+        "sizeLabel": "Μέγεθος Διαμερίσματος",
+        "capacityLabel": "Μέγιστη Χωρητικότητα",
+        "capacityText": "{count} επισκέπτες",
+        "bedLabel": "Τύπος Κρεβατιού",
+        "viewLabel": "Θέα",
+        "bathroomLabel": "Μπάνιο",
+        "amenitiesTitle": "Κύρια Χαρακτηριστικά",
         "featureLabel": {
           "wifi": "Wi-Fi",
-          "ac": "Air Conditioning",
-          "tv": "Television",
-          "minibar": "Kitchen",
-          "breakfast": "Welcome Basket",
-          "parking": "Parking",
-          "balcony": "Balcony"
+          "ac": "Κλιματισμός",
+          "tv": "Τηλεόραση",
+          "minibar": "Κουζίνα",
+          "breakfast": "Καλάθι Καλωσορίσματος",
+          "parking": "Πάρκινγκ",
+          "balcony": "Μπαλκόνι"
         },
-        "detailsButton": "View Details",
-        "bookButton": "Book Now",
-        "unavailableButton": "Unavailable",
-        "clearButton": "Clear Comparison"
+        "detailsButton": "Προβολή Λεπτομερειών",
+        "bookButton": "Κράτηση Τώρα",
+        "unavailableButton": "Μη Διαθέσιμο",
+        "clearButton": "Καθαρισμός Σύγκρισης"
       },
       "viewToggle": {
         "listTitle": "Διαθέσιμα Διαμερίσματα",
@@ -692,6 +703,9 @@
         "resultsSummary": "Showing {count} of {total} apartments",
         "clearButton": "Clear Filters"
       },
+      "viewingRoom": "Προβολή συγκεκριμένου διαμερίσματος",
+      "viewRoomDetails": "Προβολή Λεπτομερειών Διαμερίσματος",
+      "checkingAvailability": "Έλεγχος διαθεσιμότητας διαμερισμάτων για τις ημερομηνίες σας...",
       "roomList": {
         "availableText": "Διαθέσιμο",
         "roomConfiguration": "Διαμόρφωση Δωματίου",
@@ -722,8 +736,8 @@
           "description": "Απολαύστε ηρεμία με τις ευέλικτες πολιτικές ακύρωσης που προσφέρουμε στους περισσότερους τύπους τιμών."
         },
         "item3": {
-          "title": "Exclusive Offers",
-          "description": "Access special packages and deals not available anywhere else."
+          "title": "Αποκλειστικές Προσφορές",
+          "description": "Πρόσβαση σε ειδικά πακέτα και προσφορές που δεν είναι διαθέσιμα αλλού."
         }
       },
       "cta": {
@@ -784,62 +798,6 @@
         "cash": "Μετρητά"
       }
     },
-    "rooms": {
-        "standard": {
-          "name": "Studio Apartment",
-          "description": "A cozy studio perfect for couples, offering comfort and essential amenities with kitchenette.",
-          "bedType": "Double Bed",
-          "view": "Garden View",
-          "bathroom": "Private Bathroom"
-        },
-        "family": {
-          "name": "Family Apartment",
-          "description": "Spacious and comfortable, ideal for families with children and full kitchen facilities.",
-          "bedType": "Double Bed & Sofa Bed",
-          "view": "Sea or Garden View",
-          "bathroom": "Private Bathroom"
-        },
-        "romantic": {
-          "name": "Sea View Apartment",
-          "description": "Specially designed for couples, featuring romantic ambiance and premium amenities with sea views.",
-          "bedType": "King Size Bed",
-          "view": "Sea View",
-          "bathroom": "Ensuite with Premium Fixtures"
-        },
-        "superior": {
-          "name": "Deluxe Apartment",
-          "description": "Experience luxury with stunning views, separate living area, and enhanced comfort.",
-          "bedType": "King Size Bed",
-          "view": "Panoramic Sea View",
-          "bathroom": "Premium Private Bathroom"
-        },
-        "amenities": {
-          "wifi": "Free Wi-Fi",
-          "ac": "Air Conditioning",
-          "privateBathroom": "Private Bathroom",
-          "tv": "Flat-screen TV",
-          "refrigerator": "Full Kitchen",
-          "balcony": "Balcony/Terrace",
-          "jacuzzi": "Premium Bath",
-          "breakfast": "Welcome Basket",
-          "minibar": "Kitchen Facilities",
-          "coffeemaker": "Coffee/Tea Facilities",
-          "seaView": "Sea View"
-        },
-        "features": {
-          "doubleBed": "Double Bed",
-          "gardenView": "Garden View",
-          "balcony": "Private Balcony",
-          "sofaBed": "Sofa Bed",
-          "seaView": "Direct Sea View",
-          "kingSizeBed": "King Size Bed",
-          "privateBalcony": "Exclusive Private Balcony",
-          "livingArea": "Separate Living Area",
-          "premiumBathroom": "Premium Bathroom Fittings",
-          "kitchenette": "Kitchenette",
-          "fullKitchen": "Full Kitchen"
-        }
-      },
     "contact": {
       "heroTitle": "Επικοινωνήστε Μαζί Μας",
       "heroDescription": "Επικοινωνήστε με το Asterias Homes. Είμαστε εδώ για να σας βοηθήσουμε με οποιεσδήποτε ερωτήσεις ή απορίες σχετικά με την κράτηση.",
@@ -1184,8 +1142,7 @@
         "contactUs": "επικοινωνήσετε μαζί μας",
         "nextSteps": "Επόμενα Βήματα",
         "emailSent": "Ένα email επιβεβαίωσης έχει σταλεί στο {email}",
-        "contactInfo": "Εάν έχετε οποιεσδήποτε ερωτήσεις, παρακαλώ επικοινωνήστε μαζί μας",
-        "bookingNumber": "Αριθμός Κράτησης"
+        "contactInfo": "Εάν έχετε οποιεσδήποτε ερωτήσεις, παρακαλώ επικοινωνήστε μαζί μας"
       },
       "errors": {
         "stripeNotLoaded": "Το σύστημα πληρωμής φορτώνει. Παρακαλώ περιμένετε μια στιγμή.",

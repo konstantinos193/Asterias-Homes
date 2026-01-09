@@ -6,8 +6,9 @@ import { useRoom, Room as HookRoom } from "@/hooks/api"
 import { Room } from "@/types/booking"
 import Image from "next/image"
 import Link from "next/link"
-import { ArrowLeft, Star, Users, Maximize, Eye, Bath, Check, Calendar } from "lucide-react"
+import { Star, Users, Maximize, Eye, Bath, Check, Calendar } from "lucide-react"
 import { logger } from "@/lib/logger"
+import { normalizeImageUrl } from "@/lib/utils"
 
 interface RoomDetailPageClientProps {
   roomId: string
@@ -17,6 +18,7 @@ interface RoomDetailPageClientProps {
 export default function RoomDetailPageClient({ roomId, initialRoom }: RoomDetailPageClientProps) {
   const { t, language } = useLanguage()
   const [selectedImageIndex, setSelectedImageIndex] = useState(0)
+  const [imageErrors, setImageErrors] = useState<Set<number>>(new Set())
   
   // Use client-side hook for revalidation, but prefer initialRoom if available
   // Cast initialRoom to HookRoom type since they're structurally compatible
@@ -71,64 +73,38 @@ export default function RoomDetailPageClient({ roomId, initialRoom }: RoomDetail
   const displayName = room?.nameKey ? t(room.nameKey) : room?.name || ''
   const displayDescription = room?.descriptionKey ? t(room.descriptionKey) : room?.description || ''
   const displayFeatures = room?.featureKeys ? room.featureKeys.map(key => t(key)) : (Array.isArray(room?.features) ? room.features : [])
-  // Replace external URLs with local paths (fallback for legacy data)
-  const replaceExternalUrl = (url: string): string => {
-    if (typeof url === 'string' && url.includes('i.imgur.com')) {
-      // Map known imgur URLs to local paths
-      const urlMappings: { [key: string]: string } = {
-        'VjuPC23': '/room-featured-2.png',
-        'SaAHqbC': '/room-featured-1.jpeg',
-        '2JTTkSc': '/room-featured-3.png',
-        'r1uVnhU': '/room-featured-4.png',
-        'X7AG1TW': '/room-featured-5.png',
-        'znGgwJY': '/favicon.png',
-        'xgXMnQz': '/admin-logo.png',
-        '3g12fLV': '/about-hero.jpeg',
-        'SerzvD0': '/about-location.jpeg',
-        'gdFTHDu': '/about-experiences.jpeg',
-        'TnCq8q1': '/about-for-whom.jpeg',
-        'KhgP0yg': '/about-amenities.jpeg',
-      };
-      
-      for (const [imgurId, localPath] of Object.entries(urlMappings)) {
-        if (url.includes(imgurId)) {
-          return localPath;
-        }
-      }
-    }
-    return url;
-  };
   
   // Get images array - handle both Room type and backend response format
   const roomImages = (room as any)?.images || (room as any)?.image ? [(room as any).image] : []
-  const rawImages = roomImages && roomImages.length > 0 ? roomImages : ["/placeholder.svg"]
-  const images = rawImages.map((img: string) => replaceExternalUrl(img))
+  // Filter out empty/null/undefined images and normalize URLs
+  const rawImages = roomImages && roomImages.length > 0 
+    ? roomImages.filter((img: string) => img && typeof img === 'string' && img.trim() !== '')
+    : []
+  const images = rawImages.length > 0 
+    ? rawImages.map((img: string) => normalizeImageUrl(img))
+    : ["/room-featured-1.jpeg"] // Fallback to a default image
 
   return (
     <main className="bg-[#A9AEA2]/30 text-slate-800 pt-20 sm:pt-24 font-alegreya min-h-screen">
-      {/* Back Button */}
-      <section className="py-4 sm:py-6 bg-white/80">
-        <div className="container mx-auto container-mobile">
-          <Link
-            href={`/${language}/rooms`}
-            className="inline-flex items-center space-x-2 text-[#8B4B5C] hover:text-[#7A4251] transition-colors"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            <span>{t("common.back") || "Back to Rooms"}</span>
-          </Link>
-        </div>
-      </section>
-
       {/* Hero Image */}
       <section className="relative h-64 sm:h-80 md:h-96 overflow-hidden">
-        {images[selectedImageIndex] && (
+        {images[selectedImageIndex] && !imageErrors.has(selectedImageIndex) && (
           <Image
             src={images[selectedImageIndex]}
             alt={displayName}
             fill
             className="object-cover"
             priority
+            onError={() => {
+              setImageErrors(prev => new Set(prev).add(selectedImageIndex))
+              logger.error('Failed to load room image', undefined, { imageUrl: images[selectedImageIndex], roomId })
+            }}
           />
+        )}
+        {(!images[selectedImageIndex] || imageErrors.has(selectedImageIndex)) && (
+          <div className="w-full h-full bg-slate-200 flex items-center justify-center">
+            <span className="text-slate-400 text-sm">Image not available</span>
+          </div>
         )}
         <div className="absolute inset-0 bg-slate-900/20"></div>
         <div className="absolute bottom-0 left-0 right-0 p-6 sm:p-8 md:p-12 text-white">
@@ -162,12 +138,22 @@ export default function RoomDetailPageClient({ roomId, initialRoom }: RoomDetail
                     selectedImageIndex === index ? 'border-[#8B4B5C]' : 'border-transparent'
                   }`}
                 >
-                  <Image
-                    src={img}
-                    alt={`${displayName} - Image ${index + 1}`}
-                    fill
-                    className="object-cover"
-                  />
+                  {!imageErrors.has(index) ? (
+                    <Image
+                      src={img}
+                      alt={`${displayName} - Image ${index + 1}`}
+                      fill
+                      className="object-cover"
+                      onError={() => {
+                        setImageErrors(prev => new Set(prev).add(index))
+                        logger.error('Failed to load room thumbnail', undefined, { imageUrl: img, roomId, index })
+                      }}
+                    />
+                  ) : (
+                    <div className="w-full h-full bg-slate-200 flex items-center justify-center">
+                      <span className="text-slate-400 text-xs">N/A</span>
+                    </div>
+                  )}
                 </button>
               ))}
             </div>

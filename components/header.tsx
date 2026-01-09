@@ -125,6 +125,7 @@ export default function Header() {
                   src="/asterias-logo.png"
                   alt={t("logo.altPublic", "Asterias Hotel Logo")}
                   fill
+                  sizes="(max-width: 640px) 160px, 224px"
                   className="object-contain"
                   priority
                 />
@@ -181,7 +182,8 @@ export default function Header() {
                     alt={`${selectedLang.name} flag`}
                     width={20}
                     height={15}
-                    className="object-contain"
+                    className="object-contain w-full"
+                    style={{ height: 'auto' }}
                   />
                 </div>
                 <span className="font-alegreya text-xs tracking-wide">{selectedLang.code.toUpperCase()}</span>
@@ -267,6 +269,7 @@ export default function Header() {
                   src="/asterias-logo.png"
                   alt={t("logo.altPublic", "Asterias Hotel Logo")}
                   fill
+                  sizes="176px"
                   className="object-contain"
                   priority
                 />

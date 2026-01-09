@@ -6,6 +6,7 @@ import { Room } from "@/types/booking"
 import RoomCard from "@/components/room-card"
 import { Filter, Search, MapPin, Star } from "lucide-react"
 import { logger } from "@/lib/logger"
+import { normalizeImageUrl } from "@/lib/utils"
 
 export default function RoomsPage() {
   const { t, language } = useLanguage()
@@ -190,24 +191,9 @@ export default function RoomsPage() {
           {filteredRooms.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
               {filteredRooms.map((room: any) => {
-                // Replace external URLs with local paths (fallback for legacy data)
-                let imageUrl = (Array.isArray(room.images) ? room.images[0] : room.image) || '';
-                if (typeof imageUrl === 'string' && imageUrl.includes('i.imgur.com')) {
-                  const urlMappings: { [key: string]: string } = {
-                    'VjuPC23': '/room-featured-2.png',
-                    'SaAHqbC': '/room-featured-1.jpeg',
-                    '2JTTkSc': '/room-featured-3.png',
-                    'r1uVnhU': '/room-featured-4.png',
-                    'X7AG1TW': '/room-featured-5.png',
-                  };
-                  
-                  for (const [imgurId, localPath] of Object.entries(urlMappings)) {
-                    if (imageUrl.includes(imgurId)) {
-                      imageUrl = localPath;
-                      break;
-                    }
-                  }
-                }
+                // Normalize image URLs - handle backend URLs and legacy imgur URLs
+                const rawImageUrl = (Array.isArray(room.images) ? room.images[0] : room.image) || '';
+                const imageUrl = normalizeImageUrl(rawImageUrl);
                 return (
                 <RoomCard
                   key={room.id || room._id}

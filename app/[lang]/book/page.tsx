@@ -5,11 +5,12 @@ import { useSearchParams, useRouter, useParams } from 'next/navigation'
 import { useLanguage } from '@/contexts/language-context'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Building, Users, Calendar, Euro, CheckCircle, Star, Loader2 } from 'lucide-react'
+import { Building, Users, Calendar, Euro, CheckCircle, Star, Loader2, AlertCircle } from 'lucide-react'
 import BookingWizard from '@/components/booking-wizard'
 import StripeProvider from '@/components/stripe-provider'
 import { useRooms } from '@/hooks/api'
 import { logger } from '@/lib/logger'
+import { getBackendApiUrl } from '@/lib/backend-url'
 import type { RoomData } from '@/data/rooms'
 
 export default function BookPage() {
@@ -29,6 +30,7 @@ export default function BookPage() {
   })
   const [roomData, setRoomData] = useState<RoomData | null>(null)
   const [roomError, setRoomError] = useState<string | null>(null)
+  const [availabilityWarning, setAvailabilityWarning] = useState<string | null>(null)
   
   // Use React Query hook for rooms data
   const { data: roomsData = [], isLoading: loadingRooms, error: roomsError } = useRooms()
@@ -47,42 +49,113 @@ export default function BookPage() {
   useEffect(() => {
     if (loadingRooms || !roomsData.length || !bookingData.checkIn || !bookingData.checkOut) return
     
-    // Get all standard rooms
-    const standardRooms = (roomsData as unknown as RoomData[]).filter((room: RoomData) => room.name?.toLowerCase().includes('standard'))
+    // Get all standard rooms - check both name and nameKey for better compatibility
+    const standardRooms = (roomsData as unknown as RoomData[]).filter((room: RoomData) => {
+      const name = room.name?.toLowerCase() || ''
+      const nameKey = room.nameKey?.toLowerCase() || ''
+      return name.includes('standard') || nameKey.includes('standard') || name.includes('apartment')
+    })
     
     if (standardRooms.length === 0) {
-      setRoomError('No standard rooms found')
+      // If no standard rooms found, use the first available room
+      const firstRoom = roomsData[0] as unknown as RoomData
+      if (firstRoom) {
+        setRoomData(firstRoom)
+        setAvailabilityWarning(null)
+        setRoomError(null)
+        logger.warn('No standard rooms found, using first available room', { roomId: firstRoom._id || firstRoom.id })
+      } else {
+        setRoomError('No rooms found in the system. Please contact us for assistance.')
+        setRoomData(null)
+      }
       return
     }
 
     // Check availability for each room and find an available one
     const checkAvailability = async () => {
       let availableRoom = null
+      let checkedRooms = 0
+      let failedChecks = 0
+      
       for (const room of standardRooms) {
         try {
           // Check if this specific room is available for the selected dates
-          const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'https://asterias-backend.onrender.com';
-          const response = await fetch(`${backendUrl}/api/rooms/${room._id || room.id}/availability?checkIn=${bookingData.checkIn}&checkOut=${bookingData.checkOut}`)
+          const roomId = room._id || room.id
+          const url = getBackendApiUrl(`/api/rooms/${roomId}/availability?checkIn=${bookingData.checkIn}&checkOut=${bookingData.checkOut}`)
+          
+          const response = await fetch(url, {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          })
+          
+          checkedRooms++
+          
           if (response.ok) {
             const availabilityData = await response.json()
             if (availabilityData.isAvailable) {
               availableRoom = room
+              logger.info('Found available room', { roomId, checkIn: bookingData.checkIn, checkOut: bookingData.checkOut })
               break
+            } else {
+              logger.debug('Room not available', { roomId, checkIn: bookingData.checkIn, checkOut: bookingData.checkOut })
             }
+          } else {
+            failedChecks++
+            const errorText = await response.text()
+            logger.warn('Availability check returned error', { 
+              roomId, 
+              status: response.status, 
+              error: errorText,
+              checkIn: bookingData.checkIn, 
+              checkOut: bookingData.checkOut 
+            })
+            // Continue to next room even if this one failed
           }
         } catch (err) {
-          logger.error('Failed to check availability for room', err as Error, { roomId: room._id || room.id })
+          failedChecks++
+          logger.error('Failed to check availability for room', err as Error, { 
+            roomId: room._id || room.id,
+            checkIn: bookingData.checkIn,
+            checkOut: bookingData.checkOut
+          })
           // Continue to next room
         }
       }
 
+      // If we found an available room, use it
       if (availableRoom) {
         setRoomData(availableRoom)
-        logger.info('Found available room', { roomId: availableRoom._id || availableRoom.id, checkIn: bookingData.checkIn, checkOut: bookingData.checkOut })
-      } else {
-        // If no rooms are available, show the first standard room but with availability warning
+        setRoomError(null)
+        setAvailabilityWarning(null)
+      } else if (failedChecks === checkedRooms && checkedRooms > 0) {
+        // All checks failed - this is a technical issue, but we'll still allow booking
         setRoomData(standardRooms[0])
-        setRoomError('⚠️ All rooms are currently booked for the selected dates. Please try different dates or contact us for availability.')
+        setRoomError(null)
+        setAvailabilityWarning('Unable to verify room availability automatically. Please proceed with caution or contact us to confirm.')
+        logger.error('All availability checks failed', undefined, { 
+          checkedRooms, 
+          failedChecks,
+          checkIn: bookingData.checkIn,
+          checkOut: bookingData.checkOut
+        })
+      } else if (checkedRooms > 0) {
+        // We checked rooms but none were available - show warning but allow booking
+        setRoomData(standardRooms[0])
+        setRoomError(null)
+        setAvailabilityWarning('⚠️ All rooms appear to be booked for the selected dates. You can still proceed, but we recommend contacting us to confirm availability.')
+        logger.info('No available rooms found', { 
+          checkedRooms, 
+          checkIn: bookingData.checkIn,
+          checkOut: bookingData.checkOut
+        })
+      } else {
+        // Fallback: use first room if we couldn't check any
+        setRoomData(standardRooms[0])
+        setRoomError(null)
+        setAvailabilityWarning(null)
+        logger.warn('Could not check availability, using first standard room', { roomId: standardRooms[0]._id || standardRooms[0].id })
       }
     }
     
@@ -160,8 +233,8 @@ export default function BookPage() {
     )
   }
 
-  // Room data error state
-  if (roomError) {
+  // Room data error state - only show for critical errors (no rooms found, etc.)
+  if (roomError && !roomData) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#f8f6f1] via-[#e8e2d5] to-[#dbe6e4]">
         <Card className="w-full max-w-md border-0 shadow-lg bg-white/80 backdrop-blur-sm">
@@ -244,6 +317,20 @@ export default function BookPage() {
                 {t('bookPage.subtitle', 'You\'re just one step away from experiencing the luxury of Asterias Homes. Please review your booking details below.')}
               </p>
             </div>
+
+            {/* Availability Warning Banner */}
+            {availabilityWarning && (
+              <div className="mb-6 p-4 bg-amber-50 border-l-4 border-amber-400 rounded-r-lg">
+                <div className="flex items-start gap-3">
+                  <AlertCircle className="h-5 w-5 text-amber-600 mt-0.5 flex-shrink-0" />
+                  <div className="flex-1">
+                    <p className="text-amber-800 font-alegreya text-sm">
+                      {availabilityWarning}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
 
             {/* Main Booking Card */}
             <Card className="border-0 shadow-lg bg-white/80 backdrop-blur-sm">

@@ -102,7 +102,18 @@
       "standard": {
         "name": "Standard Apartment",
         "description": "A classically furnished apartment with traditional style, perfect for a relaxing getaway in Koronisia. All our apartments are identical in style and layout, offering comfort and authenticity of the area."
-      }
+      },
+      "aboutRoom": "About This Room",
+      "maxGuests": "Max Guests",
+      "size": "Size",
+      "view": "View",
+      "bathroom": "Bathroom",
+      "accommodates": "Accommodates",
+      "guests": "guests",
+      "bookNow": "Book Now",
+      "contactUs": "Contact Us",
+      "backToRooms": "Back to Rooms",
+      "notFound": "The room you're looking for doesn't exist."
     },
     "roomCard": {
       "bookNow": "Book Apartment"
@@ -586,6 +597,7 @@
         "resultsSummary": "Showing {count} of {total} apartments",
         "clearButton": "Clear Filters"
       },
+      "checkingAvailability": "Checking room availability for your dates...",
       "roomList": {
         "unavailableOverlay": "Currently Unavailable",
         "availableText": "Available",
@@ -855,7 +867,6 @@
         "roomNotFound": "Room Not Found",
         "anyQuestions": "If you have any questions, feel free to",
         "contactUs": "contact us",
-        "bookingNumber": "Booking Number",
         "nextSteps": "Next Steps",
         "emailSent": "A confirmation email has been sent to {email}",
         "contactInfo": "If you have any questions, please contact us"

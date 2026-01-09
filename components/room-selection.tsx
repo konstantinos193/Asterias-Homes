@@ -10,15 +10,17 @@ import { Users, Wifi, Snowflake, Tv, Shield, Building, AlertCircle } from 'lucid
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { getDiverseRoomImages, RoomImage } from '@/lib/image-utils'
 import { useRooms } from '@/hooks/api'
+import { normalizeImageUrl } from '@/lib/utils'
 
 interface RoomSelectionProps {
   onRoomSelect: (quantity: number, totalPrice: number) => void
   guestCount: number
   checkIn?: Date
   checkOut?: Date
+  roomImages?: string[] // Actual room images from the database
 }
 
-export default function RoomSelection({ onRoomSelect, guestCount, checkIn, checkOut }: RoomSelectionProps) {
+export default function RoomSelection({ onRoomSelect, guestCount, checkIn, checkOut, roomImages: propsRoomImages = [] }: RoomSelectionProps) {
   const { t } = useLanguage()
   const { data: rooms = [], isLoading } = useRooms()
   const [showMultiRoomDialog, setShowMultiRoomDialog] = useState(false)
@@ -98,14 +100,18 @@ export default function RoomSelection({ onRoomSelect, guestCount, checkIn, check
     }
   }, [guestCount, requiredRooms])
 
-  // Get organized room images for display
-  const [roomImages, setRoomImages] = useState<RoomImage[]>([])
-  
-  // Load organized images on component mount
-  useEffect(() => {
-    const images = getDiverseRoomImages(4)
-    setRoomImages(images)
-  }, [])
+  // Use actual room images from props if available, otherwise fallback to static images
+  // Normalize all image URLs to handle backend URLs, imgur URLs, etc.
+  const displayImages = propsRoomImages.length > 0 
+    ? propsRoomImages.slice(0, 4).map((url, index) => ({
+        url: normalizeImageUrl(url),
+        description: `Room view ${index + 1}`,
+        category: 'room'
+      }))
+    : getDiverseRoomImages(4).map(img => ({
+        ...img,
+        url: normalizeImageUrl(img.url)
+      }))
   
   // Handle image click to show in modal
   const handleImageClick = (imageUrl: string) => {
@@ -235,9 +241,9 @@ export default function RoomSelection({ onRoomSelect, guestCount, checkIn, check
                                  {/* Room Images - positioned to the right side */}
                  <div className="ml-8 flex-shrink-0">
                    <div className="space-y-3">
-                     {roomImages.length > 0 ? (
-                       // Use organized room images
-                       roomImages.map((image, index) => (
+                     {displayImages.length > 0 ? (
+                       // Use actual room images from database if available, otherwise use static images
+                       displayImages.map((image, index) => (
                          <div 
                           key={index} 
                           className="w-48 h-32 rounded-lg overflow-hidden shadow-md cursor-pointer hover:shadow-lg transition-shadow duration-300 relative"
@@ -254,7 +260,7 @@ export default function RoomSelection({ onRoomSelect, guestCount, checkIn, check
                         </div>
                        ))
                      ) : (
-                       // Fallback to static images if no organized images
+                       // Fallback to static images if no images available
                        <>
                          <div 
                           className="w-48 h-32 rounded-lg overflow-hidden shadow-md cursor-pointer hover:shadow-lg transition-shadow duration-300 relative"
@@ -354,7 +360,11 @@ export default function RoomSelection({ onRoomSelect, guestCount, checkIn, check
                   {/* Select button */}
                   <Button
                     onClick={handleRoomSelect}
-                    className="w-full"
+                    className={`w-full px-8 py-3 font-alegreya transition-colors ${
+                      hasEnoughRooms 
+                        ? "bg-[#0A4A4A] border-2 border-[#0A4A4A] text-white hover:bg-[#0A4A4A]/90" 
+                        : "bg-slate-300 border-2 border-slate-300 text-slate-500 cursor-not-allowed"
+                    }`}
                     size="lg"
                     disabled={!hasEnoughRooms}
                     variant={hasEnoughRooms ? "default" : "secondary"}
@@ -421,7 +431,7 @@ export default function RoomSelection({ onRoomSelect, guestCount, checkIn, check
             <div className="w-full h-full flex justify-center items-center relative max-w-7xl max-h-[90vh] p-4">
               {selectedImage && (
                 <Image 
-                  src={selectedImage} 
+                  src={normalizeImageUrl(selectedImage)} 
                   alt="Room Preview" 
                   fill
                   className="object-contain"

@@ -173,7 +173,18 @@
         "en": "Family rooms",
         "de": "Familienzimmer"
       }
-    }
+    },
+    "aboutRoom": "Über dieses Apartment",
+    "maxGuests": "Max. Gäste",
+    "size": "Größe",
+    "view": "Blick",
+    "bathroom": "Badezimmer",
+    "accommodates": "Für",
+    "guests": "Gäste",
+    "bookNow": "Jetzt buchen",
+    "contactUs": "Kontaktieren Sie uns",
+    "backToRooms": "Zurück zu den Apartments",
+    "notFound": "Das gesuchte Apartment existiert nicht."
   },
   "roomCard": {
     "bookNow": "Apartment buchen"
@@ -664,6 +675,9 @@
       "resultsSummary": "Zeigt {count} von {total} Apartments",
       "clearButton": "Filter löschen"
     },
+    "checkingAvailability": "Verfügbarkeit der Apartments für Ihre Daten wird überprüft...",
+    "viewingRoom": "Anzeigen eines bestimmten Apartments",
+    "viewRoomDetails": "Apartment-Details anzeigen",
     "roomList": {
       "unavailableOverlay": "Derzeit nicht verfügbar",
       "availableText": "Verfügbar",

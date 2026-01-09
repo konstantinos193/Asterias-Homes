@@ -3,6 +3,7 @@
 import { useState, useEffect, useMemo } from "react"
 import Image from "next/image"
 import Link from "next/link"
+import { useSearchParams } from "next/navigation"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Button } from "@/components/ui/button"
 import { Slider } from "@/components/ui/slider"
@@ -33,6 +34,7 @@ import {
   Snowflake,
   Tv,
   Shield,
+  Building,
 } from "lucide-react"
 import {
   Sheet,
@@ -46,11 +48,13 @@ import {
 import { DatePicker } from "@/components/ui/date-picker"
 import { api } from "@/lib/api-client"
 import RoomSelection from "@/components/room-selection"
-import { useRooms } from "@/hooks/api"
+import { useRooms, useRoom } from "@/hooks/api"
 import { logger } from "@/lib/logger"
+import { normalizeImageUrl } from "@/lib/utils"
 
 export default function BookingsPage() {
   const { t, language } = useLanguage()
+  const searchParams = useSearchParams()
   const [checkIn, setCheckIn] = useState<Date>()
   const [checkOut, setCheckOut] = useState<Date>()
   const [adults, setAdults] = useState("2")
@@ -63,8 +67,37 @@ export default function BookingsPage() {
   const [roomAvailabilities, setRoomAvailabilities] = useState<Record<string, number>>({});
   const [availability, setAvailability] = useState<Record<string, any>>({});
 
-  // Normalize rooms data
-  const rooms = Array.isArray(roomsData) ? roomsData : []
+  // Get roomId from URL query params
+  const roomIdParam = searchParams?.get('roomId') || null
+
+  // Fetch specific room when roomId is present
+  const { data: specificRoom, isLoading: loadingSpecificRoom } = useRoom(roomIdParam, {
+    enabled: !!roomIdParam
+  })
+
+  // Normalize rooms data and filter by roomId if provided
+  const rooms = useMemo(() => {
+    const allRooms = Array.isArray(roomsData) ? roomsData : []
+    if (roomIdParam && specificRoom) {
+      // When a specific room is found, include it in the rooms array
+      const roomId = specificRoom._id || specificRoom.id || ''
+      const existsInAllRooms = allRooms.some((room: any) => {
+        const rId = room._id || room.id || ''
+        return rId === roomIdParam || String(rId) === String(roomIdParam)
+      })
+      if (existsInAllRooms) {
+        // Filter to show only the specified room
+        return allRooms.filter((room: any) => {
+          const rId = room._id || room.id || ''
+          return rId === roomIdParam || String(rId) === String(roomIdParam)
+        })
+      } else {
+        // Room not in allRooms, but we have it from useRoom, so add it
+        return [specificRoom]
+      }
+    }
+    return allRooms
+  }, [roomsData, roomIdParam, specificRoom])
 
   const dateLocale = language === "el" ? el : enUS
   const apiKey = process.env.NEXT_PUBLIC_API_KEY;
@@ -131,24 +164,17 @@ export default function BookingsPage() {
       image: (() => {
         const imgUrl = room.image || (room.images && room.images[0]) || "/placeholder.svg";
         // Ensure imgUrl is always a string
-        const imgString = typeof imgUrl === 'string' ? imgUrl : (typeof imgUrl === 'object' && imgUrl !== null ? "/placeholder.svg" : "/placeholder.svg");
-        // Replace external URLs with local paths (fallback for legacy data)
-        if (typeof imgString === 'string' && imgString.includes('i.imgur.com')) {
-          const urlMappings: { [key: string]: string } = {
-            'VjuPC23': '/room-featured-2.png',
-            'SaAHqbC': '/room-featured-1.jpeg',
-            '2JTTkSc': '/room-featured-3.png',
-            'r1uVnhU': '/room-featured-4.png',
-            'X7AG1TW': '/room-featured-5.png',
-          };
-          
-          for (const [imgurId, localPath] of Object.entries(urlMappings)) {
-            if (imgString.includes(imgurId)) {
-              return localPath;
-            }
-          }
-        }
-        return imgString;
+        const imgString = typeof imgUrl === 'string' ? imgUrl : "/placeholder.svg";
+        // Normalize the image URL using the shared utility
+        return normalizeImageUrl(imgString);
+      })(),
+      // Pass full images array for RoomSelection component
+      images: (() => {
+        const roomImages = room.images || (room.image ? [room.image] : []);
+        // Filter out empty/null/undefined images and normalize URLs
+        return roomImages
+          .filter((img: string) => img && typeof img === 'string' && img.trim() !== '')
+          .map((img: string) => normalizeImageUrl(img));
       })(),
       totalRooms: typeof room.totalRooms === 'number' ? room.totalRooms : 7, // We have 7 identical rooms
       rating: typeof room.rating === 'number' ? room.rating : 4.8,
@@ -285,6 +311,13 @@ export default function BookingsPage() {
 
   // No filtering needed since all rooms are identical
   const filteredRooms = availableRooms; // Show all rooms directly
+
+  // Automatically show results when roomId is present
+  useEffect(() => {
+    if (roomIdParam && rooms.length > 0 && !showResults) {
+      setShowResults(true)
+    }
+  }, [roomIdParam, rooms.length, showResults])
 
   const ComparisonModal = () => {
     const roomsToCompare = availableRooms.filter((room) => compareRooms.includes(room.id))
@@ -584,29 +617,65 @@ export default function BookingsPage() {
               {showResults && Object.keys(roomAvailabilities).length === 0 && (
                 <div className="col-span-2 text-center py-8">
                   <div className="text-slate-600 font-alegreya">
-                    🔍 Checking room availability for your dates...
+                    🔍 {t("bookingsPage.checkingAvailability")}
                   </div>
                 </div>
               )}
               
               {/* Show loading state */}
-              {loadingRooms && (
+              {(loadingRooms || (roomIdParam && loadingSpecificRoom)) && (
                 <div className="col-span-2 text-center py-8">
                   <div className="text-slate-600 font-alegreya">
-                    ⏳ {t('loading.rooms')}
+                    ⏳ {roomIdParam ? t('loading.room') || 'Loading room...' : t('loading.rooms')}
                   </div>
                 </div>
               )}
               
               {/* Show no rooms message */}
-              {!loadingRooms && filteredRooms.length === 0 && (
+              {!loadingRooms && !loadingSpecificRoom && filteredRooms.length === 0 && (
                 <div className="col-span-2 text-center py-8">
                   <div className="text-slate-600 font-alegreya">
-                    ❌ No rooms found. Check console for errors.
+                    {roomIdParam ? (
+                      <>
+                        ❌ Room with ID "{roomIdParam}" not found. 
+                        <Link href={`/${language}/bookings`} className="ml-2 text-[#8B4B5C] underline hover:text-[#7A4251]">
+                          View all rooms
+                        </Link>
+                      </>
+                    ) : (
+                      <>❌ No rooms found. Check console for errors.</>
+                    )}
                   </div>
                 </div>
               )}
               
+              {/* Show specific room banner when roomId is present */}
+              {roomIdParam && specificRoom && (
+                <div className="col-span-2 mb-4">
+                  <div className="bg-[#8B4B5C]/10 border border-[#8B4B5C] rounded-lg p-4">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <Building className="h-5 w-5 text-[#8B4B5C]" />
+                        <div>
+                          <p className="text-sm font-medium text-slate-700 font-alegreya">
+                            {t("bookingsPage.viewingRoom") || "Viewing specific room"}:
+                          </p>
+                          <p className="text-lg font-semibold text-[#8B4B5C] font-cormorant">
+                            {specificRoom.name || t("bookingsPage.roomList.standardApartment")}
+                          </p>
+                        </div>
+                      </div>
+                      <Link
+                        href={`/${language}/rooms/${roomIdParam}`}
+                        className="text-sm text-[#8B4B5C] hover:text-[#7A4251] underline font-alegreya"
+                      >
+                        {t("bookingsPage.viewRoomDetails") || "View Room Details"}
+                      </Link>
+                    </div>
+                  </div>
+                </div>
+              )}
+
               {/* Replace duplicate room cards with consolidated RoomSelection component */}
               {!loadingRooms && filteredRooms.length > 0 && (
                 <div className="col-span-2">
@@ -615,6 +684,7 @@ export default function BookingsPage() {
                     guestCount={parseInt(adults) + parseInt(children)}
                     checkIn={checkIn}
                     checkOut={checkOut}
+                    roomImages={availableRooms[0]?.images || []}
                   />
                   
 
