@@ -1,5 +1,6 @@
 "use client"
 
+import { useState } from "react"
 import { Calendar } from "@/components/ui/calendar"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
@@ -16,6 +17,8 @@ interface StepDatesProps {
 
 export default function StepDates({ bookingData, updateBookingData }: StepDatesProps) {
   const { t } = useLanguage()
+  const [checkInOpen, setCheckInOpen] = useState(false)
+  const [checkOutOpen, setCheckOutOpen] = useState(false)
   const nights =
     bookingData.checkIn && bookingData.checkOut ? differenceInDays(bookingData.checkOut, bookingData.checkIn) : 0
 
@@ -35,8 +38,8 @@ export default function StepDates({ bookingData, updateBookingData }: StepDatesP
           <label className="block text-sm font-medium text-slate-700 font-alegreya mb-2">
             {t("bookingWizard.dates.checkIn")}
           </label>
-          <Popover>
-            <PopoverTrigger asChild>
+          <Popover open={checkInOpen} onOpenChange={setCheckInOpen}>
+            <PopoverTrigger onClick={() => setCheckInOpen(true)}>
               <Button variant="outline" className="w-full justify-start text-left font-normal">
                 <CalendarIcon className="mr-2 h-4 w-4" />
                 {bookingData.checkIn ? format(bookingData.checkIn, "dd/MM/yyyy") : t("bookingWizard.dates.selectDate", "Select date")}
@@ -46,7 +49,10 @@ export default function StepDates({ bookingData, updateBookingData }: StepDatesP
               <Calendar
                 mode="single"
                 selected={bookingData.checkIn}
-                onSelect={(date) => updateBookingData({ checkIn: date })}
+                onSelect={(date) => {
+                  updateBookingData({ checkIn: date })
+                  setCheckInOpen(false)
+                }}
                 disabled={(date) => date < new Date()}
                 initialFocus
               />
@@ -58,8 +64,8 @@ export default function StepDates({ bookingData, updateBookingData }: StepDatesP
           <label className="block text-sm font-medium text-slate-700 font-alegreya mb-2">
             {t("bookingWizard.dates.checkOut")}
           </label>
-          <Popover>
-            <PopoverTrigger asChild>
+          <Popover open={checkOutOpen} onOpenChange={setCheckOutOpen}>
+            <PopoverTrigger onClick={() => setCheckOutOpen(true)}>
               <Button variant="outline" className="w-full justify-start text-left font-normal">
                 <CalendarIcon className="mr-2 h-4 w-4" />
                 {bookingData.checkOut ? format(bookingData.checkOut, "dd/MM/yyyy") : t("bookingWizard.dates.selectDate", "Select date")}
@@ -69,7 +75,10 @@ export default function StepDates({ bookingData, updateBookingData }: StepDatesP
               <Calendar
                 mode="single"
                 selected={bookingData.checkOut}
-                onSelect={(date) => updateBookingData({ checkOut: date })}
+                onSelect={(date) => {
+                  updateBookingData({ checkOut: date })
+                  setCheckOutOpen(false)
+                }}
                 disabled={(date) => date <= (bookingData.checkIn || new Date())}
                 initialFocus
               />

@@ -1,5 +1,10 @@
+// DEPRECATED: This API route is being phased out in favor of direct backend calls
+// Components should use the apiClient from @/lib/api-client instead
+// This route is kept temporarily for backward compatibility but should not be used in new code
+
 import { NextRequest, NextResponse } from 'next/server'
 import { getBackendApiUrl } from '@/lib/backend-url'
+import { logger } from '@/lib/logger'
 
 export async function GET(
   request: NextRequest,
@@ -10,18 +15,11 @@ export async function GET(
   const BACKEND_URL = getBackendApiUrl('/api/admin')
   const url = `${BACKEND_URL}/${adminPath}`
   
-  console.log('🔍 Admin API Route - GET:', {
-    adminPath,
-    fullUrl: url,
-    backendUrl: BACKEND_URL,
-    envVar: process.env.NEXT_PUBLIC_BACKEND_URL
-  })
-  
   // Get the authToken from cookies
   const authToken = request.cookies.get('authToken')?.value
   
   try {
-    const headers: HeadersInit = {
+    const headers: Record<string, string> = {
       'Content-Type': 'application/json',
     }
     
@@ -30,13 +28,10 @@ export async function GET(
       headers['Authorization'] = `Bearer ${authToken}`
     }
     
-    console.log('🚀 Making backend request to:', url)
     const response = await fetch(url, {
       method: 'GET',
       headers,
     })
-    
-    console.log('📡 Backend response status:', response.status, response.statusText)
     
     // Check if response has content before parsing JSON
     const text = await response.text()
@@ -51,8 +46,7 @@ export async function GET(
     try {
       data = JSON.parse(text)
     } catch (parseError) {
-      console.error('JSON parse error:', parseError)
-      console.error('Response text:', text)
+      logger.error('JSON parse error in admin API route GET', parseError as Error, { responseText: text, url })
       return NextResponse.json(
         { error: 'Invalid JSON response from backend' },
         { status: 500 }
@@ -61,6 +55,7 @@ export async function GET(
     
     return NextResponse.json(data, { status: response.status })
   } catch (error) {
+    logger.error('Backend request failed in admin API route GET', error as Error, { url, adminPath })
     return NextResponse.json(
       { error: 'Backend request failed' },
       { status: 500 }
@@ -82,7 +77,7 @@ export async function POST(
   const authToken = request.cookies.get('authToken')?.value
   
   try {
-    const headers: HeadersInit = {
+    const headers: Record<string, string> = {
       'Content-Type': 'application/json',
     }
     
@@ -109,8 +104,7 @@ export async function POST(
     try {
       data = JSON.parse(text)
     } catch (parseError) {
-      console.error('JSON parse error:', parseError)
-      console.error('Response text:', text)
+      logger.error('JSON parse error in admin API route POST', parseError as Error, { responseText: text, url })
       return NextResponse.json(
         { error: 'Invalid JSON response from backend' },
         { status: 500 }
@@ -119,6 +113,7 @@ export async function POST(
     
     return NextResponse.json(data, { status: response.status })
   } catch (error) {
+    logger.error('Backend request failed in admin API route POST', error as Error, { url, adminPath })
     return NextResponse.json(
       { error: 'Backend request failed' },
       { status: 500 }
@@ -140,7 +135,7 @@ export async function PUT(
   const authToken = request.cookies.get('authToken')?.value
   
   try {
-    const headers: HeadersInit = {
+    const headers: Record<string, string> = {
       'Content-Type': 'application/json',
     }
     
@@ -167,8 +162,7 @@ export async function PUT(
     try {
       data = JSON.parse(text)
     } catch (parseError) {
-      console.error('JSON parse error:', parseError)
-      console.error('Response text:', text)
+      logger.error('JSON parse error in admin API route PUT', parseError as Error, { responseText: text, url })
       return NextResponse.json(
         { error: 'Invalid JSON response from backend' },
         { status: 500 }
@@ -177,6 +171,7 @@ export async function PUT(
     
     return NextResponse.json(data, { status: response.status })
   } catch (error) {
+    logger.error('Backend request failed in admin API route PUT', error as Error, { url, adminPath })
     return NextResponse.json(
       { error: 'Backend request failed' },
       { status: 500 }
@@ -197,7 +192,7 @@ export async function DELETE(
   const authToken = request.cookies.get('authToken')?.value
   
   try {
-    const headers: HeadersInit = {
+    const headers: Record<string, string> = {
       'Content-Type': 'application/json',
     }
     
@@ -223,8 +218,7 @@ export async function DELETE(
     try {
       data = JSON.parse(text)
     } catch (parseError) {
-      console.error('JSON parse error:', parseError)
-      console.error('Response text:', text)
+      logger.error('JSON parse error in admin API route DELETE', parseError as Error, { responseText: text, url })
       return NextResponse.json(
         { error: 'Invalid JSON response from backend' },
         { status: 500 }
@@ -233,6 +227,7 @@ export async function DELETE(
     
     return NextResponse.json(data, { status: response.status })
   } catch (error) {
+    logger.error('Backend request failed in admin API route DELETE', error as Error, { url, adminPath })
     return NextResponse.json(
       { error: 'Backend request failed' },
       { status: 500 }

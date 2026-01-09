@@ -10,31 +10,31 @@
           "description": "Double bed room",
           "images": [
             {
-              "url": "https://i.imgur.com/4NL5ksl.jpeg",
+              "url": "/room-double-bed-1.jpeg",
               "description": "Double bed, cyan background"
             },
             {
-              "url": "https://i.imgur.com/nUevEKg.jpeg", 
+              "url": "/room-double-bed-2.jpeg", 
               "description": "Double bed, cyan background"
             },
             {
-              "url": "https://i.imgur.com/m6b1tO9.jpeg",
+              "url": "/room-double-bed-3.jpeg",
               "description": "Double bed, cyan background"
             },
             {
-              "url": "https://i.imgur.com/9sylhCa.jpeg",
+              "url": "/room-double-bed-4.jpeg",
               "description": "Double bed, cyan background"
             },
             {
-              "url": "https://i.imgur.com/SaUgzp5.jpeg",
+              "url": "/room-double-bed-5.jpeg",
               "description": "Double bed, cyan background"
             },
             {
-              "url": "https://i.imgur.com/MzlE9rg.jpeg",
+              "url": "/room-double-bed-6.jpeg",
               "description": "Double bed, cyan background"
             },
             {
-              "url": "https://i.imgur.com/Tur9rik.jpeg",
+              "url": "/room-double-bed-7.jpeg",
               "description": "Double bed, cyan background"
             }
           ]
@@ -44,55 +44,55 @@
           "description": "Two single beds room",
           "images": [
             {
-              "url": "https://i.imgur.com/sIO85j6.jpeg",
+              "url": "/room-single-beds-1.jpeg",
               "description": "Two single beds, cyan background"
             },
             {
-              "url": "https://i.imgur.com/QKExnz5.jpeg",
+              "url": "/room-single-beds-2.jpeg",
               "description": "Two single beds, cyan background"
             },
             {
-              "url": "https://i.imgur.com/WW6oIhy.jpeg",
+              "url": "/room-single-beds-3.jpeg",
               "description": "Two single beds, cyan background"
             },
             {
-              "url": "https://i.imgur.com/Rs4ey8R.jpeg",
+              "url": "/room-single-beds-4.jpeg",
               "description": "Two single beds, cyan background"
             },
             {
-              "url": "https://i.imgur.com/OEFGnld.jpeg",
+              "url": "/room-single-beds-5.jpeg",
               "description": "Two single beds, cyan background"
             },
             {
-              "url": "https://i.imgur.com/dJsHNCn.jpeg",
+              "url": "/room-single-beds-6.jpeg",
               "description": "Two single beds, cyan background"
             },
             {
-              "url": "https://i.imgur.com/HDDAUDg.jpeg",
+              "url": "/room-single-beds-7.jpeg",
               "description": "Two single beds, cyan background"
             },
             {
-              "url": "https://i.imgur.com/EYGEw7Q.jpeg",
+              "url": "/room-single-beds-8.jpeg",
               "description": "Two single beds, cyan background"
             },
             {
-              "url": "https://i.imgur.com/eRhxIAC.jpeg",
+              "url": "/room-single-beds-9.jpeg",
               "description": "Two single beds, cyan background"
             },
             {
-              "url": "https://i.imgur.com/Xwukcpy.jpeg",
+              "url": "/room-single-beds-10.jpeg",
               "description": "Two single beds, cyan background"
             },
             {
-              "url": "https://i.imgur.com/iipJIp4.jpeg",
+              "url": "/room-single-beds-11.jpeg",
               "description": "Two single beds, cyan background"
             },
             {
-              "url": "https://i.imgur.com/VfzTS9s.jpeg",
+              "url": "/room-single-beds-12.jpeg",
               "description": "Two single beds, cyan background"
             },
             {
-              "url": "https://i.imgur.com/vCim59r.jpeg",
+              "url": "/room-single-beds-13.jpeg",
               "description": "Two single beds, cyan background"
             }
           ]
@@ -102,23 +102,23 @@
           "description": "Bathroom with modern fixtures",
           "images": [
             {
-              "url": "https://i.imgur.com/3MkeYBa.png",
+              "url": "/room-bathroom-1.png",
               "description": "Cyan house bathroom overview"
             },
             {
-              "url": "https://i.imgur.com/5P60mSS.png",
+              "url": "/room-bathroom-2.png",
               "description": "Cyan house bathroom sink area"
             },
             {
-              "url": "https://i.imgur.com/vizCDPx.png",
+              "url": "/room-bathroom-3.png",
               "description": "Cyan house bathroom shower area"
             },
             {
-              "url": "https://i.imgur.com/cMAvMNN.png",
+              "url": "/room-bathroom-4.png",
               "description": "Cyan house bathroom toilet area"
             },
             {
-              "url": "https://i.imgur.com/CijxizR.png",
+              "url": "/room-bathroom-5.png",
               "description": "Cyan house bathroom detail view"
             }
           ]

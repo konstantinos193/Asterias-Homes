@@ -29,17 +29,16 @@ export default function RoomCard({
 }: RoomCardProps) {
   const { t } = useLanguage() // Get t function
 
-  const displayName = nameKey ? t(nameKey) : name;
+  const displayName = (nameKey ? t(nameKey) : name) || "";
   const displayDescription = descriptionKey ? t(descriptionKey) : description;
   const displayFeatures = featureKeys ? featureKeys.map(key => t(key)) : (Array.isArray(features) ? features : []);
-
 
   return (
     <div className="group overflow-hidden rounded-lg shadow-sm hover:shadow-md transition-all duration-300">
       <div className="relative overflow-hidden">
         <Image
           src={image || "/placeholder.svg"}
-          alt={displayName}
+          alt={displayName || "Room image"}
           width={600}
           height={400}
           className="w-full h-48 sm:h-56 md:h-64 lg:h-80 object-cover transition-transform duration-700 group-hover:scale-110"

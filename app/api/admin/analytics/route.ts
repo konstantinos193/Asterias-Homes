@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getBackendUrl } from '@/lib/backend-url'
+import { logger } from '@/lib/logger'
 
 // Force dynamic rendering since we use cookies
 export const dynamic = 'force-dynamic'
@@ -45,7 +46,8 @@ export async function GET(request: NextRequest) {
     const data = await response.json()
     return NextResponse.json(data)
   } catch (error) {
-    console.error('Analytics API error:', error)
+    const err = error instanceof Error ? error : new Error(String(error))
+    logger.error('Analytics API error', err)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 } 

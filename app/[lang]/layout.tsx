@@ -10,8 +10,8 @@ export default async function LangLayout({ children, params }: { children: React
   return (
     <LanguageProvider initialLanguage={lang as LanguageCode}>
       <PerformanceOptimizer
-        preconnectDomains={["https://i.imgur.com", "https://asteriashome.gr", "https://www.asteriashome.gr"]}
-        dnsPrefetchDomains={["https://i.imgur.com", "https://asteriashome.gr", "https://www.asteriashome.gr"]}
+        preconnectDomains={["https://asteriashome.gr", "https://www.asteriashome.gr"]}
+        dnsPrefetchDomains={["https://asteriashome.gr", "https://www.asteriashome.gr"]}
         preloadImages={["/hero-1.png", "/hero-2.png"]}
       />
       <Header />

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getBackendApiUrl } from '@/lib/backend-url'
+import { logger } from '@/lib/logger'
 
 const BACKEND_URL = getBackendApiUrl('/api/auth')
 
@@ -7,20 +8,9 @@ export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ auth: string[] }> }
 ) {
-  console.log('🚨 API ROUTE CALLED - GET METHOD')
-  console.log('🚨 Request URL:', request.url)
-  
   const resolvedParams = await params
-  console.log('🚨 Params:', resolvedParams)
-  
   const authPath = resolvedParams.auth.join('/')
   const url = `${BACKEND_URL}/${authPath}`
-  
-  console.log('🔍 Auth API Debug:', {
-    authPath,
-    url,
-    method: 'GET'
-  })
   
   // Get the authToken from cookies
   const authToken = request.cookies.get('authToken')?.value
@@ -35,17 +25,11 @@ export async function GET(
       headers['Authorization'] = `Bearer ${authToken}`
     }
     
-    console.log('🚀 Making request to backend:', { url, headers })
+    logger.debug('Auth API GET request', { authPath, url, method: 'GET' })
     
     const response = await fetch(url, {
       method: 'GET',
       headers,
-    })
-    
-    console.log('📡 Backend response:', {
-      status: response.status,
-      statusText: response.statusText,
-      ok: response.ok
     })
     
     // Check if response has content before parsing JSON
@@ -61,8 +45,8 @@ export async function GET(
     try {
       data = JSON.parse(text)
     } catch (parseError) {
-      console.error('JSON parse error:', parseError)
-      console.error('Response text:', text)
+      const error = parseError instanceof Error ? parseError : new Error(String(parseError))
+      logger.error('JSON parse error in auth API', error, { url, responseText: text.substring(0, 200) })
       return NextResponse.json(
         { error: 'Invalid JSON response from backend' },
         { status: 500 }
@@ -71,6 +55,8 @@ export async function GET(
     
     return NextResponse.json(data, { status: response.status })
   } catch (error) {
+    const err = error instanceof Error ? error : new Error(String(error))
+    logger.error('Auth API GET request failed', err, { authPath, url })
     return NextResponse.json(
       { error: 'Backend request failed' },
       { status: 500 }
@@ -87,17 +73,8 @@ export async function POST(
   const url = `${BACKEND_URL}/${authPath}`
   const body = await request.json()
   
-  console.log('🔍 Auth API Debug POST:', {
-    authPath,
-    url,
-    method: 'POST',
-    body,
-    bodyString: JSON.stringify(body),
-    bodyStringLength: JSON.stringify(body).length
-  })
-  
   try {
-    console.log('🚀 Making POST request to backend:', { url, body })
+    logger.debug('Auth API POST request', { authPath, url, method: 'POST' })
     
     const response = await fetch(url, {
       method: 'POST',
@@ -105,12 +82,6 @@ export async function POST(
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(body),
-    })
-    
-    console.log('📡 Backend POST response:', {
-      status: response.status,
-      statusText: response.statusText,
-      ok: response.ok
     })
     
     // Check if response has content before parsing JSON
@@ -126,8 +97,8 @@ export async function POST(
     try {
       data = JSON.parse(text)
     } catch (parseError) {
-      console.error('JSON parse error:', parseError)
-      console.error('Response text:', text)
+      const error = parseError instanceof Error ? parseError : new Error(String(parseError))
+      logger.error('JSON parse error in auth API POST', error, { url, responseText: text.substring(0, 200) })
       return NextResponse.json(
         { error: 'Invalid JSON response from backend' },
         { status: 500 }
@@ -149,6 +120,70 @@ export async function POST(
     
     return NextResponse.json(data, { status: response.status })
   } catch (error) {
+    const err = error instanceof Error ? error : new Error(String(error))
+    logger.error('Auth API POST request failed', err, { authPath, url })
+    return NextResponse.json(
+      { error: 'Backend request failed' },
+      { status: 500 }
+    )
+  }
+}
+
+export async function PUT(
+  request: NextRequest,
+  { params }: { params: Promise<{ auth: string[] }> }
+) {
+  const resolvedParams = await params
+  const authPath = resolvedParams.auth.join('/')
+  const url = `${BACKEND_URL}/${authPath}`
+  const body = await request.json()
+  
+  // Get the authToken from cookies
+  const authToken = request.cookies.get('authToken')?.value
+  
+  try {
+    logger.debug('Auth API PUT request', { authPath, url, method: 'PUT' })
+    
+    const headers: HeadersInit = {
+      'Content-Type': 'application/json',
+    }
+    
+    // If we have an auth token, send it as Authorization header to backend
+    if (authToken) {
+      headers['Authorization'] = `Bearer ${authToken}`
+    }
+    
+    const response = await fetch(url, {
+      method: 'PUT',
+      headers,
+      body: JSON.stringify(body),
+    })
+    
+    // Check if response has content before parsing JSON
+    const text = await response.text()
+    if (!text) {
+      return NextResponse.json(
+        { error: 'Empty response from backend' },
+        { status: 500 }
+      )
+    }
+    
+    let data
+    try {
+      data = JSON.parse(text)
+    } catch (parseError) {
+      const error = parseError instanceof Error ? parseError : new Error(String(parseError))
+      logger.error('JSON parse error in auth API PUT', error, { url, responseText: text.substring(0, 200) })
+      return NextResponse.json(
+        { error: 'Invalid JSON response from backend' },
+        { status: 500 }
+      )
+    }
+    
+    return NextResponse.json(data, { status: response.status })
+  } catch (error) {
+    const err = error instanceof Error ? error : new Error(String(error))
+    logger.error('Auth API PUT request failed', err, { authPath, url })
     return NextResponse.json(
       { error: 'Backend request failed' },
       { status: 500 }

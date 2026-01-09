@@ -5,7 +5,8 @@ import { format, addDays, isBefore, isSameDay, startOfMonth, endOfMonth, eachDay
 import { el, enUS, de } from 'date-fns/locale'
 import { CalendarIcon, ChevronLeft, ChevronRight } from 'lucide-react'
 import { Button } from './button'
-import { calendarAPI } from '@/lib/api'
+import { api } from '@/lib/api-client'
+import { logger } from '@/lib/logger'
 
 interface DatePickerProps {
   selectedDate?: Date
@@ -73,10 +74,16 @@ export function DatePicker({
       try {
         const currentMonthNum = currentMonth.getMonth() + 1;
         const currentYear = currentMonth.getFullYear();
-        const data = await calendarAPI.getCalendarAvailability(currentMonthNum, currentYear);
+        const data = await api.availability.getCalendarAvailability(currentMonthNum, currentYear) as { availability?: Record<string, any> };
         setAvailabilityData(data.availability || {});
       } catch (error) {
-        console.error('Error fetching availability:', error);
+        const currentMonthNum = currentMonth.getMonth() + 1;
+        const currentYear = currentMonth.getFullYear();
+        logger.error('Error fetching availability', error instanceof Error ? error : new Error(String(error)), {
+          component: 'date-picker',
+          month: currentMonthNum,
+          year: currentYear
+        });
         setAvailabilityData({});
       } finally {
         setLoadingAvailability(false);

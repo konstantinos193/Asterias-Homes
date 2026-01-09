@@ -44,8 +44,10 @@ import {
   SheetClose,
 } from "@/components/ui/sheet"
 import { DatePicker } from "@/components/ui/date-picker"
-import { calendarAPI } from "@/lib/api"
+import { api } from "@/lib/api-client"
 import RoomSelection from "@/components/room-selection"
+import { useRooms } from "@/hooks/api"
+import { logger } from "@/lib/logger"
 
 export default function BookingsPage() {
   const { t, language } = useLanguage()
@@ -57,47 +59,26 @@ export default function BookingsPage() {
   // Remove filter states since all rooms are identical
   const [compareRooms, setCompareRooms] = useState<string[]>([])
   const [showComparison, setShowComparison] = useState(false)
-  const [rooms, setRooms] = useState<any[]>([]);
-  const [loadingRooms, setLoadingRooms] = useState(true);
+  const { data: roomsData = [], isLoading: loadingRooms, error: roomsError } = useRooms()
   const [roomAvailabilities, setRoomAvailabilities] = useState<Record<string, number>>({});
   const [availability, setAvailability] = useState<Record<string, any>>({});
 
+  // Normalize rooms data
+  const rooms = Array.isArray(roomsData) ? roomsData : []
 
   const dateLocale = language === "el" ? el : enUS
   const apiKey = process.env.NEXT_PUBLIC_API_KEY;
 
-  // Fetch rooms from backend - only once on mount
-  useEffect(() => {
-    async function fetchRooms() {
-      setLoadingRooms(true);
-      try {
-        console.log('Fetching rooms from backend...');
-        const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'https://asterias-backend.onrender.com';
-        const res = await fetch(`${backendUrl}/api/rooms`);
-        const data = await res.json();
-        console.log('Backend rooms response:', data);
-        console.log('Backend rooms data structure:', {
-          hasRooms: !!data.rooms,
-          roomsType: typeof data.rooms,
-          roomsLength: data.rooms?.length,
-          firstRoom: data.rooms?.[0],
-          fullResponse: data
-        });
-        setRooms(data.rooms || data); // Try both data.rooms and data directly
-      } catch (e) {
-        console.error('Error fetching rooms:', e);
-        setRooms([]);
-      }
-      setLoadingRooms(false);
-    }
-    fetchRooms();
-  }, []); // Empty dependency array - only run once
+  // Log errors if any
+  if (roomsError) {
+    logger.error('Error fetching rooms in bookings page', roomsError as Error)
+  }
 
 
 
   // Handle room selection from RoomSelection component
   const handleRoomSelect = (quantity: number, totalPrice: number) => {
-    console.log(`Selected ${quantity} rooms for €${totalPrice}`);
+    logger.info('Room selected in bookings page', { quantity, totalPrice });
     // Navigate to booking wizard with selected room data
     const searchParams = new URLSearchParams({
       rooms: quantity.toString(),
@@ -115,11 +96,16 @@ export default function BookingsPage() {
   const availableRooms = useMemo(() => {
     if (!Array.isArray(rooms)) return [];
     
-    return rooms.map((room) => ({
+    return rooms.map((room) => {
+      // Store original amenities as object before converting to array
+      const roomAmenitiesObj = room.amenities && typeof room.amenities === 'object' && !Array.isArray(room.amenities) 
+        ? (room.amenities as Record<string, any>)
+        : null;
+      return {
       ...room,
               name: t("bookingsPage.roomList.standardApartment"),
       description: t("bookingsPage.roomList.roomDescription"),
-      amenities: room.amenities ? Object.keys(room.amenities).filter(key => room.amenities[key]) : [
+      amenities: roomAmenitiesObj ? Object.keys(roomAmenitiesObj).filter(key => roomAmenitiesObj[key]) : [
         'WiFi',
         'Air Conditioning', 
         'TV',
@@ -142,19 +128,49 @@ export default function BookingsPage() {
       bedType: t("bookingsPage.roomList.bedConfiguration"),
       view: 'Garden or Sea View',
       bathroom: 'Private Bathroom with Shower',
-      image: room.image || (room.images && room.images[0]) || "/placeholder.svg",
-      totalRooms: room.totalRooms || 7, // We have 7 identical rooms
-      rating: room.rating || 4.8,
-      reviews: room.reviewCount || 25,
-      price: room.price || 85,
-      originalPrice: room.originalPrice || room.price || 85,
-      size: room.size || 35,
-      id: room._id || room.id,
+      image: (() => {
+        const imgUrl = room.image || (room.images && room.images[0]) || "/placeholder.svg";
+        // Ensure imgUrl is always a string
+        const imgString = typeof imgUrl === 'string' ? imgUrl : (typeof imgUrl === 'object' && imgUrl !== null ? "/placeholder.svg" : "/placeholder.svg");
+        // Replace external URLs with local paths (fallback for legacy data)
+        if (typeof imgString === 'string' && imgString.includes('i.imgur.com')) {
+          const urlMappings: { [key: string]: string } = {
+            'VjuPC23': '/room-featured-2.png',
+            'SaAHqbC': '/room-featured-1.jpeg',
+            '2JTTkSc': '/room-featured-3.png',
+            'r1uVnhU': '/room-featured-4.png',
+            'X7AG1TW': '/room-featured-5.png',
+          };
+          
+          for (const [imgurId, localPath] of Object.entries(urlMappings)) {
+            if (imgString.includes(imgurId)) {
+              return localPath;
+            }
+          }
+        }
+        return imgString;
+      })(),
+      totalRooms: typeof room.totalRooms === 'number' ? room.totalRooms : 7, // We have 7 identical rooms
+      rating: typeof room.rating === 'number' ? room.rating : 4.8,
+      reviews: typeof room.reviewCount === 'number' ? room.reviewCount : 25,
+      price: typeof room.price === 'number' ? room.price : 85,
+      originalPrice: typeof room.originalPrice === 'number' ? room.originalPrice : (typeof room.price === 'number' ? room.price : 85),
+      size: typeof room.size === 'number' ? room.size : (typeof room.size === 'string' ? parseInt(room.size) || 35 : 35),
+      id: room._id || room.id || '',
       // Proper room configuration for 7 identical standard rooms
       maxGuests: 4, // Each room can accommodate 4 guests (1 double + 2 single beds)
       available: true, // All rooms are available by default
-      availableCount: room.availableCount || 0 // Add availableCount to the room object
-    }));
+      availableCount: typeof room.availableCount === 'number' ? room.availableCount : 0, // Add availableCount to the room object
+      // Add properties for comparison modal
+      wifi: roomAmenitiesObj?.wifi ?? true,
+      airConditioning: roomAmenitiesObj?.ac ?? true,
+      tv: roomAmenitiesObj?.tv ?? true,
+      minibar: roomAmenitiesObj?.minibar ?? false,
+      breakfast: false,
+      parking: true,
+      balcony: roomAmenitiesObj?.balcony ?? true
+      };
+    });
   }, [rooms, t]); // Only recalculate when rooms or t function changes
 
   // Fetch availability for list view when search is performed - only when needed
@@ -162,7 +178,10 @@ export default function BookingsPage() {
     if (!checkIn || !checkOut || !showResults || !availableRooms.length) return;
     
     async function fetchAvailabilities() {
-      console.log('Fetching availabilities for search...');
+      // Type guard: ensure checkIn and checkOut are defined
+      if (!checkIn || !checkOut) return;
+      
+      logger.info('Fetching availabilities for search...');
       const checkInStr = format(checkIn, "yyyy-MM-dd");
       const checkOutStr = format(checkOut, "yyyy-MM-dd");
       const newAvailabilities: Record<string, number> = {};
@@ -171,32 +190,33 @@ export default function BookingsPage() {
         await Promise.all(
           availableRooms.map(async (room) => {
             try {
-              console.log('FETCHING AVAILABILITY', `https://asterias-backend.onrender.com/api/bookings/availability?roomId=${room.id}&checkIn=${checkInStr}&checkOut=${checkOutStr}`);
+              const headers: Record<string, string> = {};
+              if (apiKey) {
+                headers['x-api-key'] = apiKey;
+              }
               const res = await fetch(
                 `https://asterias-backend.onrender.com/api/bookings/availability?roomId=${room.id}&checkIn=${checkInStr}&checkOut=${checkOutStr}`,
                 {
-                  headers: {
-                    'x-api-key': apiKey,
-                  },
+                  headers,
                 },
               );
               const data = await res.json();
               newAvailabilities[room.id] = data.available;
-              console.log('Fetched availability for', room.id, data);
+              logger.info('Fetched availability for room', { roomId: room.id, availability: data.available });
             } catch (error) {
-              console.error(`Error fetching availability for room ${room.id}:`, error);
+              logger.error(`Error fetching availability for room ${room.id}`, error as Error);
               // Fallback to default availability
-              newAvailabilities[room.id] = room.totalRooms || 1;
+              newAvailabilities[room.id] = typeof room.totalRooms === 'number' ? room.totalRooms : 1;
             }
           })
         );
         setRoomAvailabilities(newAvailabilities);
-        console.log('All availabilities:', newAvailabilities);
+        logger.info('All availabilities fetched', { availabilities: newAvailabilities });
       } catch (error) {
-        console.error('Error fetching availabilities:', error);
+        logger.error('Error fetching availabilities', error as Error);
         // Fallback to default availability
         availableRooms.forEach(room => {
-          newAvailabilities[room.id] = room.totalRooms || 1;
+          newAvailabilities[room.id] = typeof room.totalRooms === 'number' ? room.totalRooms : 1;
         });
         setRoomAvailabilities(newAvailabilities);
       }
@@ -215,14 +235,13 @@ export default function BookingsPage() {
       const currentYear = currentDate.getFullYear();
       
       try {
-        console.log('Fetching aggregated calendar availability for month:', currentMonth, 'year:', currentYear);
-        const data = await calendarAPI.getCalendarAvailability(currentMonth, currentYear);
-        console.log('Calendar availability response:', data);
+        logger.info('Fetching aggregated calendar availability', { month: currentMonth, year: currentYear });
+        const response = await api.availability.getCalendarAvailability(currentMonth, currentYear) as { availability?: Record<string, any> };
         
         // Set availability data
-        setAvailability(data.availability || {});
+        setAvailability(response?.availability || {});
       } catch (error) {
-        console.error('Error fetching calendar availability:', error);
+        logger.error('Error fetching calendar availability', error as Error);
         setAvailability({});
       }
     }
@@ -240,7 +259,7 @@ export default function BookingsPage() {
     : 0;
 
   const handleSearch = () => {
-    console.log("handleSearch", { checkIn, checkOut, nights });
+    logger.info("Booking search initiated", { checkIn, checkOut, nights });
     if (checkIn && checkOut && nights > 0) {
       setShowResults(true)
     }
@@ -292,7 +311,7 @@ export default function BookingsPage() {
                   <X className="h-4 w-4" />
                 </button>
                 <div className="relative h-48 mb-4 rounded-lg overflow-hidden">
-                  <Image src={room.image || "/placeholder.svg"} alt={room.name} fill className="object-cover" />
+                  <Image src={typeof room.image === 'string' ? room.image : "/placeholder.svg"} alt={room.name} fill className="object-cover" />
                   <div className="absolute top-2 left-2 bg-white/90 backdrop-blur-sm rounded px-2 py-1">
                     <div className="flex items-center gap-1">
                       <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
@@ -596,7 +615,6 @@ export default function BookingsPage() {
                     guestCount={parseInt(adults) + parseInt(children)}
                     checkIn={checkIn}
                     checkOut={checkOut}
-                    rooms={rooms}
                   />
                   
 

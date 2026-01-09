@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getBackendApiUrl } from '@/lib/backend-url'
+import { logger } from '@/lib/logger'
 
 const BACKEND_URL = getBackendApiUrl('/api/images')
 
@@ -32,7 +33,8 @@ export async function POST(request: NextRequest) {
     
     return NextResponse.json(data, { status: response.status })
   } catch (error) {
-    console.error('Image upload error:', error)
+    const err = error instanceof Error ? error : new Error(String(error))
+    logger.error('Image upload error', err)
     return NextResponse.json(
       { error: 'Failed to upload images' },
       { status: 500 }

@@ -4,7 +4,8 @@ import { useState, useEffect } from "react"
 import Link from "next/link"
 import { useLanguage } from "@/contexts/language-context"
 import { usePathname } from "next/navigation"
-import { Home, Info, Bed, Calendar, Phone, X, Globe } from "lucide-react"
+import { useAuth } from "@/hooks/use-auth"
+import { Home, Info, Bed, Calendar, Phone, X, Globe, FileText } from "lucide-react"
 
 interface MobileNavProps {
   isOpen: boolean
@@ -13,6 +14,7 @@ interface MobileNavProps {
 
 export default function MobileNav({ isOpen, onClose }: MobileNavProps) {
   const { t, language } = useLanguage()
+  const { user, loading: authLoading } = useAuth()
   const pathname = usePathname()
 
   const navigation = [
@@ -111,6 +113,22 @@ export default function MobileNav({ isOpen, onClose }: MobileNavProps) {
                   </Link>
                 )
               })}
+              
+              {/* My Bookings Link - Only show if authenticated */}
+              {user && !authLoading && (
+                <Link
+                  href={`/${language}/my-bookings`}
+                  onClick={onClose}
+                  className={`flex items-center space-x-3 px-4 py-3 rounded-lg text-left transition-colors min-h-[44px] ${
+                    pathname === `/${language}/my-bookings`
+                      ? 'bg-[#8B4B5C] text-white'
+                      : 'text-gray-700 hover:bg-gray-100 hover:text-[#8B4B5C]'
+                  }`}
+                >
+                  <FileText className={`h-5 w-5 ${pathname === `/${language}/my-bookings` ? 'text-white' : 'text-gray-500'}`} />
+                  <span className="font-medium">{t("nav.myBookings")}</span>
+                </Link>
+              )}
             </div>
           </nav>
 

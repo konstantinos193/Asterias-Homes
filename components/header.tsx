@@ -3,10 +3,11 @@
 import { useState, useEffect, useRef } from "react"
 import Link from "next/link"
 import Image from "next/image"
-import { Menu, X, ChevronDown } from "lucide-react"
+import { Menu, X, ChevronDown, Calendar } from "lucide-react"
 import { useLanguage, type LanguageCode } from "@/contexts/language-context"
 import { usePathname } from "next/navigation"
-import { useRouter } from "next/navigation";
+import { useRouter } from "next/navigation"
+import { useAuth } from "@/hooks/use-auth"
 
 const languages: { code: LanguageCode; name: string; flag: string }[] = [
   {
@@ -29,6 +30,7 @@ const languages: { code: LanguageCode; name: string; flag: string }[] = [
 export default function Header() {
   const pathname = usePathname()
   const { language, setLanguage, t } = useLanguage()
+  const { user, loading: authLoading } = useAuth()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const [languageDropdownOpen, setLanguageDropdownOpen] = useState(false)
@@ -120,7 +122,7 @@ export default function Header() {
               <span className="sr-only">{t("logo.altPublic", "Asterias Hotel")}</span>
               <div className={`relative transition-all duration-300 ${scrolled ? "w-32 h-16 sm:w-48 sm:h-20" : "w-40 h-20 sm:w-56 sm:h-24"}`}>
                 <Image
-                  src="https://i.imgur.com/leL7gRY.png"
+                  src="/asterias-logo.png"
                   alt={t("logo.altPublic", "Asterias Hotel Logo")}
                   fill
                   className="object-contain"
@@ -147,8 +149,23 @@ export default function Header() {
             </nav>
           </div>
 
-          {/* Right Side - Language and Booking - Hidden on mobile */}
+          {/* Right Side - Language, My Bookings, and Booking - Hidden on mobile */}
           <div className="hidden lg:flex items-center space-x-6">
+            {/* My Bookings Link - Only show if authenticated */}
+            {user && !authLoading && (
+              <Link
+                href={`${langPrefix}/my-bookings`}
+                className={`px-4 py-2.5 rounded-lg font-medium tracking-wide transition-all duration-200 transform hover:scale-105 flex items-center gap-2 ${
+                  useLightHeaderBg 
+                    ? "text-slate-700 hover:text-[#8B4B5C] border border-slate-200 hover:border-[#8B4B5C]" 
+                    : "text-white/90 hover:text-white border border-white/20 hover:border-white/40"
+                }`}
+              >
+                <Calendar className="h-4 w-4" />
+                {t("nav.myBookings")}
+              </Link>
+            )}
+            
             <div className="relative" ref={dropdownRef}>
               <button
                 onClick={() => setLanguageDropdownOpen(!languageDropdownOpen)}
@@ -247,7 +264,7 @@ export default function Header() {
               <span className="sr-only">{t("logo.altPublic", "Asterias Hotel")}</span>
               <div className="relative h-16 w-44">
                 <Image
-                  src="https://i.imgur.com/leL7gRY.png"
+                  src="/asterias-logo.png"
                   alt={t("logo.altPublic", "Asterias Hotel Logo")}
                   fill
                   className="object-contain"
@@ -279,6 +296,18 @@ export default function Header() {
                     {t(item.name)}
                   </Link>
                 ))}
+                
+                {/* My Bookings Link - Only show if authenticated */}
+                {user && !authLoading && (
+                  <Link
+                    href={`${langPrefix}/my-bookings`}
+                    className="flex items-center gap-3 px-3 py-4 text-lg font-cormorant font-medium text-slate-800 hover:bg-[#E8E2D5] rounded-md transition-colors min-h-[44px]"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    <Calendar className="h-5 w-5 text-[#8B4B5C]" />
+                    {t("nav.myBookings")}
+                  </Link>
+                )}
               </div>
               
               {/* Language Selector */}

@@ -1,7 +1,4 @@
-import type { Config } from "tailwindcss"
-
 const config = {
-  darkMode: ["class"],
   content: [
     "./pages/**/*.{ts,tsx}",
     "./components/**/*.{ts,tsx}",
@@ -10,13 +7,6 @@ const config = {
     "*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
-    container: {
-      center: true,
-      padding: "2rem",
-      screens: {
-        "2xl": "1400px",
-      },
-    },
     extend: {
       colors: {
         border: "hsl(var(--border))",
@@ -25,11 +15,11 @@ const config = {
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         primary: {
-          DEFAULT: "#8B4B5C", // Burgundy from the logo
+          DEFAULT: "#8B4B5C",
           foreground: "hsl(var(--primary-foreground))",
         },
         secondary: {
-          DEFAULT: "#E8E2D5", // Cream/beige from the logo background
+          DEFAULT: "#E8E2D5",
           foreground: "hsl(var(--secondary-foreground))",
         },
         destructive: {
@@ -41,7 +31,7 @@ const config = {
           foreground: "hsl(var(--muted-foreground))",
         },
         accent: {
-          DEFAULT: "#A67B5B", // Warm brown accent
+          DEFAULT: "#A67B5B",
           foreground: "hsl(var(--accent-foreground))",
         },
         popover: {
@@ -58,27 +48,27 @@ const config = {
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
       },
+      fontFamily: {
+        sans: ["var(--font-alegreya)"],
+        serif: ["var(--font-cormorant)"],
+      },
       keyframes: {
         "accordion-down": {
-          from: { height: 0 },
+          from: { height: "0" },
           to: { height: "var(--radix-accordion-content-height)" },
         },
         "accordion-up": {
           from: { height: "var(--radix-accordion-content-height)" },
-          to: { height: 0 },
+          to: { height: "0" },
         },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
       },
-      fontFamily: {
-        sans: ["var(--font-alegreya)"],
-        serif: ["var(--font-cormorant)"],
-      },
     },
   },
   plugins: [require("tailwindcss-animate")],
-} satisfies Config
+}
 
 export default config

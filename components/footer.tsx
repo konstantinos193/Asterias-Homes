@@ -20,7 +20,7 @@ export default function Footer() {
             <div className="space-y-4">
               <div className="flex items-center space-x-3">
                 <Image
-                  src="https://i.imgur.com/leL7gRY.png"
+                  src="/asterias-logo.png"
                   alt="Asterias Homes Logo"
                   width={120}
                   height={48}

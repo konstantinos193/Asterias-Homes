@@ -2,9 +2,12 @@ import type { Metadata } from "next"
 import type React from "react"
 import { Cormorant, Alegreya_Sans as Alegreya } from "next/font/google"
 import "./globals.css"
+import "leaflet/dist/leaflet.css"
 import { ThemeProvider } from "@/components/theme-provider"
 import { Toaster } from "@/components/ui/sonner"
 import { AuthProvider } from '@/hooks/use-auth'
+import { MemoryMonitorInit } from "@/components/memory-monitor-init"
+import { QueryProvider } from "@/lib/query-client"
 
 const cormorant = Cormorant({
   subsets: ["latin", "latin-ext"],
@@ -28,12 +31,14 @@ export const metadata: Metadata = {
     "Stay in traditional, classic holiday apartments in Koronisia, Arta. 7 cozy, well-kept apartments with authentic charm near the Amvrakikos Gulf—quiet, clean, and welcoming.",
   keywords: [
     "Asterias Homes",
-    "vacation apartments",
+    "traditional apartments",
     "Koronisia",
     "Arta",
     "Greece",
     "Amvrakikos Gulf",
-    "luxury accommodation",
+    "classic accommodation",
+    "authentic Greek apartments",
+    "traditional accommodation",
     "apartment rentals",
     "nature retreat",
     "Greek islands",
@@ -44,7 +49,8 @@ export const metadata: Metadata = {
     "Amvrakikos accommodation",
     "Koronisia hotels",
     "Arta tourism",
-    "Greek holiday homes"
+    "Greek holiday homes",
+    "family-run accommodation"
   ],
   authors: [{ name: "adinfinity" }],
   creator: "adinfinity",
@@ -108,11 +114,11 @@ export const metadata: Metadata = {
   },
   icons: {
     icon: [
-      { url: "https://i.imgur.com/znGgwJY.png", sizes: "16x16", type: "image/png" },
-      { url: "https://i.imgur.com/znGgwJY.png", sizes: "32x32", type: "image/png" },
-      { url: "https://i.imgur.com/znGgwJY.png", sizes: "96x96", type: "image/png" },
+      { url: "/favicon.png", sizes: "16x16", type: "image/png" },
+      { url: "/favicon.png", sizes: "32x32", type: "image/png" },
+      { url: "/favicon.png", sizes: "96x96", type: "image/png" },
     ],
-    shortcut: "https://i.imgur.com/znGgwJY.png",
+    shortcut: "/favicon.png",
     apple: [
       { url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
       { url: "/apple-touch-icon-152x152.png", sizes: "152x152", type: "image/png" },
@@ -137,6 +143,17 @@ export const metadata: Metadata = {
     "msapplication-TileColor": "#8B4B5C",
     "msapplication-config": "/browserconfig.xml",
     "theme-color": "#8B4B5C",
+    "mobile-web-app-capable": "yes",
+    "apple-mobile-web-app-capable": "yes",
+    "apple-mobile-web-app-status-bar-style": "default",
+    "apple-mobile-web-app-title": "Asterias Homes",
+  },
+  viewport: {
+    width: "device-width",
+    initialScale: 1,
+    maximumScale: 5,
+    userScalable: true,
+    viewportFit: "cover",
   },
   verification: {
     google: "your-google-verification-code",
@@ -148,14 +165,17 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body className={`${cormorant.variable} ${alegreya.variable}`}>
-        <AuthProvider>
-          <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false} disableTransitionOnChange>
-            <main>{children}</main>
-            <Toaster />
-          </ThemeProvider>
-        </AuthProvider>
+        <MemoryMonitorInit />
+        <QueryProvider>
+          <AuthProvider>
+            <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false} disableTransitionOnChange>
+              <main>{children}</main>
+              <Toaster />
+            </ThemeProvider>
+          </AuthProvider>
+        </QueryProvider>
       </body>
     </html>
   )

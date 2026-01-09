@@ -27,6 +27,8 @@ import {
   X,
   LineChart,
   Tag,
+  MessageSquare,
+  ShieldCheck,
 } from "lucide-react"
 import { useState, useEffect } from "react"
 import { cn } from "@/lib/utils"
@@ -86,6 +88,8 @@ function AdminLayoutContent({
     { href: "/admin/rooms", label: "Δωμάτια", icon: BedDouble },
     { href: "/admin/offers", label: "Προσφορές", icon: Tag },
     { href: "/admin/guests", label: "Επισκέπτες", icon: UsersIcon },
+    { href: "/admin/users", label: "Χρήστες", icon: ShieldCheck },
+    { href: "/admin/contacts", label: "Μηνύματα", icon: MessageSquare },
     { href: "/admin/reports", label: "Αναφορές", icon: LineChart },
     { href: "/admin/settings", label: "Ρυθμίσεις", icon: SettingsIcon },
   ]
@@ -102,7 +106,7 @@ function AdminLayoutContent({
         <div className="flex flex-col h-full">
           <div className="h-16 flex items-center px-6 border-b border-slate-200">
             <Link href="/admin" className="flex items-center gap-2">
-              <Image src="https://i.imgur.com/xgXMnQz.png" alt="Logo" width={32} height={32} />
+              <Image src="/admin-logo.png" alt="Logo" width={32} height={32} />
               <span className="font-cormorant text-xl font-semibold text-[#0A4A4A]">Πίνακας Διαχείρισης</span>
             </Link>
           </div>
@@ -180,11 +184,17 @@ function AdminLayoutContent({
                     </div>
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem className="font-alegreya">
+                  <DropdownMenuItem 
+                    className="font-alegreya"
+                    onClick={() => router.push('/admin/profile')}
+                  >
                     <UsersIcon className="mr-2 h-4 w-4" />
                     Προφίλ
                   </DropdownMenuItem>
-                  <DropdownMenuItem className="font-alegreya">
+                  <DropdownMenuItem 
+                    className="font-alegreya"
+                    onClick={() => router.push('/admin/settings')}
+                  >
                     <SettingsIcon className="mr-2 h-4 w-4" />
                     Ρυθμίσεις
                   </DropdownMenuItem>

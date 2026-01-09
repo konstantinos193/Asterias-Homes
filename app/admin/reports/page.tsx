@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
@@ -18,9 +18,12 @@ import {
   Download,
   Clock,
   Building,
-  Target
+  Target,
+  FileText,
+  Settings
 } from "lucide-react"
-import { adminAPI } from "@/lib/api"
+import { useAdminAnalytics, useAdminRevenueReports } from "@/hooks/api/use-admin"
+import { logger } from "@/lib/logger"
 import * as XLSX from 'xlsx'
 
 interface AnalyticsData {
@@ -93,32 +96,22 @@ interface RevenueData {
 }
 
 export default function AdminReportsPage() {
-  const [analyticsData, setAnalyticsData] = useState<AnalyticsData | null>(null)
-  const [revenueData, setRevenueData] = useState<RevenueData | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState("")
   const [period, setPeriod] = useState("30")
   const [revenuePeriod, setRevenuePeriod] = useState("12")
 
-  useEffect(() => {
-    fetchReportsData()
-  }, [period, revenuePeriod])
+  const { data: analyticsResponse, isLoading: analyticsLoading, error: analyticsError } = useAdminAnalytics({ period })
+  const { data: revenueResponse, isLoading: revenueLoading, error: revenueError } = useAdminRevenueReports(revenuePeriod)
 
-  const fetchReportsData = async () => {
-    try {
-      setLoading(true)
-      const [analyticsResponse, revenueResponse] = await Promise.all([
-        adminAPI.getAnalytics({ period }),
-        adminAPI.getRevenueReports(revenuePeriod)
-      ])
-      setAnalyticsData(analyticsResponse)
-      setRevenueData(revenueResponse)
-    } catch (err: any) {
-      setError(err.message || "Failed to load reports data")
-    } finally {
-      setLoading(false)
-    }
-  }
+  const loading = analyticsLoading || revenueLoading
+  const analyticsData = analyticsResponse as AnalyticsData | null
+  const revenueData = revenueResponse as RevenueData | null
+
+  // Handle errors
+  const error = analyticsError || revenueError ? (() => {
+    const err = (analyticsError || revenueError) as Error
+    logger.error('Error fetching reports data', err)
+    return err.message || "Failed to load reports data"
+  })() : null
 
   const formatCurrency = (amount: number | undefined | null) => {
     if (!amount || isNaN(amount)) return '0,00 €'
@@ -612,6 +605,102 @@ export default function AdminReportsPage() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Custom Report Generator */}
+      <Card className="border-2 border-dashed border-slate-300">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 font-cormorant">
+            <FileText className="h-5 w-5 text-[#0A4A4A]" />
+            Προσαρμοσμένη Αναφορά
+          </CardTitle>
+          <CardDescription className="font-alegreya">
+            Δημιουργήστε και εξάγετε προσαρμοσμένες αναφορές βάσει των συγκεκριμένων σας αναγκών
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            <div className="p-6 bg-slate-50 rounded-lg border border-slate-200">
+              <div className="flex items-start gap-3">
+                <Settings className="h-5 w-5 text-slate-500 mt-0.5" />
+                <div className="flex-1">
+                  <h4 className="font-semibold text-slate-800 font-alegreya mb-2">
+                    Προσαρμοσμένος Γεννήτορας Αναφορών
+                  </h4>
+                  <p className="text-sm text-slate-600 font-alegreya mb-4">
+                    Η λειτουργία δημιουργίας προσαρμοσμένων αναφορών θα είναι διαθέσιμη σε μελλοντική ενημέρωση. 
+                    Αυτή τη στιγμή, μπορείτε να χρησιμοποιήσετε την ενότητα "Εξαγωγή Αναφορών" παραπάνω για 
+                    να εξάγετε τις υπάρχουσες αναφορές σε Excel.
+                  </p>
+                  <div className="flex gap-2">
+                    <Button
+                      onClick={exportAnalyticsReport}
+                      disabled={!analyticsData || !revenueData}
+                      className="bg-[#0A4A4A] hover:bg-[#083a3a] text-white font-alegreya"
+                    >
+                      <Download className="h-4 w-4 mr-2" />
+                      Εξαγωγή Τρέχουσας Αναφοράς
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            {/* Coming Soon Features Preview */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+              <div className="p-4 bg-white border border-slate-200 rounded-lg">
+                <h5 className="font-semibold text-slate-800 font-alegreya mb-2">Μελλοντικές Λειτουργίες:</h5>
+                <ul className="space-y-2 text-sm text-slate-600 font-alegreya">
+                  <li className="flex items-center gap-2">
+                    <span className="text-[#0A4A4A]">•</span>
+                    Επιλογή προσαρμοσμένων ημερομηνιών
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <span className="text-[#0A4A4A]">•</span>
+                    Φιλτράρισμα βάσει συγκεκριμένων κριτηρίων
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <span className="text-[#0A4A4A]">•</span>
+                    Επιλογή πεδίων για εξαγωγή
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <span className="text-[#0A4A4A]">•</span>
+                    Εξαγωγή σε PDF, CSV, Excel
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <span className="text-[#0A4A4A]">•</span>
+                    Προεπισκόπηση αναφοράς
+                  </li>
+                </ul>
+              </div>
+              <div className="p-4 bg-white border border-slate-200 rounded-lg">
+                <h5 className="font-semibold text-slate-800 font-alegreya mb-2">Τρέχουσες Δυνατότητες:</h5>
+                <ul className="space-y-2 text-sm text-slate-600 font-alegreya">
+                  <li className="flex items-center gap-2">
+                    <span className="text-green-600">✓</span>
+                    Εξαγωγή αναλυτικών δεδομένων
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <span className="text-green-600">✓</span>
+                    Εξαγωγή δεδομένων εσόδων
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <span className="text-green-600">✓</span>
+                    Εξαγωγή στοιχείων δωματίων
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <span className="text-green-600">✓</span>
+                    Εξαγωγή δημογραφικών δεδομένων
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <span className="text-green-600">✓</span>
+                    Πολλαπλά φύλλα Excel
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   )
 }

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server"
 import { allRoomsData } from "@/data/rooms"
 import { differenceInDays } from "date-fns"
+import { logger } from "@/lib/logger"
 
 export async function POST(request: Request) {
   try {
@@ -14,7 +15,7 @@ export async function POST(request: Request) {
     
     // Initialize Stripe with your secret key - only when the route is called
     const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-      apiVersion: "2025-06-30.basil", // Use the latest API version
+      apiVersion: "2025-12-15.clover", // Use the latest API version
     })
 
     const { roomId, checkIn, checkOut, currency = "eur" } = await request.json()
@@ -37,8 +38,8 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Room price not available" }, { status: 400 })
     }
     
-    // Extract numeric price from string (e.g., "€90" -> 90)
-    const priceValue = parseFloat(room.price.replace(/[^\d.]/g, ""))
+    // Use price directly since it's already a number
+    const priceValue = room.price
     const basePrice = nights * priceValue
     const taxAmount = basePrice * 0.13 // Assuming 13% tax
     const amountInCents = Math.round((basePrice + taxAmount) * 100) // Stripe expects amount in cents
@@ -63,7 +64,8 @@ export async function POST(request: Request) {
       amount: amountInCents / 100, // Send amount back for display if needed
     })
   } catch (error: any) {
-    console.error("Error creating PaymentIntent:", error)
-    return NextResponse.json({ error: error.message }, { status: 500 })
+    const err = error instanceof Error ? error : new Error(String(error))
+    logger.error("Error creating PaymentIntent", err)
+    return NextResponse.json({ error: err.message }, { status: 500 })
   }
 }

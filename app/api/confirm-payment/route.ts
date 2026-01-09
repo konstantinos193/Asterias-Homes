@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getBackendApiUrl } from '@/lib/backend-url'
+import { logger } from '@/lib/logger'
 
 const BACKEND_URL = getBackendApiUrl('/api/payments')
 
@@ -30,7 +31,8 @@ export async function POST(request: NextRequest) {
     const data = await response.json()
     return NextResponse.json(data, { status: response.status })
   } catch (error) {
-    console.error('Payment confirmation proxy error:', error)
+    const err = error instanceof Error ? error : new Error(String(error))
+    logger.error('Payment confirmation proxy error', err)
     return NextResponse.json(
       { error: 'Payment confirmation failed' },
       { status: 500 }

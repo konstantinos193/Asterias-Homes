@@ -54,3 +54,26 @@ export function DialogHeader({ children, className }: { children: React.ReactNod
 export function DialogTitle({ children, className }: { children: React.ReactNode; className?: string }) {
   return <h2 className={className}>{children}</h2>
 }
+
+export function DialogDescription({ children, className }: { children: React.ReactNode; className?: string }) {
+  return <p className={`text-sm text-slate-600 ${className || ''}`}>{children}</p>
+}
+
+export function DialogFooter({ children, className }: { children: React.ReactNode; className?: string }) {
+  return <div className={`flex justify-end gap-2 mt-6 ${className || ''}`}>{children}</div>
+}
+
+export function DialogTrigger({ children, asChild }: { children: React.ReactNode; asChild?: boolean }) {
+  if (asChild && React.isValidElement(children)) {
+    return React.cloneElement(children as React.ReactElement<any>, {
+      onClick: (e: React.MouseEvent) => {
+        e.preventDefault()
+        // The parent Dialog will handle the open state
+        if (children && typeof (children as any).props.onClick === 'function') {
+          (children as any).props.onClick(e)
+        }
+      },
+    })
+  }
+  return <>{children}</>
+}

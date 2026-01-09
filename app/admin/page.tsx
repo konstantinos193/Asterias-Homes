@@ -1,9 +1,10 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { Calendar, Bed, Users, TrendingUp, Clock, CheckCircle, XCircle, AlertCircle } from "lucide-react"
+import { Calendar, Bed, Users, TrendingUp, Clock, CheckCircle, XCircle, AlertCircle, MessageSquare } from "lucide-react"
 import Link from "next/link"
-import { adminAPI } from "@/lib/api"
+import { useAdminDashboard } from "@/hooks/api"
+import { logger } from "@/lib/logger"
+import { Button } from "@/components/ui/button"
 
 // Mock data fallback
 const mockStatsData = [
@@ -54,31 +55,19 @@ const getStatusIcon = (status: string) => {
 }
 
 export default function AdminDashboard() {
-  const [dashboardData, setDashboardData] = useState<any>(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState("")
+  const { data: dashboardData, isLoading: loading, error: queryError } = useAdminDashboard()
 
-  useEffect(() => {
-    const fetchDashboardData = async () => {
-      try {
-        console.log('ADMIN DASHBOARD: Fetching dashboard data...')
-        const data = await adminAPI.getDashboard()
-        console.log('ADMIN DASHBOARD: Data received:', data)
-        setDashboardData(data)
-      } catch (err: any) {
-        console.error('ADMIN DASHBOARD: API Error:', err)
-        // Show a clear error message for 401, but do not redirect or clear auth state
-        if (err.message && err.message.includes('401')) {
-          setError('You are not authorized to view the admin dashboard. Please log in as an admin user.')
-          return
-        }
-        setError(err.message || "Failed to load dashboard data")
-      } finally {
-        setLoading(false)
-      }
+  // Handle errors
+  const error = queryError ? (() => {
+    const err = queryError as Error
+    logger.error('Admin dashboard error', err)
+    
+    // Show a clear error message for 401, but do not redirect or clear auth state
+    if (err.message && err.message.includes('401')) {
+      return 'You are not authorized to view the admin dashboard. Please log in as an admin user.'
     }
-    fetchDashboardData()
-  }, [])
+    return err.message || "Failed to load dashboard data"
+  })() : null
 
   if (loading) {
     return (
@@ -97,34 +86,35 @@ export default function AdminDashboard() {
   }
 
   // Use real data from backend or fallback to mock data
-  const statsData = dashboardData?.stats ? [
+  const dashboard = dashboardData as any
+  const statsData = dashboard?.stats ? [
     {
       nameKey: "admin.dashboard.stats.todayArrivals",
-      value: dashboardData.stats.todayArrivals?.value?.toString() || dashboardData.stats.todayArrivals?.toString() || "0",
+      value: dashboard.stats.todayArrivals?.value?.toString() || dashboard.stats.todayArrivals?.toString() || "0",
       icon: Calendar,
-      change: dashboardData.stats.todayArrivals?.change,
-      changeType: dashboardData.stats.todayArrivals?.changeType,
+      change: dashboard.stats.todayArrivals?.change,
+      changeType: dashboard.stats.todayArrivals?.changeType,
     },
     {
       nameKey: "admin.dashboard.stats.availableRooms", 
-      value: dashboardData.stats.availableRooms?.value?.toString() || dashboardData.stats.availableRooms?.toString() || "0",
+      value: dashboard.stats.availableRooms?.value?.toString() || dashboard.stats.availableRooms?.toString() || "0",
       icon: Bed,
-      change: dashboardData.stats.availableRooms?.change,
-      changeType: dashboardData.stats.availableRooms?.changeType,
+      change: dashboard.stats.availableRooms?.change,
+      changeType: dashboard.stats.availableRooms?.changeType,
     },
     {
       nameKey: "admin.dashboard.stats.totalGuests",
-      value: dashboardData.stats.totalGuests?.value?.toString() || dashboardData.stats.totalGuests?.toString() || "0", 
+      value: dashboard.stats.totalGuests?.value?.toString() || dashboard.stats.totalGuests?.toString() || "0", 
       icon: Users,
-      change: dashboardData.stats.totalGuests?.change,
-      changeType: dashboardData.stats.totalGuests?.changeType,
+      change: dashboard.stats.totalGuests?.change,
+      changeType: dashboard.stats.totalGuests?.changeType,
     },
     {
       nameKey: "admin.dashboard.stats.occupancy",
-      value: dashboardData.stats.occupancyRate?.value || dashboardData.stats.occupancyRate || "0%",
+      value: dashboard.stats.occupancyRate?.value || dashboard.stats.occupancyRate || "0%",
       icon: TrendingUp,
-      change: dashboardData.stats.occupancyRate?.change,
-      changeType: dashboardData.stats.occupancyRate?.changeType,
+      change: dashboard.stats.occupancyRate?.change,
+      changeType: dashboard.stats.occupancyRate?.changeType,
     },
   ] : mockStatsData
 
@@ -192,17 +182,17 @@ export default function AdminDashboard() {
         ))}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Recent Bookings */}
-        <div className="bg-white rounded-sm border border-slate-200">
+        <div className="bg-white rounded-sm border border-slate-200 lg:col-span-2">
           <div className="px-6 py-4 border-b border-slate-200">
             <h2 className="text-lg font-cormorant font-semibold text-slate-800">
               Πρόσφατες Κρατήσεις
             </h2>
           </div>
           <div className="divide-y divide-slate-200">
-            {dashboardData?.recentBookings && dashboardData.recentBookings.length > 0 ? (
-              dashboardData.recentBookings.map((booking: any, index: number) => (
+            {dashboard?.recentBookings && dashboard.recentBookings.length > 0 ? (
+              dashboard.recentBookings.map((booking: any, index: number) => (
               <div key={booking._id || booking.id || index} className="px-6 py-4">
                 <div className="flex items-center justify-between">
                   <div className="flex-1 min-w-0">
@@ -248,54 +238,98 @@ export default function AdminDashboard() {
           </div>
         </div>
 
-        {/* Today's Arrivals */}
+        {/* Unread Contacts */}
         <div className="bg-white rounded-sm border border-slate-200">
-          <div className="px-6 py-4 border-b border-slate-200">
+          <div className="px-6 py-4 border-b border-slate-200 flex items-center justify-between">
             <h2 className="text-lg font-cormorant font-semibold text-slate-800">
-              Σημερινές Άφιξεις
+              Μη αναγνωσμένα Μηνύματα
             </h2>
-          </div>
-          <div className="divide-y divide-slate-200">
-            {dashboardData?.todayArrivals && dashboardData.todayArrivals.length > 0 ? (
-              dashboardData.todayArrivals.map((arrival: any, index: number) => (
-                <div key={arrival._id || index} className="px-6 py-4">
-                  <div className="flex items-center justify-between">
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-1">
-                        {getStatusIcon(arrival.bookingStatus || arrival.status)}
-                        <p className="text-sm font-medium text-slate-900 font-alegreya truncate">
-                          {arrival.guestInfo ? `${arrival.guestInfo.firstName} ${arrival.guestInfo.lastName}` : arrival.guest || 'Guest'}
-                        </p>
-                      </div>
-                      <p className="text-sm text-slate-500 font-alegreya">
-                        {arrival.room?.name || arrival.room || 'Room'}
-                      </p>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-sm font-medium text-slate-900 font-alegreya">
-                        {arrival.checkIn ? new Date(arrival.checkIn).toLocaleTimeString('el-GR', { hour: '2-digit', minute: '2-digit' }) : arrival.time}
-                      </p>
-                      <p className="text-xs text-slate-500 font-alegreya">
-                        {(arrival.bookingStatus || arrival.status) === "CONFIRMED" ? "Επιβεβαιωμένη" :
-                         (arrival.bookingStatus || arrival.status) === "PENDING" ? "Εκκρεμής" :
-                         (arrival.bookingStatus || arrival.status) === "CHECKED_IN" ? "Έγινε Check-in" :
-                         arrival.bookingStatus || arrival.status}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              ))
-            ) : (
-              <div className="px-6 py-8 text-center">
-                <p className="text-slate-500 font-alegreya">Δεν υπάρχουν άφιξεις σήμερα</p>
-              </div>
+            {dashboard?.unreadContacts && dashboard.unreadContacts > 0 && (
+              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 font-alegreya">
+                {dashboard.unreadContacts}
+              </span>
             )}
           </div>
-          <div className="px-6 py-3 border-t border-slate-200">
-            <Link href="/admin/bookings" className="text-sm text-[#0A4A4A] hover:underline font-alegreya">
-              Διαχείριση κρατήσεων →
-            </Link>
+          <div className="px-6 py-8 text-center">
+            {dashboard?.unreadContacts && dashboard.unreadContacts > 0 ? (
+              <>
+                <MessageSquare className="h-12 w-12 text-[#0A4A4A] mx-auto mb-4" />
+                <p className="text-lg font-semibold text-slate-900 font-cormorant mb-1">
+                  {dashboard.unreadContacts}
+                </p>
+                <p className="text-sm text-slate-600 font-alegreya mb-4">
+                  {dashboard.unreadContacts === 1 ? "Μη αναγνωσμένο μήνυμα" : "Μη αναγνωσμένα μηνύματα"}
+                </p>
+                <Link href="/admin/contacts?status=UNREAD">
+                  <Button className="bg-[#0A4A4A] hover:bg-[#083a3a] text-white font-alegreya w-full">
+                    Προβολή Μηνυμάτων
+                  </Button>
+                </Link>
+              </>
+            ) : (
+              <>
+                <MessageSquare className="h-12 w-12 text-slate-300 mx-auto mb-4" />
+                <p className="text-slate-500 font-alegreya mb-4">
+                  Όλα τα μηνύματα έχουν διαβαστεί
+                </p>
+                <Link href="/admin/contacts">
+                  <Button variant="outline" className="font-alegreya w-full">
+                    Προβολή Όλων
+                  </Button>
+                </Link>
+              </>
+            )}
           </div>
+        </div>
+      </div>
+
+      {/* Today's Arrivals */}
+      <div className="bg-white rounded-sm border border-slate-200">
+        <div className="px-6 py-4 border-b border-slate-200">
+          <h2 className="text-lg font-cormorant font-semibold text-slate-800">
+            Σημερινές Άφιξεις
+          </h2>
+        </div>
+        <div className="divide-y divide-slate-200">
+          {dashboard?.todayArrivals && dashboard.todayArrivals.length > 0 ? (
+            dashboard.todayArrivals.map((arrival: any, index: number) => (
+              <div key={arrival._id || index} className="px-6 py-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-1">
+                      {getStatusIcon(arrival.bookingStatus || arrival.status)}
+                      <p className="text-sm font-medium text-slate-900 font-alegreya truncate">
+                        {arrival.guestInfo ? `${arrival.guestInfo.firstName} ${arrival.guestInfo.lastName}` : arrival.guest || 'Guest'}
+                      </p>
+                    </div>
+                    <p className="text-sm text-slate-500 font-alegreya">
+                      {arrival.room?.name || arrival.room || 'Room'}
+                    </p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-sm font-medium text-slate-900 font-alegreya">
+                      {arrival.checkIn ? new Date(arrival.checkIn).toLocaleTimeString('el-GR', { hour: '2-digit', minute: '2-digit' }) : arrival.time}
+                    </p>
+                    <p className="text-xs text-slate-500 font-alegreya">
+                      {(arrival.bookingStatus || arrival.status) === "CONFIRMED" ? "Επιβεβαιωμένη" :
+                       (arrival.bookingStatus || arrival.status) === "PENDING" ? "Εκκρεμής" :
+                       (arrival.bookingStatus || arrival.status) === "CHECKED_IN" ? "Έγινε Check-in" :
+                       arrival.bookingStatus || arrival.status}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            ))
+          ) : (
+            <div className="px-6 py-8 text-center">
+              <p className="text-slate-500 font-alegreya">Δεν υπάρχουν άφιξεις σήμερα</p>
+            </div>
+          )}
+        </div>
+        <div className="px-6 py-3 border-t border-slate-200">
+          <Link href="/admin/bookings" className="text-sm text-[#0A4A4A] hover:underline font-alegreya">
+            Διαχείριση κρατήσεων →
+          </Link>
         </div>
       </div>
     </div>

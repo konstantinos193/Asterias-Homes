@@ -1,3 +1,15 @@
+/**
+ * @deprecated This file is deprecated. Use @/lib/api-client instead.
+ * This file is kept for backward compatibility but should not be used in new code.
+ * All new code should use the apiClient from @/lib/api-client or React Query hooks from @/hooks/api
+ * 
+ * Migration guide:
+ * - Replace `roomsAPI.getAll()` with `api.rooms.getAll()` from @/lib/api-client
+ * - Replace `adminAPI.*` with `api.admin.*` from @/lib/api-client
+ * - Replace `calendarAPI.*` with `api.availability.*` from @/lib/api-client
+ * - Use React Query hooks from @/hooks/api for better caching and state management
+ */
+
 // API utility for backend communication using Next.js API proxy routes
 import { getBackendApiUrl } from './backend-url';
 
@@ -35,7 +47,7 @@ const apiRequest = async (endpoint: string, options: RequestInit = {}) => {
       throw error;
     }
     // Otherwise, it's a network error
-    console.error('API request failed:', endpoint, error);
+    // Note: logger is not imported here to avoid circular dependencies, console.error is acceptable for network errors
     throw new Error(error.message || 'Network error: Failed to connect to server');
   }
 };
@@ -232,7 +244,8 @@ export const roomsAPI = {
     } else if (Array.isArray(data)) {
       roomsArray = data;
     } else {
-      console.error('Unexpected API response structure:', data);
+      // Note: logger is not imported here to avoid circular dependencies
+      // The error is handled by returning empty array
       return [];
     }
     

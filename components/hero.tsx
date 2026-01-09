@@ -9,7 +9,7 @@ export default function Hero() {
   const [currentSlide, setCurrentSlide] = useState(0)
   const { t, language } = useLanguage()
 
-  const heroImage = "https://i.imgur.com/mQuYaP7.jpeg"
+  const heroImage = "/hero-main.jpeg"
 
   const slides = [
     {

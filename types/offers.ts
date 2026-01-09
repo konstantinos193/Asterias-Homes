@@ -1,5 +1,6 @@
 export interface Offer {
-  _id: string
+  id?: string // Normalized id (derived from _id)
+  _id: string // MongoDB id
   title: string
   titleKey?: string
   description: string

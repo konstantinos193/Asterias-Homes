@@ -1,5 +1,10 @@
+// DEPRECATED: This API route is being phased out in favor of direct backend calls
+// Components should use the apiClient from @/lib/api-client instead
+// This route is kept temporarily for backward compatibility but should not be used in new code
+
 import { NextRequest, NextResponse } from 'next/server'
 import { getBackendApiUrl } from '@/lib/backend-url'
+import { logger } from '@/lib/logger'
 
 const BACKEND_URL = getBackendApiUrl('/api/rooms')
 
@@ -29,8 +34,7 @@ export async function GET(request: NextRequest) {
     try {
       data = JSON.parse(text)
     } catch (parseError) {
-      console.error('JSON parse error:', parseError)
-      console.error('Response text:', text)
+      logger.error('JSON parse error in rooms API route', parseError as Error, { responseText: text })
       return NextResponse.json(
         { error: 'Invalid JSON response from backend' },
         { status: 500 }
@@ -39,7 +43,7 @@ export async function GET(request: NextRequest) {
     
     return NextResponse.json(data, { status: response.status })
   } catch (error) {
-    console.error('Error fetching rooms:', error)
+    logger.error('Error fetching rooms in API route', error as Error)
     return NextResponse.json(
       { error: 'Failed to fetch rooms' },
       { status: 500 }

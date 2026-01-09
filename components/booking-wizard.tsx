@@ -9,7 +9,8 @@ import StepPayment from "./booking-steps/step-payment"
 import StepConfirmation from "./booking-steps/step-confirmation"
 import type { BookingData } from "@/types/booking"
 import { useLanguage } from "@/contexts/language-context"
-import { paymentsAPI } from "@/lib/api"
+import { useCreatePaymentIntent, useConfirmPayment, useCreateCashBooking } from "@/hooks/api"
+import { logger } from "@/lib/logger"
 
 import { useStripe, useElements, CardElement } from "@stripe/react-stripe-js" // Import Stripe hooks
 
@@ -81,6 +82,11 @@ export default function BookingWizard({ initialRoomId, preFilledData, language }
 
   const stripe = useStripe()
   const elements = useElements()
+  
+  // Payment mutations
+  const createPaymentIntentMutation = useCreatePaymentIntent()
+  const confirmPaymentMutation = useConfirmPayment()
+  const createCashBookingMutation = useCreateCashBooking()
 
   const updateBookingData = (data: Partial<BookingData>) => {
     setBookingData((prev) => ({ ...prev, ...data }))
@@ -133,7 +139,7 @@ export default function BookingWizard({ initialRoomId, preFilledData, language }
           // For cash payments, create the booking directly
           try {
             setIsProcessingPayment(true)
-            const confirmationResult = await paymentsAPI.createCashBooking({
+            const confirmationResult = await createCashBookingMutation.mutateAsync({
               roomId: bookingData.roomId,
               checkIn: bookingData.checkIn!.toISOString(),
               checkOut: bookingData.checkOut!.toISOString(),
@@ -142,12 +148,12 @@ export default function BookingWizard({ initialRoomId, preFilledData, language }
               totalAmount: (bookingData.roomPrice || 0) * (bookingData.nights || 1),
               guestInfo: {
                 ...bookingData.guestInfo,
-                language: language
+                language: language || contextLanguage
               },
               specialRequests: bookingData.guestInfo.specialRequests
             });
             
-            console.log("Cash booking created:", confirmationResult);
+            logger.info("Cash booking created", { bookingNumber: confirmationResult.booking?.bookingNumber });
             
             // Proceed to confirmation step
             setCurrentStep(currentStep + 1)
@@ -161,7 +167,10 @@ export default function BookingWizard({ initialRoomId, preFilledData, language }
             }))
             return
           } catch (error: any) {
-            console.error("Cash booking creation failed:", error);
+            logger.error("Cash booking creation failed", error instanceof Error ? error : new Error(error.message), {
+              roomId: bookingData.roomId,
+              error: error.message
+            });
             setPaymentError(error.message || t("bookingWizard.errors.bookingCreationFailed"));
             setIsProcessingPayment(false);
             return;
@@ -207,9 +216,10 @@ export default function BookingWizard({ initialRoomId, preFilledData, language }
 
     if (bookingData.paymentMethod === "cash") {
       // Handle cash payment: typically means saving booking and redirecting
-      console.log("Processing cash booking:", bookingData)
+      logger.debug("Processing cash booking", { roomId: bookingData.roomId, guests: bookingData.adults + bookingData.children });
       // Here you would typically save the booking to your database with 'pending payment' or 'pay on arrival' status
-      window.location.href = "/success?payment_method=cash" // Redirect to success page
+      const currentLang = language || contextLanguage || 'el'
+      window.location.href = `/${currentLang}/success?payment_method=cash` // Redirect to success page with language prefix
       setIsProcessingPayment(false)
       return
     }
@@ -224,7 +234,7 @@ export default function BookingWizard({ initialRoomId, preFilledData, language }
 
     try {
       // 1. Create PaymentIntent on the server
-      const paymentIntentResult = await paymentsAPI.createPaymentIntent({
+      const paymentIntentResult = await createPaymentIntentMutation.mutateAsync({
         roomId: bookingData.roomId,
         checkIn: bookingData.checkIn!.toISOString(),
         checkOut: bookingData.checkOut!.toISOString(),
@@ -252,26 +262,36 @@ export default function BookingWizard({ initialRoomId, preFilledData, language }
       })
 
       if (error) {
+        const stripeError = error instanceof Error ? error : new Error(error.message || 'Stripe payment error')
+        logger.error("Stripe payment confirmation failed", stripeError, {
+          paymentIntentId: paymentIntentResult.paymentIntentId,
+          email: bookingData.guestInfo.email
+        });
         setPaymentError(error.message || t("bookingWizard.errors.paymentFailed"))
         setIsProcessingPayment(false)
       } else if (paymentIntent?.status === "succeeded") {
-        console.log("Payment succeeded:", paymentIntent)
+        logger.info("Payment succeeded", { 
+          paymentIntentId: paymentIntent.id,
+          amount: paymentIntent.amount 
+        });
         
         // 3. Confirm payment and create booking on the backend
         try {
-          const confirmationResult = await paymentsAPI.confirmPayment({
+          const confirmationResult = await confirmPaymentMutation.mutateAsync({
             paymentIntentId: paymentIntent.id,
             guestInfo: {
               ...bookingData.guestInfo,
-              language: language // Include the customer's language
+              language: language || contextLanguage // Include the customer's language
             },
             specialRequests: bookingData.guestInfo.specialRequests
           });
           
-          console.log("Booking created:", confirmationResult);
+          logger.info("Booking created", { 
+            bookingNumber: confirmationResult.booking?.bookingNumber,
+            bookingId: confirmationResult.booking?._id
+          });
           
-          // Instead of redirecting, proceed to the next step (confirmation)
-          console.log('✅ Payment successful, advancing to confirmation step. Current step:', currentStep, '-> New step:', currentStep + 1)
+          // Proceed to the next step (confirmation)
           setCurrentStep(4) // Explicitly set to step 4 (confirmation)
           setIsProcessingPayment(false)
           setPaymentError(null) // Clear any payment errors
@@ -282,16 +302,27 @@ export default function BookingWizard({ initialRoomId, preFilledData, language }
             bookingResult: confirmationResult
           }))
         } catch (confirmError: any) {
-          console.error("Booking creation failed:", confirmError);
+          logger.error("Booking creation failed after payment", confirmError instanceof Error ? confirmError : new Error(confirmError.message), {
+            paymentIntentId: paymentIntent.id,
+            error: confirmError.message
+          });
           setPaymentError(confirmError.message || t("bookingWizard.errors.bookingCreationFailed"));
           setIsProcessingPayment(false);
           return;
         }
       } else {
+        logger.warn("Payment not succeeded", { 
+          status: paymentIntent?.status,
+          paymentIntentId: paymentIntent?.id 
+        });
         setPaymentError(t("bookingWizard.errors.paymentNotSucceeded") + ` ${paymentIntent?.status}`)
         setIsProcessingPayment(false)
       }
     } catch (err: any) {
+      logger.error("Unexpected error during payment processing", err instanceof Error ? err : new Error(err.message), {
+        roomId: bookingData.roomId,
+        error: err.message
+      });
       setPaymentError(err.message || t("bookingWizard.errors.unexpectedError"))
       setIsProcessingPayment(false)
     }
@@ -307,10 +338,6 @@ export default function BookingWizard({ initialRoomId, preFilledData, language }
       <div className="max-w-4xl mx-auto">
         {/* Progress Indicator */}
         <div className="mb-8">
-          {/* Debug info */}
-          <div className="text-xs text-slate-500 mb-2 text-center">
-            Debug: Current Step: {currentStep}, Total Steps: {steps.length}
-          </div>
           <div className="flex items-center justify-between overflow-x-auto pb-2">
             {steps.map((step, index) => (
               <div key={step.id} className={`flex items-center ${index < steps.length - 1 ? "flex-1" : ""}`}>
@@ -377,22 +404,34 @@ export default function BookingWizard({ initialRoomId, preFilledData, language }
           {currentStep < steps.length ? (
             <Button
               onClick={handleNext}
-              disabled={!canProceed || isProcessingPayment}
+              disabled={!canProceed || isProcessingPayment || createPaymentIntentMutation.isPending || confirmPaymentMutation.isPending || createCashBookingMutation.isPending}
               className="flex items-center gap-2 px-8 py-3 bg-[#0A4A4A] hover:bg-[#083a3a] text-white border-2 border-[#0A4A4A] transition-colors font-alegreya"
             >
-              {isProcessingPayment && currentStep === steps.length - 1 ? (
+              {(isProcessingPayment || createPaymentIntentMutation.isPending || confirmPaymentMutation.isPending || createCashBookingMutation.isPending) && currentStep === steps.length - 1 ? (
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               ) : null}
-              {isProcessingPayment && currentStep === steps.length - 1
+              {(isProcessingPayment || createPaymentIntentMutation.isPending || confirmPaymentMutation.isPending || createCashBookingMutation.isPending) && currentStep === steps.length - 1
                 ? t("bookingWizard.buttons.processing")
                 : t("bookingWizard.buttons.next")}
-              {!isProcessingPayment && <ChevronRight className="w-4 w-4" />}
+              {!isProcessingPayment && !createPaymentIntentMutation.isPending && !confirmPaymentMutation.isPending && !createCashBookingMutation.isPending && <ChevronRight className="w-4 w-4" />}
             </Button>
           ) : (
             <Button
               onClick={() => {
-                // On the last step, this button can redirect to homepage or show a success message
-                window.location.href = `/${language || contextLanguage}`
+                // On the last step, redirect to success page with booking details
+                const currentLang = language || contextLanguage || 'el'
+                const bookingNumber = bookingData.bookingResult?.booking?.bookingNumber
+                const bookingId = bookingData.bookingResult?.booking?._id || bookingData.bookingResult?.booking?.id
+                const paymentMethod = bookingData.paymentMethod || 'card'
+                
+                // Build success page URL with booking details
+                const params = new URLSearchParams({
+                  payment_method: paymentMethod
+                })
+                if (bookingNumber) params.append('booking_number', bookingNumber)
+                if (bookingId) params.append('booking_id', bookingId)
+                
+                window.location.href = `/${currentLang}/success?${params.toString()}`
               }}
               className="px-8 py-3 bg-[#0A4A4A] hover:bg-[#083a3a] text-white border-2 border-[#0A4A4A] transition-colors font-alegreya min-w-[180px]"
             >

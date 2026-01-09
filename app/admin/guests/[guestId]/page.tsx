@@ -1,77 +1,203 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect, useMemo } from "react"
+import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { ArrowLeft, Mail, Phone, Calendar, User, CreditCard, Clock } from "lucide-react"
+import { ArrowLeft, Mail, Phone, Calendar, User, CreditCard, Clock, Loader2 } from "lucide-react"
+import { useGuestByEmail, useUpdateGuest, useDeleteGuest, useAdminUsers } from "@/hooks/api/use-admin"
+import { useToast } from "@/components/ui/use-toast"
 
-// Mock guest data
-const guestData = {
-  id: "1",
-  name: "Μαρία Παπαδοπούλου",
-  email: "maria@example.com",
-  phone: "+30 694 123 4567",
-  country: "Ελλάδα",
-  address: "Λεωφόρος Αλεξάνδρας 15, Αθήνα",
-  postalCode: "11521",
-  visits: 3,
-  lastVisit: "2024-01-17",
-  status: "active",
-  notes: "Προτιμά δωμάτια με θέα στη θάλασσα. Αλλεργία στη γύρη.",
-  bookings: [
-    {
-      id: "AST-2024-001",
-      room: "Standard Δωμάτιο",
-      checkIn: "2024-01-15",
-      checkOut: "2024-01-17",
-      status: "completed",
-      total: "135.60€",
-    },
-    {
-      id: "AST-2023-045",
-      room: "Οικογενειακό Δωμάτιο",
-      checkIn: "2023-08-10",
-      checkOut: "2023-08-15",
-      status: "completed",
-      total: "452.00€",
-    },
-    {
-      id: "AST-2023-012",
-      room: "Ρομαντικό Δωμάτιο",
-      checkIn: "2023-02-14",
-      checkOut: "2023-02-16",
-      status: "completed",
-      total: "226.00€",
-    },
-  ],
+// Helper function to determine if a string is an email
+function isEmail(str: string): boolean {
+  return str.includes("@") && str.includes(".")
+}
+
+// Helper function to get email from guestId (could be MongoDB _id or email)
+function getEmailFromGuestId(guestId: string, users: any[]): string | null {
+  if (isEmail(guestId)) {
+    return guestId
+  }
+  // If it's a MongoDB _id, find the user with matching _id and get their email
+  const user = users.find((u) => u._id === guestId)
+  return user?.email || null
 }
 
 export default function GuestDetailPage({ params }: { params: { guestId: string } }) {
-  const [guest, setGuest] = useState({ ...guestData })
-  const [notes, setNotes] = useState(guestData.notes)
+  const router = useRouter()
+  const { toast } = useToast()
+  const { data: usersData = [] } = useAdminUsers()
+  const users = Array.isArray(usersData) ? usersData : []
+
+  // Determine email from guestId
+  const email = useMemo(() => {
+    return getEmailFromGuestId(params.guestId, users)
+  }, [params.guestId, users])
+
+  // Fetch guest data
+  const { data: guestData, isLoading, error } = useGuestByEmail(email || null)
+  const updateGuestMutation = useUpdateGuest()
+  const deleteGuestMutation = useDeleteGuest()
+
+  // Transform backend data to frontend format
+  const transformedGuest = useMemo(() => {
+    if (!guestData?.guest) return null
+
+    const guest = guestData.guest as any
+    const bookings = (guestData.bookings || []) as any[]
+
+    return {
+      id: guest._id || guest.email,
+      email: guest.email || "",
+      name: guest.firstName && guest.lastName 
+        ? `${guest.firstName} ${guest.lastName}`.trim()
+        : guest.firstName || guest.lastName || guest.name || "",
+      firstName: guest.firstName || "",
+      lastName: guest.lastName || "",
+      phone: guest.phone || "",
+      country: guest.country || "",
+      address: guest.address || "",
+      postalCode: guest.postalCode || "",
+      visits: guest.totalVisits || 0,
+      lastVisit: guest.lastVisit ? new Date(guest.lastVisit).toISOString().split("T")[0] : "",
+      status: guest.status || "active",
+      notes: guest.notes || "",
+      totalSpent: guest.totalSpent || 0,
+      bookings: bookings.map((booking: any) => ({
+        id: booking._id || booking.bookingNumber || booking.id || "",
+        room: booking.roomId?.name || booking.roomType || "Unknown Room",
+        checkIn: booking.checkIn ? new Date(booking.checkIn).toISOString().split("T")[0] : "",
+        checkOut: booking.checkOut ? new Date(booking.checkOut).toISOString().split("T")[0] : "",
+        status: booking.bookingStatus?.toLowerCase() || "completed",
+        total: `${booking.totalAmount?.toFixed(2) || "0.00"}€`,
+      })),
+    }
+  }, [guestData])
+
+  const [guest, setGuest] = useState(transformedGuest)
+  const [notes, setNotes] = useState("")
+  const [isSaving, setIsSaving] = useState(false)
+  const [isDeleting, setIsDeleting] = useState(false)
+
+  // Update local state when data loads
+  useEffect(() => {
+    if (transformedGuest) {
+      setGuest(transformedGuest)
+      setNotes(transformedGuest.notes || "")
+    }
+  }, [transformedGuest])
 
   const handleInputChange = (field: string, value: string) => {
-    setGuest((prev) => ({ ...prev, [field]: value }))
+    setGuest((prev) => {
+      if (!prev) return prev
+      return { ...prev, [field]: value }
+    })
   }
 
-  const handleSave = () => {
-    // In a real app, you would save the guest data to the database
-    console.log("Saving guest:", { ...guest, notes })
-    // Redirect to guests list
-    window.location.href = "/admin/guests"
+  const handleSave = async () => {
+    if (!guest || !email) {
+      toast({
+        title: "Σφάλμα",
+        description: "Δεν είναι δυνατή η αποθήκευση. Λείπουν απαραίτητα στοιχεία.",
+        variant: "destructive",
+      })
+      return
+    }
+
+    setIsSaving(true)
+    try {
+      // Split name into firstName and lastName if needed
+      const nameParts = guest.name.split(" ")
+      const firstName = guest.firstName || nameParts[0] || ""
+      const lastName = guest.lastName || nameParts.slice(1).join(" ") || ""
+
+      const updateData = {
+        firstName: firstName,
+        lastName: lastName,
+        phone: guest.phone || "",
+        country: guest.country || "",
+        address: guest.address || "",
+        postalCode: guest.postalCode || "",
+        status: guest.status || "active",
+        notes: notes || "",
+      }
+
+      await updateGuestMutation.mutateAsync({ email, data: updateData })
+
+      toast({
+        title: "Επιτυχία",
+        description: "Τα στοιχεία του επισκέπτη ενημερώθηκαν επιτυχώς.",
+      })
+
+      // Refresh data after save
+      setTimeout(() => {
+        router.refresh()
+      }, 1000)
+    } catch (error: any) {
+      toast({
+        title: "Σφάλμα",
+        description: error?.message || "Αποτυχία αποθήκευσης των στοιχείων.",
+        variant: "destructive",
+      })
+    } finally {
+      setIsSaving(false)
+    }
+  }
+
+  const handleDelete = async () => {
+    if (!email) {
+      toast({
+        title: "Σφάλμα",
+        description: "Δεν είναι δυνατή η διαγραφή. Λείπει το email.",
+        variant: "destructive",
+      })
+      return
+    }
+
+    if (!confirm("Είστε σίγουροι ότι θέλετε να διαγράψετε αυτόν τον επισκέπτη;")) {
+      return
+    }
+
+    setIsDeleting(true)
+    try {
+      await deleteGuestMutation.mutateAsync(email)
+
+      toast({
+        title: "Επιτυχία",
+        description: "Ο επισκέπτης διαγράφηκε επιτυχώς.",
+      })
+
+      // Redirect to guests list
+      setTimeout(() => {
+        router.push("/admin/guests")
+      }, 1000)
+    } catch (error: any) {
+      toast({
+        title: "Σφάλμα",
+        description: error?.message || "Αποτυχία διαγραφής του επισκέπτη.",
+        variant: "destructive",
+      })
+    } finally {
+      setIsDeleting(false)
+    }
   }
 
   const getStatusText = (status: string) => {
     switch (status) {
       case "completed":
+      case "confirmed":
         return "Ολοκληρωμένη"
       case "upcoming":
+      case "pending":
         return "Επερχόμενη"
       case "cancelled":
+      case "cancelled":
         return "Ακυρωμένη"
+      case "checked_in":
+        return "Σε Διαμονή"
       default:
         return status
     }
@@ -80,14 +206,70 @@ export default function GuestDetailPage({ params }: { params: { guestId: string 
   const getStatusClass = (status: string) => {
     switch (status) {
       case "completed":
+      case "confirmed":
         return "bg-green-50 text-green-700"
       case "upcoming":
+      case "pending":
         return "bg-blue-50 text-blue-700"
       case "cancelled":
         return "bg-red-50 text-red-700"
+      case "checked_in":
+        return "bg-purple-50 text-purple-700"
       default:
         return "bg-slate-50 text-slate-700"
     }
+  }
+
+  // Loading state
+  if (isLoading || !email) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <Loader2 className="h-8 w-8 animate-spin text-[#0A4A4A]" />
+        <span className="ml-3 text-slate-600 font-alegreya">Φόρτωση στοιχείων επισκέπτη...</span>
+      </div>
+    )
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <div className="space-y-4">
+        <div className="flex items-center gap-2">
+          <Link href="/admin/guests" className="text-slate-500 hover:text-[#0A4A4A]">
+            <ArrowLeft className="h-5 w-5" />
+          </Link>
+          <h1 className="text-2xl font-cormorant font-light text-slate-800">Προφίλ Επισκέπτη</h1>
+        </div>
+        <div className="bg-red-50 border border-red-200 rounded-sm p-4">
+          <p className="text-red-700 font-alegreya">
+            {error instanceof Error ? error.message : "Αποτυχία φόρτωσης των στοιχείων του επισκέπτη."}
+          </p>
+        </div>
+        <Button variant="outline" onClick={() => router.push("/admin/guests")} className="font-alegreya">
+          Επιστροφή στη λίστα επισκεπτών
+        </Button>
+      </div>
+    )
+  }
+
+  // No guest data
+  if (!guest) {
+    return (
+      <div className="space-y-4">
+        <div className="flex items-center gap-2">
+          <Link href="/admin/guests" className="text-slate-500 hover:text-[#0A4A4A]">
+            <ArrowLeft className="h-5 w-5" />
+          </Link>
+          <h1 className="text-2xl font-cormorant font-light text-slate-800">Προφίλ Επισκέπτη</h1>
+        </div>
+        <div className="bg-slate-50 border border-slate-200 rounded-sm p-4">
+          <p className="text-slate-700 font-alegreya">Δεν βρέθηκαν στοιχεία για τον επισκέπτη.</p>
+        </div>
+        <Button variant="outline" onClick={() => router.push("/admin/guests")} className="font-alegreya">
+          Επιστροφή στη λίστα επισκεπτών
+        </Button>
+      </div>
+    )
   }
 
   return (
@@ -101,14 +283,25 @@ export default function GuestDetailPage({ params }: { params: { guestId: string 
             </Link>
             <h1 className="text-2xl font-cormorant font-light text-slate-800">Προφίλ Επισκέπτη</h1>
           </div>
-          <p className="text-slate-600 font-alegreya mt-1">ID: {guest.id}</p>
+          <p className="text-slate-600 font-alegreya mt-1">Email: {guest.email}</p>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" className="font-alegreya" onClick={() => (window.location.href = "/admin/guests")}>
+          <Button variant="outline" className="font-alegreya" onClick={() => router.push("/admin/guests")}>
             Ακύρωση
           </Button>
-          <Button className="bg-[#0A4A4A] hover:bg-[#083a3a] text-white font-alegreya" onClick={handleSave}>
-            Αποθήκευση
+          <Button
+            className="bg-[#0A4A4A] hover:bg-[#083a3a] text-white font-alegreya"
+            onClick={handleSave}
+            disabled={isSaving}
+          >
+            {isSaving ? (
+              <>
+                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                Αποθήκευση...
+              </>
+            ) : (
+              "Αποθήκευση"
+            )}
           </Button>
         </div>
       </div>
@@ -133,12 +326,7 @@ export default function GuestDetailPage({ params }: { params: { guestId: string 
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-slate-700 font-alegreya mb-1">Email</label>
-                  <Input
-                    type="email"
-                    value={guest.email}
-                    onChange={(e) => handleInputChange("email", e.target.value)}
-                    className="font-alegreya"
-                  />
+                  <Input type="email" value={guest.email} className="font-alegreya" disabled />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-slate-700 font-alegreya mb-1">Τηλέφωνο</label>
@@ -197,7 +385,7 @@ export default function GuestDetailPage({ params }: { params: { guestId: string 
               <h2 className="text-lg font-cormorant font-semibold text-slate-800">Ιστορικό Κρατήσεων</h2>
             </div>
             <div className="p-6">
-              {guest.bookings.length > 0 ? (
+              {guest.bookings && guest.bookings.length > 0 ? (
                 <div className="space-y-4">
                   {guest.bookings.map((booking) => (
                     <div key={booking.id} className="border border-slate-200 rounded-sm p-4">
@@ -274,15 +462,7 @@ export default function GuestDetailPage({ params }: { params: { guestId: string 
                     <CreditCard className="h-4 w-4" />
                     Συνολικές Δαπάνες
                   </div>
-                  <p className="font-alegreya font-medium">
-                    {guest.bookings
-                      .reduce((total, booking) => {
-                        const amount = Number.parseFloat(booking.total.replace("€", "").replace(",", "."))
-                        return total + amount
-                      }, 0)
-                      .toFixed(2)}
-                    €
-                  </p>
+                  <p className="font-alegreya font-medium">{guest.totalSpent.toFixed(2)}€</p>
                 </div>
               </div>
             </div>
@@ -301,8 +481,19 @@ export default function GuestDetailPage({ params }: { params: { guestId: string 
                 rows={5}
                 placeholder="Προσθέστε σημειώσεις για τον επισκέπτη..."
               />
-              <Button className="w-full bg-[#0A4A4A] hover:bg-[#083a3a] text-white font-alegreya">
-                Αποθήκευση Σημειώσεων
+              <Button
+                className="w-full bg-[#0A4A4A] hover:bg-[#083a3a] text-white font-alegreya"
+                onClick={handleSave}
+                disabled={isSaving}
+              >
+                {isSaving ? (
+                  <>
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    Αποθήκευση...
+                  </>
+                ) : (
+                  "Αποθήκευση Σημειώσεων"
+                )}
               </Button>
             </div>
           </div>
@@ -325,8 +516,17 @@ export default function GuestDetailPage({ params }: { params: { guestId: string 
                 <Button
                   variant="outline"
                   className="w-full text-red-600 hover:text-red-700 hover:bg-red-50 font-alegreya"
+                  onClick={handleDelete}
+                  disabled={isDeleting}
                 >
-                  Διαγραφή Επισκέπτη
+                  {isDeleting ? (
+                    <>
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      Διαγραφή...
+                    </>
+                  ) : (
+                    "Διαγραφή Επισκέπτη"
+                  )}
                 </Button>
               </div>
             </div>

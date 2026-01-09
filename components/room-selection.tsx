@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import Image from 'next/image'
 import { useLanguage } from '@/contexts/language-context'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -8,17 +9,18 @@ import { Badge } from '@/components/ui/badge'
 import { Users, Wifi, Snowflake, Tv, Shield, Building, AlertCircle } from 'lucide-react'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { getDiverseRoomImages, RoomImage } from '@/lib/image-utils'
+import { useRooms } from '@/hooks/api'
 
 interface RoomSelectionProps {
   onRoomSelect: (quantity: number, totalPrice: number) => void
   guestCount: number
   checkIn?: Date
   checkOut?: Date
-  rooms?: any[] // Add rooms prop to receive backend data
 }
 
-export default function RoomSelection({ onRoomSelect, guestCount, checkIn, checkOut, rooms = [] }: RoomSelectionProps) {
+export default function RoomSelection({ onRoomSelect, guestCount, checkIn, checkOut }: RoomSelectionProps) {
   const { t } = useLanguage()
+  const { data: rooms = [], isLoading } = useRooms()
   const [showMultiRoomDialog, setShowMultiRoomDialog] = useState(false)
   const [showImageModal, setShowImageModal] = useState(false)
   const [selectedImage, setSelectedImage] = useState<string>('')
@@ -237,67 +239,59 @@ export default function RoomSelection({ onRoomSelect, guestCount, checkIn, check
                        // Use organized room images
                        roomImages.map((image, index) => (
                          <div 
-                           key={index} 
-                           className="w-48 h-32 rounded-lg overflow-hidden shadow-md cursor-pointer hover:shadow-lg transition-shadow duration-300"
-                           onClick={() => handleImageClick(image.url)}
-                         >
-                           <img 
-                             src={image.url} 
-                             alt={image.description}
-                             title={image.description}
-                             className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-                             onError={(e) => {
-                               const target = e.target as HTMLImageElement;
-                               target.src = '/placeholder.jpg';
-                             }}
-                           />
-                         </div>
+                          key={index} 
+                          className="w-48 h-32 rounded-lg overflow-hidden shadow-md cursor-pointer hover:shadow-lg transition-shadow duration-300 relative"
+                          onClick={() => handleImageClick(image.url)}
+                        >
+                          <Image 
+                            src={image.url} 
+                            alt={image.description}
+                            title={image.description}
+                            fill
+                            className="object-cover hover:scale-105 transition-transform duration-300"
+                            sizes="(max-width: 768px) 100vw, 192px"
+                          />
+                        </div>
                        ))
                      ) : (
                        // Fallback to static images if no organized images
                        <>
                          <div 
-                           className="w-48 h-32 rounded-lg overflow-hidden shadow-md cursor-pointer hover:shadow-lg transition-shadow duration-300"
-                           onClick={() => handleImageClick('/room-1.png')}
-                         >
-                           <img 
-                             src="/room-1.png" 
-                             alt="Standard Apartment View 1" 
-                             className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-                             onError={(e) => {
-                               const target = e.target as HTMLImageElement;
-                               target.src = '/placeholder.jpg';
-                             }}
-                           />
-                         </div>
-                         <div 
-                           className="w-48 h-32 rounded-lg overflow-hidden shadow-md cursor-pointer hover:shadow-lg transition-shadow duration-300"
-                           onClick={() => handleImageClick('/room-2.png')}
-                         >
-                           <img 
-                             src="/room-2.png" 
-                             alt="Standard Apartment View 2" 
-                             className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-                             onError={(e) => {
-                               const target = e.target as HTMLImageElement;
-                               target.src = '/placeholder.jpg';
-                             }}
-                           />
-                         </div>
-                         <div 
-                           className="w-48 h-32 rounded-lg overflow-hidden shadow-md cursor-pointer hover:shadow-lg transition-shadow duration-300"
-                           onClick={() => handleImageClick('/room-3.png')}
-                         >
-                           <img 
-                             src="/room-3.png" 
-                             alt="Standard Apartment View 3" 
-                             className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-                             onError={(e) => {
-                               const target = e.target as HTMLImageElement;
-                               target.src = '/placeholder.jpg';
-                             }}
-                           />
-                         </div>
+                          className="w-48 h-32 rounded-lg overflow-hidden shadow-md cursor-pointer hover:shadow-lg transition-shadow duration-300 relative"
+                          onClick={() => handleImageClick('/room-1.png')}
+                        >
+                          <Image 
+                            src="/room-1.png" 
+                            alt="Standard Apartment View 1" 
+                            fill
+                            className="object-cover hover:scale-105 transition-transform duration-300"
+                            sizes="(max-width: 768px) 100vw, 192px"
+                          />
+                        </div>
+                        <div 
+                          className="w-48 h-32 rounded-lg overflow-hidden shadow-md cursor-pointer hover:shadow-lg transition-shadow duration-300 relative"
+                          onClick={() => handleImageClick('/room-2.png')}
+                        >
+                          <Image 
+                            src="/room-2.png" 
+                            alt="Standard Apartment View 2" 
+                            fill
+                            className="object-cover hover:scale-105 transition-transform duration-300"
+                            sizes="(max-width: 768px) 100vw, 192px"
+                          />
+                        </div>
+                        <div 
+                          className="w-48 h-32 rounded-lg overflow-hidden shadow-md cursor-pointer hover:shadow-lg transition-shadow duration-300 relative"
+                          onClick={() => handleImageClick('/room-3.png')}
+                        >
+                          <Image 
+                            src="/room-3.png" 
+                            alt="Standard Apartment View 3" 
+                            fill
+                            className="object-cover hover:scale-105 transition-transform duration-300"
+                            sizes="(max-width: 768px) 100vw, 192px"
+                          />
+                        </div>
                        </>
                      )}
                    </div>
@@ -424,12 +418,14 @@ export default function RoomSelection({ onRoomSelect, guestCount, checkIn, check
             className="fixed inset-0 z-50 flex items-center justify-center bg-black/90"
             onClick={() => setShowImageModal(false)}
           >
-            <div className="w-full h-full flex justify-center items-center">
+            <div className="w-full h-full flex justify-center items-center relative max-w-7xl max-h-[90vh] p-4">
               {selectedImage && (
-                <img 
+                <Image 
                   src={selectedImage} 
                   alt="Room Preview" 
-                  className="max-w-full max-h-full object-contain"
+                  fill
+                  className="object-contain"
+                  sizes="(max-width: 1280px) 100vw, 1280px"
                   onClick={(e) => e.stopPropagation()}
                 />
               )}

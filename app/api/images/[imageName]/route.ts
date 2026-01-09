@@ -3,8 +3,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import path from 'path';
 import fs from 'fs';
 
-export async function GET(request: NextRequest, { params }: { params: { imageName: string } }) {
-  const imageName = params.imageName;
+export async function GET(request: NextRequest, { params }: { params: Promise<{ imageName: string }> }) {
+  const { imageName } = await params;
   // Adjust the path to your backend images
   const imagePath = path.join(process.cwd(), 'backend', imageName);
 

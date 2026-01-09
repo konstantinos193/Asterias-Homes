@@ -14,7 +14,7 @@ export default function AboutPage() {
           <div className="flex-1 flex justify-center order-2 md:order-1">
             {/* IMG_4047.JPG */}
             <Image
-              src="https://i.imgur.com/3g12fLV.jpeg"
+              src="/about-hero.jpeg"
               alt="Πανοραμική θέα Κορωνησίας"
               className="w-full max-w-sm sm:max-w-md aspect-[4/3] rounded-lg shadow-lg object-cover"
               width={800}
@@ -57,7 +57,7 @@ export default function AboutPage() {
           <div className="flex-1 order-1 md:order-2 flex justify-center">
             {/* IMG_4045.JPG */}
             <Image
-              src="https://i.imgur.com/SerzvD0.jpeg"
+              src="/about-location.jpeg"
               alt="Χάρτης ή τοποθεσία Κορωνησίας"
               className="w-full max-w-sm sm:max-w-md aspect-[4/3] rounded-lg shadow object-cover"
               width={800}
@@ -76,7 +76,7 @@ export default function AboutPage() {
           <div className="flex-1 flex justify-center order-2 md:order-1">
             {/* IMG_3770.JPG replaced with external URL */}
             <Image
-              src="https://i.imgur.com/gdFTHDu.jpeg"
+              src="/about-experiences.jpeg"
               alt="Εμπειρίες/Ηλιοβασίλεμα/Δραστηριότητες"
               className="w-full max-w-sm sm:max-w-md aspect-[4/3] rounded-lg shadow object-cover"
               width={800}
@@ -115,7 +115,7 @@ export default function AboutPage() {
           <div className="flex-1 order-1 md:order-2 flex justify-center">
             {/* IMG_3765.JPG */}
             <Image
-              src="https://i.imgur.com/TnCq8q1.jpeg"
+              src="/about-for-whom.jpeg"
               alt="Οικογένειες/Ζευγάρια/Τηλεργασία/Φυσιολάτρες"
               className="w-full max-w-md aspect-[4/3] rounded-lg shadow object-cover"
               width={800}
@@ -134,7 +134,7 @@ export default function AboutPage() {
           <div className="flex-1 flex justify-center">
             {/* IMG_3546.JPG */}
             <Image
-              src="https://i.imgur.com/KhgP0yg.jpeg"
+              src="/about-amenities.jpeg"
               alt="Παροχές/Δωμάτια/Εξωτερικοί χώροι"
               className="w-full max-w-md aspect-[4/3] rounded-lg shadow object-cover"
               width={800}
@@ -173,7 +173,7 @@ export default function AboutPage() {
             {[1, 2, 3, 4].map((index) => (
               <div key={index} className="aspect-square rounded-lg overflow-hidden shadow-lg transform transition-all duration-300 hover:scale-105 hover:shadow-xl">
                 <Image
-                  src={`https://i.imgur.com/${index === 1 ? '3g12fLV' : index === 2 ? 'SerzvD0' : index === 3 ? 'gdFTHDu' : 'TnCq8q1'}.jpeg`}
+                  src={index === 1 ? '/about-hero.jpeg' : index === 2 ? '/about-location.jpeg' : index === 3 ? '/about-experiences.jpeg' : '/about-for-whom.jpeg'}
                   alt={`Gallery preview ${index}`}
                   width={200}
                   height={200}

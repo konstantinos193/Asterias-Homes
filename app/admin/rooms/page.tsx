@@ -7,7 +7,10 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Search, Filter, Plus, Edit, Trash2, Eye } from "lucide-react"
-import { adminAPI } from "@/lib/api"
+import { useAdminRooms } from "@/hooks/api"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { api } from "@/lib/api-client"
+import { logger } from "@/lib/logger"
 
 const getStatusText = (status: string) => {
   switch (status) {
@@ -40,29 +43,34 @@ const getStatusClass = (status: string) => {
 }
 
 export default function RoomsPage() {
-  const [rooms, setRooms] = useState<any[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState("")
+  const { data: roomsData = [], isLoading, error: roomsError } = useAdminRooms()
+  const queryClient = useQueryClient()
   const [searchTerm, setSearchTerm] = useState("")
   const [statusFilter, setStatusFilter] = useState("all")
   const [typeFilter, setTypeFilter] = useState("all")
 
-  useEffect(() => {
-    const fetchRooms = async () => {
-      try {
-        const response = await adminAPI.getAllRooms()
-        setRooms(response.rooms || [])
-      } catch (err: any) {
-        setError(err.message || "Failed to load rooms")
-      } finally {
-        setLoading(false)
-      }
-    }
+  // Normalize rooms data
+  const rooms = Array.isArray(roomsData) 
+    ? (Array.isArray((roomsData as any).rooms) ? (roomsData as any).rooms : roomsData)
+    : []
 
-    fetchRooms()
-  }, [])
+  // Delete mutation
+  const deleteRoomMutation = useMutation({
+    mutationFn: async (roomId: string) => {
+      await api.admin.deleteRoom(roomId)
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin', 'rooms'] })
+    },
+  })
 
-  const filteredRooms = rooms.filter((room) => {
+  // Log errors
+  const error = roomsError ? (roomsError as Error).message : ""
+  if (roomsError) {
+    logger.error('Error fetching admin rooms', roomsError as Error)
+  }
+
+  const filteredRooms = rooms.filter((room: any) => {
     const matchesSearch =
       room.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       room.description?.toLowerCase().includes(searchTerm.toLowerCase())
@@ -76,17 +84,15 @@ export default function RoomsPage() {
   const handleDeleteRoom = async (roomId: string) => {
     if (confirm("Are you sure you want to delete this room?")) {
       try {
-        await adminAPI.deleteRoom(roomId)
-        // Refresh rooms after deletion
-        const response = await adminAPI.getAllRooms()
-        setRooms(response.rooms || [])
+        await deleteRoomMutation.mutateAsync(roomId)
+        logger.info('Room deleted successfully', { roomId })
       } catch (err: any) {
-        setError(err.message || "Failed to delete room")
+        logger.error('Failed to delete room', err as Error, { roomId })
       }
     }
   }
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="flex items-center justify-center h-64">
         <div className="text-slate-600 font-alegreya">Φόρτωση δωματίων...</div>
@@ -172,7 +178,7 @@ export default function RoomsPage() {
 
       {/* Rooms Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredRooms.map((room) => (
+        {filteredRooms.map((room: any) => (
           <div key={room._id} className="bg-white rounded-sm border border-slate-200 overflow-hidden">
             <div className="relative h-48">
               <Image src={room.image || "/placeholder.svg"} alt={room.name} fill className="object-cover" />

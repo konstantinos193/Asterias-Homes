@@ -35,6 +35,8 @@ import {
   RefreshCw
 } from "lucide-react"
 import { toast } from "sonner"
+import { useAdminSettings, useUpdateAdminSettings } from "@/hooks/api/use-admin"
+import { logger } from "@/lib/logger"
 
 interface AdminSettings {
   // Booking Rules
@@ -127,34 +129,28 @@ export default function AdminSettingsPage() {
     auditLogging: true
   })
 
-  const [loading, setLoading] = useState(false)
   const [hasChanges, setHasChanges] = useState(false)
-  const [initialLoading, setInitialLoading] = useState(true)
 
-  // Load settings from API on mount
+  const { data: settingsData, isLoading: initialLoading, error: settingsError } = useAdminSettings()
+  const updateSettingsMutation = useUpdateAdminSettings()
+
+  // Update local state when settings are loaded
   useEffect(() => {
-    const loadSettings = async () => {
-      try {
-        const response = await fetch('/api/admin/settings', {
-          credentials: 'include'
-        })
-
-        if (response.ok) {
-          const data = await response.json()
-          if (data.success && data.data) {
-            setSettings(data.data)
-          }
-        }
-      } catch (error) {
-        console.error('Error loading settings:', error)
-        toast.error("Σφάλμα κατά τη φόρτωση των ρυθμίσεων")
-      } finally {
-        setInitialLoading(false)
-      }
+    if (settingsData && typeof settingsData === 'object') {
+      setSettings(prev => ({
+        ...prev,
+        ...(settingsData as Partial<AdminSettings>)
+      }))
     }
+  }, [settingsData])
 
-    loadSettings()
-  }, [])
+  // Handle errors
+  useEffect(() => {
+    if (settingsError) {
+      logger.error('Error loading settings', settingsError as Error)
+      toast.error("Σφάλμα κατά τη φόρτωση των ρυθμίσεων")
+    }
+  }, [settingsError])
 
   const updateSetting = (key: keyof AdminSettings, value: any) => {
     setSettings(prev => ({
@@ -166,35 +162,25 @@ export default function AdminSettingsPage() {
 
   const saveSettings = async () => {
     try {
-      setLoading(true)
-      
-      const response = await fetch('/api/admin/settings', {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include',
-        body: JSON.stringify(settings)
-      })
-
-      const data = await response.json()
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Failed to save settings')
-      }
+      const response = await updateSettingsMutation.mutateAsync(settings)
       
       // Update local state with saved data to ensure consistency
-      if (data.success && data.data) {
-        setSettings(data.data)
+      if (response && typeof response === 'object' && 'success' in response && 'data' in response) {
+        const savedData = (response as { success: boolean; data: unknown }).data
+        if (savedData && typeof savedData === 'object') {
+          setSettings(prev => ({
+            ...prev,
+            ...(savedData as Partial<AdminSettings>)
+          }))
+        }
       }
       
+      logger.info('Settings saved successfully')
       toast.success("Οι ρυθμίσεις αποθηκεύτηκαν επιτυχώς!")
       setHasChanges(false)
     } catch (error) {
-      console.error('Settings save error:', error)
+      logger.error('Settings save error', error as Error)
       toast.error("Σφάλμα κατά την αποθήκευση των ρυθμίσεων")
-    } finally {
-      setLoading(false)
     }
   }
 
@@ -246,11 +232,11 @@ export default function AdminSettingsPage() {
           </Button>
           <Button
             onClick={saveSettings}
-            disabled={!hasChanges || loading}
+            disabled={!hasChanges || updateSettingsMutation.isPending}
             className="bg-[#0A4A4A] hover:bg-[#083a3a] text-white font-alegreya"
           >
             <Save className="h-4 w-4 mr-2" />
-            {loading ? "Αποθήκευση..." : "Αποθήκευση"}
+            {updateSettingsMutation.isPending ? "Αποθήκευση..." : "Αποθήκευση"}
           </Button>
         </div>
       </div>

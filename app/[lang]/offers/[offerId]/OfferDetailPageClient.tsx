@@ -1,8 +1,7 @@
 "use client"
 
-import { useState, useEffect } from "react"
 import { useLanguage } from "@/contexts/language-context"
-import { offersAPI } from "@/lib/api"
+import { useOffer } from "@/hooks/api/use-offers"
 import { Offer } from "@/types/offers"
 import Image from "next/image"
 import Link from "next/link"
@@ -10,40 +9,25 @@ import { Calendar, Star, ArrowLeft, Tag, Check } from "lucide-react"
 
 interface OfferDetailPageClientProps {
   offerId: string
+  initialOffer?: Offer | null // Server-fetched offer data for SSR
 }
 
-export default function OfferDetailPageClient({ offerId }: OfferDetailPageClientProps) {
+export default function OfferDetailPageClient({ offerId, initialOffer }: OfferDetailPageClientProps) {
   const { t, language } = useLanguage()
-  const [offer, setOffer] = useState<Offer | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  
+  // Use client-side hook for revalidation, but prefer initialOffer if available
+  const { data: offerData, isLoading, error } = useOffer(offerId, {
+    initialData: initialOffer,
+    enabled: !initialOffer, // Only fetch if we don't have initial data
+  })
 
-  useEffect(() => {
-    const fetchOffer = async () => {
-      try {
-        setLoading(true)
-        const response = await offersAPI.getById(offerId)
-        if (response && response.offer) {
-          setOffer(response.offer)
-        } else if (response) {
-          setOffer(response)
-        } else {
-          setError('Offer not found')
-        }
-      } catch (err) {
-        console.error('Failed to fetch offer:', err)
-        setError('Failed to load offer')
-      } finally {
-        setLoading(false)
-      }
-    }
+  // Use initialOffer if available, otherwise use offerData from hook
+  const offer = initialOffer || offerData
+  
+  // Only show loading if we don't have initial data and we're still loading
+  const isLoadingState = !initialOffer && isLoading
 
-    if (offerId) {
-      fetchOffer()
-    }
-  }, [offerId])
-
-  if (loading) {
+  if (isLoadingState) {
     return (
       <main className="bg-[#A9AEA2]/30 text-slate-800 pt-20 sm:pt-24 font-alegreya min-h-screen">
         <div className="container mx-auto container-mobile py-12 text-center">
@@ -59,7 +43,7 @@ export default function OfferDetailPageClient({ offerId }: OfferDetailPageClient
         <div className="container mx-auto container-mobile py-12 text-center">
           <Tag className="h-16 w-16 mx-auto text-slate-400 mb-4" />
           <h2 className="text-xl sm:text-2xl font-semibold text-slate-700 mb-2">
-            {error || "Offer Not Found"}
+            {error?.message || "Offer Not Found"}
           </h2>
           <p className="text-slate-600 mb-6">
             {t("offers.notFound") || "The offer you're looking for doesn't exist or has expired."}

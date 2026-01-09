@@ -1,73 +1,188 @@
-import HomePageClient from "../HomePageClient"
-import { getRooms } from "@/lib/api"
-import { Room } from "@/types/booking"
+import HomePageClient from "@/app/HomePageClient"
 import { Metadata } from "next"
 
-export const metadata: Metadata = {
-  title: "Luxury Vacation Apartments in Koronisia, Arta",
-  description: "Experience luxury vacation apartments in Koronisia, Arta, in the heart of Amvrakikos Gulf. 7 beautifully appointed apartments with modern amenities, surrounded by natural beauty and tranquility.",
-  keywords: [
-    "vacation apartments Koronisia",
-    "luxury accommodation Arta",
-    "Greek holiday homes",
-    "Amvrakikos Gulf apartments",
-    "beachfront accommodation Greece",
-    "Koronisia vacation rentals",
-    "Arta tourism accommodation",
-    "Greek island apartments"
-  ],
-  openGraph: {
-    title: "Luxury Vacation Apartments in Koronisia, Arta",
-    description: "Experience luxury vacation apartments in Koronisia, Arta, in the heart of Amvrakikos Gulf. 7 beautifully appointed apartments with modern amenities.",
-    images: [
-      {
-        url: "/hero-1.png",
-        width: 1200,
-        height: 630,
-        alt: "Asterias Homes - Luxury Vacation Apartments in Greece",
-      }
-    ],
-  },
-  alternates: {
-    canonical: "/",
-    languages: {
-      "en-US": "/en",
-      "el-GR": "/el",
-      "de-DE": "/de",
-    },
-  },
-}
-
-export default async function Home() {
-  // Fetch rooms data server-side
-  const rooms = await getRooms()
+export async function generateMetadata({ params }: { params: Promise<{ lang: string }> }): Promise<Metadata> {
+  const { lang } = await params
+  const baseUrl = 'https://asteriashome.gr'
   
-  let featuredRooms: Room[] = []
-  
-  if (rooms && rooms.length > 0) {
-    const roomType = rooms[0]
-    const numberOfFeatured = 3
-    featuredRooms = Array.from({ length: numberOfFeatured }, (_, index) => ({
-      ...roomType,
-      displayId: `${roomType.id}-featured-${index}`,
-      image: roomType.images[index % roomType.images.length],
-      featureKeys: [
-        "rooms.feature.entirePlace",
-        "rooms.feature.freeParking",
-        "rooms.feature.breakfastIncluded",
-        "rooms.feature.balcony",
-        "rooms.feature.privateBathroom",
-        "rooms.feature.freeWifi",
-        "rooms.feature.shower",
-        "rooms.feature.airConditioning",
-        "rooms.feature.flatScreenTV",
-        "rooms.feature.kitchenette",
-        "rooms.feature.nonSmoking",
-        "rooms.feature.familyFriendly"
-      ]
-    }))
+  const localeMap: Record<string, string> = {
+    'en': 'en_US',
+    'el': 'el_GR',
+    'de': 'de_DE'
   }
 
-  // HomePageClient will use the context for translations
-  return <HomePageClient featuredRooms={featuredRooms} />
+  // Get current month for seasonal optimization
+  const currentMonth = new Date().getMonth() + 1 // 1-12
+  const isSummer = currentMonth >= 6 && currentMonth <= 8
+  const isWinter = currentMonth >= 12 || currentMonth <= 2
+  const isAutumn = currentMonth >= 9 && currentMonth <= 11
+  const isSpring = currentMonth >= 3 && currentMonth <= 5
+  
+  // Seasonal messaging
+  const seasonalText = isSummer 
+    ? lang === 'el' ? 'Καλοκαιρινές διακοπές' : 'Summer vacation'
+    : isWinter
+    ? lang === 'el' ? 'Χειμερινή απόδραση' : 'Winter escape'
+    : isAutumn
+    ? lang === 'el' ? 'Φθινοπωρινή ανάπαυση' : 'Autumn retreat'
+    : lang === 'el' ? 'Ανοιξιάτικες διακοπές' : 'Spring getaway'
+
+  // Language-specific SEO content based on actual Search Console queries
+  const seoContent: Record<string, {
+    title: string
+    description: string
+    keywords: string[]
+  }> = {
+    'el': {
+      title: "Αστεριας Κορωνησία - Asterias Homes | Διαμερίσματα & Ξενοδοχεία Άρτα | Κράτηση Online",
+      description: `${seasonalText} - Αστεριας Κορωνησία - Ανακάλυψε τα Asterias Homes στη Κορωνησία Άρτας, στον Αμβρακικό Κόλπο. 7 παραδοσιακά διαμερίσματα διακοπών με αυθεντική ελληνική φιλοξενία. ΔΙΑΜΟΝΗ ΚΟΡΩΝΗΣΙΑ - ΟΧΙ Κουφονήσια. Κράτηση online, άμεση επιβεβαίωση. Από €80/νύχτα.`,
+      keywords: [
+        // Successful query - works!
+        "αστεριας κορωνησια",
+        "αστεριας κορωνησία",
+        // High impressions, need optimization
+        "κορωνησια διαμονη",
+        "κορωνησια",
+        "asterias apartments",
+        "asteria house",
+        "koronisia apartments",
+        "κορωνησια ξενοδοχεια",
+        // Misspellings and variations
+        "κορονισια",
+        "κορωνησια αρτα",
+        "αμβρακικού",
+        "αμβρακικος κολπος διαμονη",
+        // Location combinations
+        "άρτα διαμονη",
+        "koronisia arta",
+        "asterias koronisia",
+        // Additional
+        "asterias premium holiday apartments",
+        "διαμερίσματα κορωνησια",
+        "ξενώνες αμβρακικος κολπος",
+        "κυνηγότοπο κορωνησια",
+        "διακοπές κορωνησια",
+        // NOT Koufonisia - clarification
+        "asterias koronisia NOT koufonisia",
+        "κορωνησια άρτα ΟΧΙ κουφονήσια"
+      ]
+    },
+    'en': {
+      title: "Holiday Apartments in Greece - Asterias Homes Koronisia, Arta | Book Online",
+      description: `${seasonalText} - Asterias Homes - Traditional Greek holiday apartments in Koronisia, Arta, Greece by the Amvrakikos Gulf. 7 well-maintained apartments with authentic Greek hospitality. Perfect for international travelers visiting Greece. KORONISIA, ARTA, GREECE - NOT Koufonisia. Online booking, instant confirmation. From €80/night.`,
+      keywords: [
+        // International appeal keywords
+        "holiday apartments greece",
+        "greek vacation rentals",
+        "greece accommodation",
+        "traditional greek apartments",
+        "holiday homes greece",
+        // High impressions keywords
+        "asterias apartments",
+        "asteria house",
+        "koronisia apartments",
+        "koronisia greece",
+        "koronisia accommodation",
+        "koronisia hotels",
+        // Location combinations - emphasize Greece
+        "asterias koronisia arta greece",
+        "koronisia arta greece",
+        "greece koronisia",
+        "greek islands accommodation",
+        "mainland greece apartments",
+        // Amvrakikos Gulf references
+        "amvrakikos gulf apartments greece",
+        "amvrakikos accommodation",
+        // Additional
+        "asterias premium holiday apartments greece",
+        "traditional apartments koronisia greece",
+        "greek holiday apartments arta",
+        // NOT Koufonisia - strong disambiguation
+        "koronisia NOT koufonisia",
+        "asterias koronisia arta NOT koufonisia",
+        "greece apartments koronisia",
+        "asterias apartments koronisia arta greece"
+      ]
+    },
+    'de': {
+      title: "Asterias Homes Koronisia - Ferienwohnungen & Hotels in Arta, Griechenland | Online Buchen",
+      description: `${isSummer ? 'Sommerferien' : isWinter ? 'Winterflucht' : isAutumn ? 'Herbsturlaub' : 'Frühlingsausflug'} - Asterias Homes Koronisia Arta - Entdecken Sie 7 traditionelle Ferienwohnungen am Ambrakischen Golf. Authentische griechische Gastfreundschaft. KORONISIA, ARTA - NICHT Koufonisia. Online-Buchung mit sofortiger Bestätigung.`,
+      keywords: [
+        "koronisia apartements",
+        "asterias homes",
+        "ferienwohnungen koronisia",
+        "koronisia arta",
+        "asterias koronisia arta",
+        "unterkunft amvrakikos golf",
+        "ambrakischer golf ferienwohnungen",
+        "griechenland ferienwohnungen",
+        "traditionelle wohnungen koronisia",
+        "koronisia NICHT koufonisia",
+        "online buchung koronisia"
+      ]
+    }
+  }
+
+  const content = seoContent[lang] || seoContent['en']
+  
+  return {
+    title: content.title,
+    description: content.description,
+    keywords: content.keywords,
+    openGraph: {
+      title: content.title,
+      description: content.description,
+      images: [
+        {
+          url: "/hero-1.png",
+          width: 1200,
+          height: 630,
+          alt: lang === 'el' 
+            ? "Asterias Homes - Διαμερίσματα διακοπών στην Κορωνησία, Ελλάδα"
+            : "Asterias Homes - Traditional Holiday Apartments in Koronisia, Greece",
+        }
+      ],
+      type: "website",
+      locale: localeMap[lang] || 'en_US',
+      siteName: "Asterias Homes",
+      url: `${baseUrl}/${lang}`,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: content.title,
+      description: content.description,
+      images: ["/hero-1.png"],
+      creator: "@asterias_homes",
+      site: "@asterias_homes",
+    },
+    alternates: {
+      canonical: `${baseUrl}/${lang}`,
+      languages: {
+        "en-US": `${baseUrl}/en`,
+        "el-GR": `${baseUrl}/el`,
+        "de-DE": `${baseUrl}/de`,
+        "x-default": `${baseUrl}/en`,
+      },
+    },
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: {
+        index: true,
+        follow: true,
+        "max-image-preview": "large",
+        "max-snippet": -1,
+        "max-video-preview": -1,
+      },
+    },
+    other: {
+      "mobile-web-app-capable": "yes",
+      "apple-mobile-web-app-capable": "yes",
+    },
+  }
+}
+
+export default function Home() {
+  // Page renders immediately - data fetching happens client-side with loading states
+  return <HomePageClient />
 } 

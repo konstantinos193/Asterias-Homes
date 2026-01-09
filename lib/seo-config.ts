@@ -2,7 +2,7 @@ export const SEO_CONFIG = {
   site: {
     name: 'Asterias Homes',
     url: 'https://asteriashome.gr',
-    description: 'Experience luxury vacation apartments in Koronisia, Arta, in the heart of Amvrakikos Gulf. 7 beautifully appointed apartments with modern amenities, surrounded by natural beauty and tranquility.',
+    description: 'Traditional, classic holiday apartments in Koronisia, Arta by the Amvrakikos Gulf. 7 well-maintained apartments with authentic charm, surrounded by natural beauty and tranquility. Quiet, clean, and welcoming.',
     defaultLanguage: 'en',
     supportedLanguages: ['en', 'el', 'de'],
     contact: {
@@ -24,101 +24,145 @@ export const SEO_CONFIG = {
   
   pages: {
     home: {
-      title: 'Luxury Vacation Apartments in Koronisia, Arta',
-      description: 'Experience luxury vacation apartments in Koronisia, Arta, in the heart of Amvrakikos Gulf. 7 beautifully appointed apartments with modern amenities, surrounded by natural beauty and tranquility.',
+      title: 'Αστεριας Κορωνησία - Asterias Homes | Διαμερίσματα Άρτα | Κράτηση Online',
+      description: 'Αστεριας Κορωνησία (Asterias Homes) - Διαμερίσματα διακοπών στη Κορωνησία Άρτας, στον Αμβρακικό Κόλπο. 7 παραδοσιακά διαμερίσματα με αυθεντική ελληνική φιλοξενία. ΚΟΡΩΝΗΣΙΑ, ΆΡΤΑ - ΟΧΙ Κουφονήσια. Κράτηση online, άμεση επιβεβαίωση. Από €80/νύχτα.',
       keywords: [
-        'vacation apartments Koronisia',
-        'luxury accommodation Arta',
+        // SUCCESSFUL keyword from Search Console (1 click, 6 impressions = 16.7% CTR!)
+        'αστεριας κορωνησια',
+        'αστεριας κορωνησία',
+        // High impressions keywords (need CTR optimization)
+        'κορωνησια διαμονη',
+        'κορωνησια',
+        'asterias apartments',
+        'asteria house',
+        'koronisia apartments',
+        'κορωνησια ξενοδοχεια',
+        'koronisia',
+        // Location combinations
+        'κορωνησια αρτα',
+        'koronisia arta',
+        'asterias koronisia arta',
+        'άρτα διαμονη',
+        // Misspellings and variations
+        'κορονισια',
+        'αμβρακικού',
+        'αμβρακικος κολπος διαμονη',
+        'amvrakikos gulf apartments',
+        // Additional keywords
+        'asterias premium holiday apartments',
+        'διαμερίσματα κορωνησια',
+        'koronisia accommodation',
+        'koronisia hotels',
+        // NOT Koufonisia - strong disambiguation (still appearing in searches!)
+        'koronisia NOT koufonisia',
+        'asterias koronisia NOT koufonisia',
+        'κορωνησια άρτα ΟΧΙ κουφονήσια',
+        'asterias koronisia arta NOT koufonisia',
+        // General keywords
         'Greek holiday homes',
-        'Amvrakikos Gulf apartments',
-        'beachfront accommodation Greece',
+        'authentic accommodation Greece',
         'Koronisia vacation rentals',
         'Arta tourism accommodation',
-        'Greek island apartments'
+        'family-run accommodation Koronisia',
+        'beachfront apartments Amvrakikos',
+        // Negative keywords (irrelevant locations appearing in search - need to avoid)
+        'asterias studios koufonisia NOT',
+        'asterias koufonisia NOT'
       ],
       image: '/hero-1.png'
     },
     
     about: {
-      title: 'About Asterias Homes - Luxury Accommodation in Koronisia',
-      description: 'Discover the story behind Asterias Homes, a family-run luxury accommodation in the coastal village of Koronisia, just 20 minutes from Arta city.',
+      title: 'About Asterias Homes - Traditional Accommodation in Koronisia',
+      description: 'Discover the story behind Asterias Homes, a family-run traditional accommodation in the coastal village of Koronisia, just 20 minutes from Arta city. Authentic Greek hospitality.',
       keywords: [
         'about Asterias Homes',
         'Koronisia accommodation history',
         'family-run hotel Greece',
         'Arta coastal village',
         'Greek hospitality',
-        'Amvrakikos Gulf accommodation'
+        'Amvrakikos Gulf accommodation',
+        'traditional Greek accommodation'
       ],
       image: '/about-header.png'
     },
     
     rooms: {
-      title: 'Luxury Apartments & Rooms in Koronisia',
-      description: 'Explore our 7 beautifully appointed luxury apartments in Koronisia, Arta. Each apartment features modern amenities, stunning sea views, and comfortable accommodations.',
+      title: 'Διαμερίσματα Κορωνησία - Asterias Homes | Κρατήσεις Online',
+      description: 'Εξερεύνησε τα 7 παραδοσιακά διαμερίσματα μας στην Κορωνησία, Άρτα. Κάθε διαμέρισμα έχει αυθεντική αίγλη, θέα στη θάλασσα και άνετα δωμάτια. Κράτηση online με άμεση επιβεβαίωση.',
       keywords: [
-        'luxury apartments Koronisia',
-        'hotel rooms Arta',
-        'Greek accommodation',
-        'sea view apartments',
-        'modern amenities Greece',
-        'comfortable rooms Koronisia'
+        'διαμερίσματα κορωνησια',
+        'asterias apartments koronisia',
+        'koronisia apartments',
+        'δωμάτια κορωνησια',
+        'διαμερίσματα αμβρακικος κολπος',
+        'traditional apartments Koronisia',
+        'koronisia rooms',
+        'Greek accommodation Koronisia',
+        'sea view apartments Koronisia',
+        'authentic accommodation Greece',
+        'comfortable rooms Koronisia',
+        'traditional Greek apartments'
       ],
       image: '/rooms-header.png'
     },
     
     gallery: {
       title: 'Photo Gallery - Asterias Homes Koronisia',
-      description: 'Browse our stunning photo gallery showcasing the beauty of Asterias Homes, our luxury apartments, and the breathtaking surroundings of Koronisia and Amvrakikos Gulf.',
+      description: 'Browse our photo gallery showcasing Asterias Homes, our traditional apartments, and the beautiful surroundings of Koronisia and Amvrakikos Gulf.',
       keywords: [
         'Asterias Homes photos',
         'Koronisia gallery',
         'apartment photos Greece',
         'Amvrakikos Gulf images',
         'Greek accommodation pictures',
-        'vacation rental photos'
+        'vacation rental photos',
+        'traditional apartments photos'
       ],
       image: '/gallery-header.png'
     },
     
     offers: {
       title: 'Special Offers & Packages - Asterias Homes',
-      description: 'Discover our exclusive special offers and vacation packages at Asterias Homes. From early bird discounts to seasonal packages, find the perfect deal for your Greek getaway.',
+      description: 'Discover our special offers and vacation packages at Asterias Homes. From early bird discounts to seasonal packages, find the perfect deal for your Greek getaway.',
       keywords: [
         'special offers Koronisia',
         'vacation packages Greece',
         'discount accommodation',
         'seasonal deals Arta',
         'Greek holiday packages',
-        'early bird discounts'
+        'early bird discounts',
+        'Koronisia special offers'
       ],
       image: '/offers-header.png'
     },
     
     contact: {
       title: 'Contact Us - Asterias Homes Koronisia',
-      description: 'Get in touch with Asterias Homes for bookings, inquiries, or information about our luxury apartments in Koronisia, Arta. We\'re here to help plan your perfect Greek vacation.',
+      description: 'Get in touch with Asterias Homes for bookings, inquiries, or information about our traditional apartments in Koronisia, Arta. We\'re here to help plan your perfect Greek vacation.',
       keywords: [
         'contact Asterias Homes',
         'Koronisia booking',
         'Greek accommodation contact',
         'Arta hotel inquiry',
         'vacation rental contact',
-        'Greek holiday booking'
+        'Greek holiday booking',
+        'Koronisia contact information'
       ],
       image: '/contact-header.png'
     },
     
     bookings: {
       title: 'Book Your Stay - Asterias Homes Koronisia',
-      description: 'Reserve your luxury apartment at Asterias Homes in Koronisia, Arta. Easy online booking for our 7 beautiful apartments with instant confirmation.',
+      description: 'Reserve your traditional apartment at Asterias Homes in Koronisia, Arta. Easy online booking for our 7 well-maintained apartments with instant confirmation.',
       keywords: [
         'book Asterias Homes',
         'Koronisia reservation',
         'Greek accommodation booking',
         'online hotel booking',
         'vacation rental reservation',
-        'Greek holiday booking'
+        'Greek holiday booking',
+        'Koronisia apartment booking'
       ],
       image: '/bookings-header.png'
     }
@@ -145,12 +189,10 @@ export const SEO_CONFIG = {
     ],
     preconnectDomains: [
       'https://fonts.googleapis.com',
-      'https://fonts.gstatic.com',
-      'https://i.imgur.com'
+      'https://fonts.gstatic.com'
     ],
     dnsPrefetchDomains: [
-      '//fonts.googleapis.com',
-      '//i.imgur.com'
+      '//fonts.googleapis.com'
     ]
   }
 }

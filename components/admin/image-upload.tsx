@@ -4,6 +4,7 @@ import { useState, useRef } from 'react'
 import { Upload, X, Image as ImageIcon } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import Image from 'next/image'
+import { logger } from '@/lib/logger'
 
 interface ImageFile {
   id: string
@@ -142,7 +143,9 @@ export default function ImageUpload({
         onImagesChange(updatedImages)
       }
     } catch (error) {
-      console.error('Upload error:', error)
+      logger.error('Upload error', error instanceof Error ? error : new Error(String(error)), {
+        component: 'image-upload'
+      })
       alert('Σφάλμα κατά την ανέβασμα των εικόνων')
     } finally {
       setUploading(false)

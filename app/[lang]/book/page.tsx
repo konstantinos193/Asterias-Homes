@@ -8,7 +8,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Building, Users, Calendar, Euro, CheckCircle, Star, Loader2 } from 'lucide-react'
 import BookingWizard from '@/components/booking-wizard'
 import StripeProvider from '@/components/stripe-provider'
-import { roomsAPI } from '@/lib/api'
+import { useRooms } from '@/hooks/api'
+import { logger } from '@/lib/logger'
 import type { RoomData } from '@/data/rooms'
 
 export default function BookPage() {
@@ -18,7 +19,6 @@ export default function BookPage() {
   const params = useParams()
   const lang = params.lang as string
   
-  const [isLoading, setIsLoading] = useState(true)
   const [showBookingWizard, setShowBookingWizard] = useState(false)
   const [bookingData, setBookingData] = useState({
     rooms: 0,
@@ -29,6 +29,9 @@ export default function BookPage() {
   })
   const [roomData, setRoomData] = useState<RoomData | null>(null)
   const [roomError, setRoomError] = useState<string | null>(null)
+  
+  // Use React Query hook for rooms data
+  const { data: roomsData = [], isLoading: loadingRooms, error: roomsError } = useRooms()
 
   useEffect(() => {
     // Get booking data from URL parameters
@@ -39,63 +42,62 @@ export default function BookPage() {
     const checkOut = searchParams.get('checkOut') || ''
 
     setBookingData({ rooms, price, guests, checkIn, checkOut })
+  }, [searchParams])
+  
+  useEffect(() => {
+    if (loadingRooms || !roomsData.length || !bookingData.checkIn || !bookingData.checkOut) return
     
-    // Fetch room data from backend
-    const fetchRoomData = async () => {
-      try {
-        const roomsData = await roomsAPI.getAll()
-        
-        // Get all standard rooms
-        const standardRooms = roomsData.filter(room => room.name.toLowerCase().includes('standard'))
-        
-        if (standardRooms.length === 0) {
-          setRoomError('No standard rooms found')
-          return
-        }
-
-        // Check availability for each room and find an available one
-        let availableRoom = null
-        for (const room of standardRooms) {
-          try {
-            // Check if this specific room is available for the selected dates
-            const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'https://asterias-backend.onrender.com';
-            const response = await fetch(`${backendUrl}/api/rooms/${room._id}/availability?checkIn=${checkIn}&checkOut=${checkOut}`)
-            if (response.ok) {
-              const availabilityData = await response.json()
-              if (availabilityData.isAvailable) {
-                availableRoom = room
-                break
-              }
-            }
-          } catch (err) {
-            console.error(`Failed to check availability for room ${room._id}:`, err)
-            // Continue to next room
-          }
-        }
-
-        if (availableRoom) {
-          setRoomData(availableRoom)
-          console.log(`✅ Found available room: ${availableRoom._id} for dates ${checkIn} - ${checkOut}`)
-        } else {
-          // If no rooms are available, show the first standard room but with availability warning
-          setRoomData(standardRooms[0])
-          setRoomError('⚠️ All rooms are currently booked for the selected dates. Please try different dates or contact us for availability.')
-        }
-      } catch (err) {
-        console.error('Failed to fetch room data:', err)
-        setRoomError('Failed to load room information')
-      }
+    // Get all standard rooms
+    const standardRooms = (roomsData as unknown as RoomData[]).filter((room: RoomData) => room.name?.toLowerCase().includes('standard'))
+    
+    if (standardRooms.length === 0) {
+      setRoomError('No standard rooms found')
+      return
     }
 
-    fetchRoomData()
-    
-    // Add a small delay to ensure smooth loading experience
-    const timer = setTimeout(() => {
-      setIsLoading(false)
-    }, 500)
+    // Check availability for each room and find an available one
+    const checkAvailability = async () => {
+      let availableRoom = null
+      for (const room of standardRooms) {
+        try {
+          // Check if this specific room is available for the selected dates
+          const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'https://asterias-backend.onrender.com';
+          const response = await fetch(`${backendUrl}/api/rooms/${room._id || room.id}/availability?checkIn=${bookingData.checkIn}&checkOut=${bookingData.checkOut}`)
+          if (response.ok) {
+            const availabilityData = await response.json()
+            if (availabilityData.isAvailable) {
+              availableRoom = room
+              break
+            }
+          }
+        } catch (err) {
+          logger.error('Failed to check availability for room', err as Error, { roomId: room._id || room.id })
+          // Continue to next room
+        }
+      }
 
-    return () => clearTimeout(timer)
-  }, [searchParams])
+      if (availableRoom) {
+        setRoomData(availableRoom)
+        logger.info('Found available room', { roomId: availableRoom._id || availableRoom.id, checkIn: bookingData.checkIn, checkOut: bookingData.checkOut })
+      } else {
+        // If no rooms are available, show the first standard room but with availability warning
+        setRoomData(standardRooms[0])
+        setRoomError('⚠️ All rooms are currently booked for the selected dates. Please try different dates or contact us for availability.')
+      }
+    }
+    
+    checkAvailability()
+  }, [roomsData, loadingRooms, bookingData.checkIn, bookingData.checkOut])
+  
+  // Log errors if any
+  if (roomsError) {
+    logger.error('Error fetching rooms in book page', roomsError as Error)
+    if (!roomError) {
+      setRoomError('Failed to load room information')
+    }
+  }
+  
+  const isLoading = loadingRooms
 
   const handleStartBooking = () => {
     // Show the booking wizard instead of redirecting

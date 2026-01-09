@@ -12,11 +12,15 @@
     "close": "Schließen",
     "search": "Suchen",
     "reset": "Zurücksetzen",
-    "actions": "Aktionen",
-    "createdAt": "Erstellt am",
-    "updatedAt": "Aktualisiert am",
-    "id": "ID"
-  },
+      "actions": "Aktionen",
+      "createdAt": "Erstellt am",
+      "updatedAt": "Aktualisiert am",
+      "id": "ID",
+      "previous": "Zurück",
+      "next": "Weiter",
+      "retry": "Wiederholen",
+      "cancelling": "Wird storniert..."
+    },
   "nav": {
     "home": "Startseite",
             "about": "Über uns",
@@ -24,6 +28,7 @@
         "bookings": "Buchungen",
     "contact": "Kontakt",
     "book": "Jetzt buchen",
+    "myBookings": "Meine Buchungen",
     "admin": "Admin"
   },
   "languageSelector": {
@@ -700,6 +705,57 @@
       "contactButton": "Kontaktieren Sie uns",
       "callButton": "Jetzt anrufen"
     },
+    "myBookings": {
+      "title": "Meine Buchungen",
+      "subtitle": "Ihre Apartment-Reservierungen anzeigen und verwalten",
+      "errorTitle": "Fehler beim Laden der Buchungen",
+      "errorDescription": "Beim Laden Ihrer Buchungen ist ein Fehler aufgetreten. Bitte versuchen Sie es später erneut.",
+      "noBookingsTitle": "Keine Buchungen gefunden",
+      "noBookingsDescription": "Sie haben noch keine Buchungen. Beginnen Sie mit der Suche nach verfügbaren Apartments.",
+      "totalBookings": "Gesamt: {count} Buchungen",
+      "filterStatus": "Nach Status filtern",
+      "bookingNumber": "Buchung #{number}",
+      "unknownDate": "Unbekanntes Datum",
+      "dates": "Daten",
+      "checkIn": "Check-in",
+      "checkOut": "Check-out",
+      "room": "Apartment",
+      "standardApartment": "Standard Apartment",
+      "guests": "Gäste",
+      "total": "Gesamt",
+      "guestInformation": "Gastinformationen",
+      "guestName": "Name",
+      "email": "E-Mail",
+      "phone": "Telefon",
+      "cancelBooking": "Buchung stornieren",
+      "pageInfo": "Seite {current} von {total}",
+      "cancelConfirmTitle": "Buchung stornieren?",
+      "cancelConfirmDescription": "Sind Sie sicher, dass Sie diese Buchung stornieren möchten? Diese Aktion kann nicht rückgängig gemacht werden. Wenn Sie bereits gezahlt haben, wird eine Rückerstattung gemäß unserer Stornierungsrichtlinie verarbeitet.",
+      "confirmCancel": "Ja, Buchung stornieren",
+      "cancelSuccess": "Buchung erfolgreich storniert",
+      "cancelSuccessDescription": "Ihre Buchung wurde storniert.",
+      "cancelError": "Stornierung fehlgeschlagen",
+      "cancelErrorDescription": "Buchung konnte nicht storniert werden. Bitte versuchen Sie es erneut oder kontaktieren Sie den Support.",
+      "status": {
+        "all": "Alle Buchungen",
+        "confirmed": "Bestätigt",
+        "pending": "Ausstehend",
+        "checked_in": "Eingecheckt",
+        "checked_out": "Ausgecheckt",
+        "cancelled": "Storniert",
+        "unknown": "Unbekannt"
+      },
+      "paymentStatus": {
+        "pending": "Ausstehend",
+        "paid": "Bezahlt",
+        "failed": "Fehlgeschlagen",
+        "refunded": "Rückerstattet"
+      },
+      "paymentMethod": {
+        "card": "Karte",
+        "cash": "Bar"
+      }
+    },
     "rooms": {
       "standard": {
         "name": "Standard Apartment",
@@ -854,7 +910,6 @@
         "roomNotFound": "Zimmer nicht gefunden",
         "anyQuestions": "Bei Fragen kontaktieren Sie uns gerne",
         "contactUs": "kontaktieren Sie uns",
-        "bookingNumber": "Buchungsnummer",
         "nextSteps": "Nächste Schritte",
         "emailSent": "Eine Bestätigungs-E-Mail wurde an {email} gesendet",
         "contactInfo": "Bei Fragen kontaktieren Sie uns bitte"
@@ -869,6 +924,35 @@
         "unexpectedError": "Ein unerwarteter Fehler ist aufgetreten. Bitte versuchen Sie es erneut."
       }
     }
+  },
+  "contact": {
+    "heroTitle": "Kontaktieren Sie uns",
+    "heroDescription": "Nehmen Sie Kontakt mit Asterias Homes auf. Wir sind hier, um Ihnen bei Fragen oder Buchungsanfragen zu helfen.",
+    "contactInfo": "Kontaktinformationen",
+    "phone": "Telefon",
+    "phone1": "+30 6972705881",
+    "phone2": "017663304809",
+    "email": "E-Mail",
+    "address": "Adresse",
+    "addressDetails": "Koronisia, Arta, Griechenland",
+    "hours": "Öffnungszeiten",
+    "receptionHours": "Rezeption: Mo - So | 10:00 - 21:00",
+    "checkInOut": "Check-in: 15:00 - 22:00 | Check-out: 08:00 - 11:00",
+    "sendMessage": "Senden Sie uns eine Nachricht",
+    "firstName": "Vorname",
+    "firstNamePlaceholder": "Geben Sie Ihren Vornamen ein",
+    "lastName": "Nachname",
+    "lastNamePlaceholder": "Geben Sie Ihren Nachnamen ein",
+    "emailPlaceholder": "Geben Sie Ihre E-Mail-Adresse ein",
+    "subject": "Betreff",
+    "subjectPlaceholder": "Geben Sie den Betreff ein",
+    "message": "Nachricht",
+    "messagePlaceholder": "Geben Sie Ihre Nachricht hier ein...",
+    "sendButton": "Nachricht senden",
+    "findUs": "Finden Sie uns",
+    "mapDescription": "Wir befinden uns im Herzen von Koronisia. Verwenden Sie die unten stehende Karte, um uns zu finden, oder kontaktieren Sie uns für Wegbeschreibungen.",
+    "mapPlaceholder": "Karte wird hier angezeigt",
+    "mapMarker": "Asterias Homes - Koronisia, Arta"
   },
   "contactPage": {
     "header": {
@@ -1227,5 +1311,195 @@
   },
   "loading": {
     "rooms": "Zimmer vom Backend werden geladen..."
+  },
+  "privacy": {
+    "title": "Datenschutzrichtlinie",
+    "lastUpdated": "Zuletzt aktualisiert: {date}",
+    "introduction": {
+      "title": "Einführung",
+      "content": "Bei Asterias Homes nehmen wir Ihre Privatsphäre ernst. Diese Datenschutzrichtlinie erklärt, wie wir Ihre Informationen sammeln, verwenden, offenlegen und schützen, wenn Sie unsere Website besuchen und unsere Dienste nutzen. Bitte lesen Sie diese Datenschutzrichtlinie sorgfältig durch. Wenn Sie den Bedingungen dieser Datenschutzrichtlinie nicht zustimmen, haben Sie bitte keinen Zugang zur Website."
+    },
+    "dataCollection": {
+      "title": "Informationen, die wir sammeln",
+      "content": "Wir sammeln Informationen, die Sie uns direkt zur Verfügung stellen, einschließlich:",
+      "items": [
+        "Persönliche Identifikationsinformationen (Name, E-Mail-Adresse, Telefonnummer)",
+        "Buchungsinformationen (Check-in/Check-out-Daten, Anzahl der Gäste)",
+        "Zahlungsinformationen (sicher über Stripe verarbeitet)",
+        "Kommunikationsdaten, wenn Sie uns kontaktieren"
+      ]
+    },
+    "dataUsage": {
+      "title": "Wie wir Ihre Informationen verwenden",
+      "content": "Wir verwenden die gesammelten Informationen, um:",
+      "items": [
+        "Ihre Buchungen zu verarbeiten und zu verwalten",
+        "Mit Ihnen über Ihre Reservierung zu kommunizieren",
+        "Ihnen Buchungsbestätigungen und Updates zu senden",
+        "Unsere Dienste und Website zu verbessern",
+        "Gesetzliche Verpflichtungen zu erfüllen"
+      ]
+    },
+    "dataSharing": {
+      "title": "Informationsweitergabe und -offenlegung",
+      "content": "Wir verkaufen, handeln oder vermieten Ihre persönlichen Informationen nicht. Wir können Ihre Informationen nur in folgenden Fällen weitergeben:",
+      "items": [
+        "Mit Zahlungsabwicklern (Stripe) zur Verarbeitung von Zahlungen",
+        "Wenn dies gesetzlich oder rechtlich erforderlich ist",
+        "Zum Schutz unserer Rechte und zur Betrugsprävention",
+        "Mit Ihrer ausdrücklichen Zustimmung"
+      ]
+    },
+    "dataSecurity": {
+      "title": "Datensicherheit",
+      "content": "Wir implementieren angemessene technische und organisatorische Sicherheitsmaßnahmen zum Schutz Ihrer persönlichen Informationen. Jedoch ist keine Übertragungsmethode über das Internet 100% sicher."
+    },
+    "yourRights": {
+      "title": "Ihre Rechte unter der DSGVO",
+      "content": "Wenn Sie in der Europäischen Wirtschaftszone (EWR) ansässig sind, haben Sie bestimmte Datenschutzrechte:",
+      "items": [
+        "Das Recht auf Zugang zu Ihren personenbezogenen Daten",
+        "Das Recht auf Berichtigung unrichtiger Daten",
+        "Das Recht auf Löschung (\"Recht auf Vergessenwerden\")",
+        "Das Recht auf Einschränkung der Verarbeitung",
+        "Das Recht auf Datenübertragbarkeit",
+        "Das Recht, der Verarbeitung zu widersprechen",
+        "Das Recht, die Einwilligung jederzeit zu widerrufen"
+      ]
+    },
+    "cookies": {
+      "title": "Cookies und Tracking-Technologien",
+      "content": "Wir verwenden Cookies und ähnliche Tracking-Technologien, um Aktivitäten auf unserer Website zu verfolgen und bestimmte Informationen zu speichern. Sie können Ihren Browser anweisen, alle Cookies abzulehnen oder anzuzeigen, wenn ein Cookie gesendet wird."
+    },
+    "retention": {
+      "title": "Datenaufbewahrung",
+      "content": "Wir speichern Ihre persönlichen Informationen nur so lange, wie es erforderlich ist, um die in dieser Datenschutzrichtlinie beschriebenen Zwecke zu erfüllen, es sei denn, eine längere Aufbewahrungsfrist ist gesetzlich vorgeschrieben oder erlaubt."
+    },
+    "children": {
+      "title": "Datenschutz für Kinder",
+      "content": "Unsere Dienste richten sich nicht an Personen unter 18 Jahren. Wir sammeln nicht wissentlich persönliche Informationen von Kindern."
+    },
+    "changes": {
+      "title": "Änderungen an dieser Datenschutzrichtlinie",
+      "content": "Wir können unsere Datenschutzrichtlinie von Zeit zu Zeit aktualisieren. Wir werden Sie über Änderungen informieren, indem wir die neue Datenschutzrichtlinie auf dieser Seite veröffentlichen und das Datum \"Zuletzt aktualisiert\" aktualisieren."
+    },
+    "contact": {
+      "title": "Kontaktieren Sie uns",
+      "content": "Wenn Sie Fragen zu dieser Datenschutzrichtlinie haben, kontaktieren Sie uns bitte:",
+      "email": "E-Mail: asterias.apartmentskoronisia@gmail.com",
+      "phone": "Telefon: +30 6972705881"
+    }
+  },
+  "terms": {
+    "title": "Nutzungsbedingungen",
+    "lastUpdated": "Zuletzt aktualisiert: {date}",
+    "introduction": {
+      "title": "Zustimmung zu den Bedingungen",
+      "content": "Durch den Zugriff auf und die Nutzung der Asterias Homes-Website und Buchungsdienste akzeptieren und stimmen Sie zu, an die Bedingungen und Bestimmungen dieser Vereinbarung gebunden zu sein. Wenn Sie nicht damit einverstanden sind, sich an das oben Genannte zu halten, nutzen Sie bitte diesen Dienst nicht."
+    },
+    "services": {
+      "title": "Beschreibung der Dienste",
+      "content": "Asterias Homes bietet Ferienapartment-Vermietungsdienste in Koronisia, Arta, Griechenland. Wir bieten 7 traditionelle Apartments zur kurzfristigen Vermietung für Gäste, die Unterkünfte im Amvrakikos-Golf-Gebiet suchen."
+    },
+    "bookings": {
+      "title": "Buchungsbedingungen",
+      "content": "Bei einer Buchung:",
+      "items": [
+        "Alle Buchungen unterliegen der Verfügbarkeit",
+        "Sie müssen mindestens 18 Jahre alt sein, um eine Buchung vorzunehmen",
+        "Buchungsbestätigungen werden per E-Mail gesendet",
+        "Preise werden in Euro angezeigt und beinhalten geltende Steuern",
+        "Zusätzliche Gebühren können für zusätzliche Dienstleistungen anfallen"
+      ]
+    },
+    "payment": {
+      "title": "Zahlungsbedingungen",
+      "content": "Zahlungsbedingungen:",
+      "items": [
+        "Die Zahlung kann per Kreditkarte oder bar bei Ankunft erfolgen",
+        "Für Kreditkartenzahlungen verwenden wir die sichere Zahlungsabwicklung von Stripe",
+        "Die vollständige Zahlung ist erforderlich, sofern nicht anders angegeben",
+        "Alle Preise beinhalten geltende Steuern (13%)",
+        "Wechselkurse gelten gemäß Zahlungsabwickler"
+      ]
+    },
+    "cancellation": {
+      "title": "Stornierungsbedingungen",
+      "content": "Stornierungsbedingungen:",
+      "items": [
+        "Kostenlose Stornierung bis zu 48 Stunden vor Check-in",
+        "Stornierungen, die weniger als 48 Stunden vor dem Check-in vorgenommen werden, können Gebühren unterliegen",
+        "Erstattungen werden mit der ursprünglichen Zahlungsmethode verarbeitet",
+        "Sonderangebote können abweichende Stornierungsbedingungen haben"
+      ]
+    },
+    "checkInOut": {
+      "title": "Check-in und Check-out",
+      "content": "Check-in und Check-out-Verfahren:",
+      "items": [
+        "Check-in-Zeit: 15:00 - 22:00",
+        "Check-out-Zeit: 08:00 - 11:00",
+        "Früher Check-in oder später Check-out können auf Anfrage verfügbar sein (je nach Verfügbarkeit)",
+        "Gäste müssen bei Check-in einen gültigen Ausweis vorlegen"
+      ]
+    },
+    "guestResponsibilities": {
+      "title": "Gäste-Verantwortlichkeiten",
+      "content": "Gäste verpflichten sich:",
+      "items": [
+        "Die Unterkunft sorgfältig und respektvoll zu behandeln",
+        "Hausregeln zu befolgen und andere Gäste zu respektieren",
+        "Schäden oder Probleme sofort zu melden",
+        "Das maximale Belegungslimit nicht zu überschreiten",
+        "Ruhezeiten und Nachbarschaftsregeln zu respektieren"
+      ]
+    },
+    "liability": {
+      "title": "Haftung und Versicherung",
+      "content": "Asterias Homes haftet nicht für:",
+      "items": [
+        "Verlust oder Schäden an persönlichen Gegenständen",
+        "Verletzungen auf dem Grundstück",
+        "Reisevereinbarungen oder Transportprobleme",
+        "Wetterbedingte Störungen"
+      ],
+      "recommendation": "Wir empfehlen Gästen, eine angemessene Reiseversicherung abzuschließen."
+    },
+    "propertyRules": {
+      "title": "Hausregeln",
+      "content": "Um einen angenehmen Aufenthalt für alle Gäste zu gewährleisten:",
+      "items": [
+        "Rauchen ist in den Apartments nicht gestattet",
+        "Haustiere können nach vorheriger Absprache erlaubt sein",
+        "Partys oder Veranstaltungen erfordern vorherige Genehmigung",
+        "Ruhezeiten müssen eingehalten werden (22:00 - 08:00)",
+        "Gäste sind für die Sauberhaltung verantwortlich"
+      ]
+    },
+    "modifications": {
+      "title": "Änderungen an Buchungen",
+      "content": "Buchungsänderungen:",
+      "items": [
+        "Änderungen an Buchungen unterliegen der Verfügbarkeit",
+        "Änderungsanträge sollten so früh wie möglich gestellt werden",
+        "Preisanpassungen können für Datums- oder Zimmeränderungen gelten",
+        "Wir werden unser Bestes tun, um angemessene Anfragen zu berücksichtigen"
+      ]
+    },
+    "disputes": {
+      "title": "Streitigkeiten und geltendes Recht",
+      "content": "Alle Streitigkeiten, die aus diesen Bedingungen oder Ihrer Nutzung unserer Dienste entstehen, unterliegen griechischem Recht und werden gemäß griechischem Recht ausgelegt. Alle Rechtsverfahren unterliegen der ausschließlichen Gerichtsbarkeit der Gerichte von Arta, Griechenland."
+    },
+    "changes": {
+      "title": "Änderungen der Bedingungen",
+      "content": "Wir behalten uns das Recht vor, diese Bedingungen jederzeit zu ändern. Änderungen treten sofort nach Veröffentlichung in Kraft. Die fortgesetzte Nutzung unserer Dienste nach Änderungen stellt die Annahme der geänderten Bedingungen dar."
+    },
+    "contact": {
+      "title": "Kontaktinformationen",
+      "content": "Bei Fragen zu diesen Nutzungsbedingungen:",
+      "email": "E-Mail: asterias.apartmentskoronisia@gmail.com",
+      "phone": "Telefon: +30 6972705881",
+      "address": "Adresse: Koronisia, Arta, Griechenland"
+    }
   }
 }

@@ -5,6 +5,7 @@ import { Upload, X, Trash2, Star, GripVertical } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import Image from 'next/image'
 import { getBackendUrl } from '@/lib/backend-url'
+import { logger } from '@/lib/logger'
 
 interface ExistingImage {
   id: string
@@ -170,7 +171,9 @@ export default function RoomImageEditor({
         onImagesChange(updatedImages)
       }
     } catch (error) {
-      console.error('Upload error:', error)
+      logger.error('Upload error', error instanceof Error ? error : new Error(String(error)), {
+        component: 'room-image-editor'
+      })
       alert('Σφάλμα κατά την ανέβασμα των εικόνων')
     } finally {
       setUploading(false)

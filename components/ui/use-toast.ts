@@ -9,7 +9,7 @@ import type {
 } from "@/components/ui/toast"
 
 const TOAST_LIMIT = 1
-const TOAST_REMOVE_DELAY = 1000000
+const TOAST_REMOVE_DELAY = 5000 // 5 seconds - reasonable timeout
 
 type ToasterToast = ToastProps & {
   id: string
@@ -63,6 +63,7 @@ const addToRemoveQueue = (toastId: string) => {
     return
   }
 
+  // Use standard setTimeout with manual cleanup
   const timeout = setTimeout(() => {
     toastTimeouts.delete(toastId)
     dispatch({
@@ -93,11 +94,18 @@ export const reducer = (state: State, action: Action): State => {
     case "DISMISS_TOAST": {
       const { toastId } = action
 
-      // ! Side effects ! - This could be extracted into a dismissToast() action,
-      // but I'll keep it here for simplicity
+      // Clear timeout immediately when dismissing to prevent memory leak
       if (toastId) {
+        const timeout = toastTimeouts.get(toastId)
+        if (timeout) {
+          clearTimeout(timeout)
+          toastTimeouts.delete(toastId)
+        }
         addToRemoveQueue(toastId)
       } else {
+        // Clear all timeouts when dismissing all
+        toastTimeouts.forEach((timeout) => clearTimeout(timeout))
+        toastTimeouts.clear()
         state.toasts.forEach((toast) => {
           addToRemoveQueue(toast.id)
         })
@@ -182,13 +190,21 @@ function useToast() {
         listeners.splice(index, 1)
       }
     }
-  }, [state])
+  }, []) // Empty dependency array - only register once on mount
 
   return {
     ...state,
     toast,
     dismiss: (toastId?: string) => dispatch({ type: "DISMISS_TOAST", toastId }),
   }
+}
+
+// Cleanup on page unload
+if (typeof window !== 'undefined') {
+  window.addEventListener('beforeunload', () => {
+    toastTimeouts.forEach((timeout) => clearTimeout(timeout))
+    toastTimeouts.clear()
+  })
 }
 
 export { useToast, toast }

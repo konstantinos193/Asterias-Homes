@@ -1,55 +1,44 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useMemo } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { useLanguage } from "@/contexts/language-context"
 import { Calendar, Star } from "lucide-react"
-import { offersAPI } from "@/lib/api"
+import { useOffers } from "@/hooks/api"
 import { Offer } from "@/types/offers"
+import { logger } from "@/lib/logger"
 
 export default function SpecialOffersSection() {
   const { t } = useLanguage()
-  const [offers, setOffers] = useState<Offer[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  const { data: allOffers = [], isLoading, error } = useOffers()
 
-  useEffect(() => {
-    const fetchOffers = async () => {
-      try {
-        setLoading(true)
-        const response = await offersAPI.getAll()
-        if (response && response.offers) {
-          // Filter only active offers that are currently valid
-          const now = new Date()
-          const activeOffers = response.offers.filter(offer => 
-            offer.active && 
-            new Date(offer.startDate) <= now && 
-            new Date(offer.endDate) >= now
-          )
-          setOffers(activeOffers)
-        } else {
-          setOffers([])
-        }
-      } catch (err) {
-        console.error('Failed to fetch offers:', err)
-        setError('Failed to load offers')
-        setOffers([])
-      } finally {
-        setLoading(false)
-      }
-    }
+  // Filter only active offers that are currently valid
+  const offers = useMemo(() => {
+    if (!allOffers || allOffers.length === 0) return []
+    
+    const now = new Date()
+    return allOffers.filter((offer: any) => {
+      const isActive = offer.active || offer.isActive
+      const startDate = offer.startDate || offer.validFrom
+      const endDate = offer.endDate || offer.validTo
+      
+      return isActive && 
+             startDate && 
+             endDate &&
+             new Date(startDate) <= now && 
+             new Date(endDate) >= now
+    }) as Offer[]
+  }, [allOffers])
 
-    fetchOffers()
-  }, [])
-
-  // Don't render anything if there are no offers
-  if (loading) {
-    return null // Don't show loading state, just don't render
+  // Log errors
+  if (error) {
+    logger.error('Failed to fetch offers in SpecialOffersSection', error as Error)
   }
 
-  if (error || offers.length === 0) {
-    return null // Don't render the section if there are no offers
+  // Don't render anything if loading, error, or no offers
+  if (isLoading || error || offers.length === 0) {
+    return null
   }
 
   return (

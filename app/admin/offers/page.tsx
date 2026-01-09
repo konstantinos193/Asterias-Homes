@@ -1,59 +1,26 @@
 "use client"
 
-import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { PlusCircle, Trash, Edit, ToggleLeft, ToggleRight } from "lucide-react"
 import Link from "next/link"
-import { offersAPI } from "@/lib/api"
+import { useAdminOffers, useDeleteOffer, useToggleOffer, Offer } from "@/hooks/api/use-offers"
 import { useToast } from "@/components/ui/use-toast"
-
-// Define the Offer type according to your backend model
-interface Offer {
-  _id: string
-  title: string
-  discount: number
-  endDate: string
-  active: boolean
-}
 
 export default function AdminOffersPage() {
   const { toast } = useToast()
-  const [offers, setOffers] = useState<Offer[]>([])
-  const [loading, setLoading] = useState(true)
-
-  const fetchOffers = async () => {
-    try {
-      setLoading(true)
-      const response = await offersAPI.getAllAdmin()
-      setOffers(response.offers)
-    } catch (error) {
-      console.error("Failed to fetch offers", error)
-      toast({
-        title: "Σφάλμα",
-        description: "Αποτυχία φόρτωσης προσφορών",
-        variant: "destructive",
-      })
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  useEffect(() => {
-    fetchOffers()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  const { data: offers = [], isLoading, error } = useAdminOffers()
+  const deleteOfferMutation = useDeleteOffer()
+  const toggleOfferMutation = useToggleOffer()
 
   const handleDelete = async (id: string) => {
     if (!confirm("Είστε σίγουροι ότι θέλετε να διαγράψετε αυτή την προσφορά;")) return
     try {
-      await offersAPI.delete(id)
+      await deleteOfferMutation.mutateAsync(id)
       toast({
         title: "Επιτυχία",
         description: "Η προσφορά διαγράφηκε επιτυχώς",
       })
-      fetchOffers() // Refresh the list
     } catch (error) {
-      console.error("Failed to delete offer", error)
       toast({
         title: "Σφάλμα",
         description: "Αποτυχία διαγραφής προσφοράς",
@@ -64,20 +31,26 @@ export default function AdminOffersPage() {
 
   const handleToggle = async (id: string) => {
     try {
-      await offersAPI.toggle(id)
+      await toggleOfferMutation.mutateAsync(id)
       toast({
         title: "Επιτυχία",
         description: "Η κατάσταση της προσφοράς ενημερώθηκε",
       })
-      fetchOffers() // Refresh the list
     } catch (error) {
-      console.error("Failed to toggle offer status", error)
       toast({
         title: "Σφάλμα",
         description: "Αποτυχία ενημέρωσης κατάστασης προσφοράς",
         variant: "destructive",
       })
     }
+  }
+
+  if (error) {
+    return (
+      <div className="p-4 bg-red-50 text-red-700 rounded-sm font-alegreya">
+        {error.message || "Αποτυχία φόρτωσης προσφορών"}
+      </div>
+    )
   }
 
   return (
@@ -135,15 +108,18 @@ export default function AdminOffersPage() {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-slate-200">
-              {loading ? (
+              {isLoading ? (
                 <tr>
                   <td colSpan={5} className="text-center p-12">
                     <p className="text-slate-500 font-alegreya">Φόρτωση...</p>
                   </td>
                 </tr>
               ) : offers.length > 0 ? (
-                offers.map((offer) => (
-                  <tr key={offer._id} className="hover:bg-slate-50">
+                offers.map((offer) => {
+                  const offerId = offer._id || offer.id || ''
+                  const isActive = offer.active ?? false
+                  return (
+                  <tr key={offerId} className="hover:bg-slate-50">
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-900 font-alegreya">
                       {offer.title}
                     </td>
@@ -151,31 +127,34 @@ export default function AdminOffersPage() {
                       {offer.discount}%
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-700 font-alegreya">
-                      {new Date(offer.endDate).toLocaleDateString('el-GR')}
+                      {offer.endDate 
+                        ? new Date(offer.endDate).toLocaleDateString('el-GR') 
+                        : 'N/A'}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-700 font-alegreya">
                       <span
                         className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                          offer.active ? "bg-green-100 text-green-800" : "bg-slate-100 text-slate-800"
+                          isActive ? "bg-green-100 text-green-800" : "bg-slate-100 text-slate-800"
                         }`}
                       >
-                        {offer.active ? "Ενεργή" : "Ανενεργή"}
+                        {isActive ? "Ενεργή" : "Ανενεργή"}
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2">
                       <Button
                         variant="ghost"
                         size="icon"
-                        onClick={() => handleToggle(offer._id)}
-                        title={offer.active ? "Απενεργοποίηση" : "Ενεργοποίηση"}
+                        onClick={() => handleToggle(offerId)}
+                        disabled={toggleOfferMutation.isPending}
+                        title={isActive ? "Απενεργοποίηση" : "Ενεργοποίηση"}
                       >
-                        {offer.active ? (
+                        {isActive ? (
                           <ToggleRight className="h-5 w-5 text-green-600" />
                         ) : (
                           <ToggleLeft className="h-5 w-5 text-slate-400" />
                         )}
                       </Button>
-                      <Link href={`/admin/offers/edit/${offer._id}`}>
+                      <Link href={`/admin/offers/edit/${offerId}`}>
                         <Button variant="ghost" size="icon" title="Επεξεργασία">
                           <Edit className="h-4 w-4" />
                         </Button>
@@ -183,7 +162,8 @@ export default function AdminOffersPage() {
                       <Button
                         variant="ghost"
                         size="icon"
-                        onClick={() => handleDelete(offer._id)}
+                        onClick={() => handleDelete(offerId)}
+                        disabled={deleteOfferMutation.isPending}
                         className="text-red-600 hover:text-red-800"
                         title="Διαγραφή"
                       >
@@ -191,7 +171,8 @@ export default function AdminOffersPage() {
                       </Button>
                     </td>
                   </tr>
-                ))
+                  )
+                })
               ) : (
                 <tr>
                   <td colSpan={5} className="text-center p-12">

@@ -47,23 +47,32 @@ export const LanguageProvider = ({
   children: ReactNode;
   initialLanguage?: LanguageCode;
 }) => {
-  const [language, setLanguageState] = useState<LanguageCode>(initialLanguage || "el");
-
-  useEffect(() => {
-    // If initialLanguage changes (from URL), update state
-    if (initialLanguage && initialLanguage !== language) {
-      setLanguageState(initialLanguage);
-      localStorage.setItem("language", initialLanguage);
+  const [language, setLanguageState] = useState<LanguageCode>(() => {
+    // Initialize with initialLanguage if provided, otherwise check localStorage, otherwise default to "el"
+    if (initialLanguage) {
+      return initialLanguage;
     }
-  }, [initialLanguage]);
-
-  useEffect(() => {
-    // Only load from localStorage if no initialLanguage is provided
-    if (!initialLanguage) {
+    if (typeof window !== "undefined") {
       const savedLanguage = localStorage.getItem("language") as LanguageCode;
       if (savedLanguage && ["el", "en", "de"].includes(savedLanguage)) {
-        setLanguageState(savedLanguage);
+        return savedLanguage;
       }
+    }
+    return "el";
+  });
+
+  useEffect(() => {
+    // If initialLanguage changes (from URL), update state immediately
+    if (initialLanguage) {
+      setLanguageState((currentLang) => {
+        if (currentLang !== initialLanguage) {
+          if (typeof window !== "undefined") {
+            localStorage.setItem("language", initialLanguage);
+          }
+          return initialLanguage;
+        }
+        return currentLang;
+      });
     }
   }, [initialLanguage]);
 

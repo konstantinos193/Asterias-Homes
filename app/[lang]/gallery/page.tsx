@@ -8,56 +8,56 @@ import { X, ChevronLeft, ChevronRight } from "lucide-react"
 const galleryData = [
   {
     id: 7,
-    src: "https://i.imgur.com/xq3mTOA.jpeg",
+    src: "/gallery-sunset-1.jpeg",
     alt: "Serene sunset over Koronisia waters",
     translationKey: "tranquilSunset",
     category: "sunset"
   },
   {
     id: 8,
-    src: "https://i.imgur.com/XWbiDRM.jpeg",
+    src: "/gallery-sunset-2.jpeg",
     alt: "Rugged sunset with power lines over Koronisia",
     translationKey: "ruggedSunset",
     category: "sunset"
   },
   {
     id: 9,
-    src: "https://i.imgur.com/6l6cTz1.jpeg",
+    src: "/gallery-sunset-3.jpeg",
     alt: "Urban-coastal sunset over Mediterranean rooftops",
     translationKey: "urbanCoastalSunset",
     category: "sunset"
   },
   {
     id: 10,
-    src: "https://i.imgur.com/5Shfo9U.jpeg",
+    src: "/gallery-sunset-4.jpeg",
     alt: "Hillside sunset view with tree and residential area",
     translationKey: "hillsideSunset",
     category: "sunset"
   },
   {
     id: 11,
-    src: "https://i.imgur.com/6SElxrT.jpeg",
+    src: "/gallery-landscape-1.jpeg",
     alt: "Daytime residential landscape with water view",
     translationKey: "daytimeResidential",
     category: "landscape"
   },
   {
     id: 12,
-    src: "https://i.imgur.com/za385XK.jpeg",
+    src: "/gallery-landscape-2.jpeg",
     alt: "Stone bell tower view over Koronisia landscape",
     translationKey: "bellTowerView",
     category: "landscape"
   },
   {
     id: 13,
-    src: "https://i.imgur.com/IxvwwX3.jpeg",
+    src: "/gallery-landscape-3.jpeg",
     alt: "Elevated view of Koronisia coastal landscape",
     translationKey: "elevatedCoastalView",
     category: "landscape"
   },
                 {
                 id: 14,
-                src: "https://i.imgur.com/y3TQNDA.jpeg",
+                src: "/gallery-landscape-4.jpeg",
                 alt: "Natural coastal perspective with sunset sky and rocky shoreline",
                 translationKey: "naturalPerspective",
                 category: "landscape"
@@ -108,7 +108,7 @@ export default function GalleryPage() {
       {/* Header Section */}
       <section
         className="relative h-[400px] md:h-[500px] flex items-center justify-center text-center bg-cover bg-center"
-        style={{ backgroundImage: "url('https://i.imgur.com/xq3mTOA.jpeg')" }}
+        style={{ backgroundImage: "url('/gallery-sunset-1.jpeg')" }}
       >
         <div className="absolute inset-0 bg-black opacity-40"></div>
         <div className="relative z-10 p-4">

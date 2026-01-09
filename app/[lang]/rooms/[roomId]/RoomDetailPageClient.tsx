@@ -1,44 +1,43 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { useLanguage } from "@/contexts/language-context"
-import { roomsAPI } from "@/lib/api"
+import { useRoom, Room as HookRoom } from "@/hooks/api"
 import { Room } from "@/types/booking"
 import Image from "next/image"
 import Link from "next/link"
 import { ArrowLeft, Star, Users, Maximize, Eye, Bath, Check, Calendar } from "lucide-react"
+import { logger } from "@/lib/logger"
 
 interface RoomDetailPageClientProps {
   roomId: string
+  initialRoom?: Room | null // Server-fetched room data for SSR
 }
 
-export default function RoomDetailPageClient({ roomId }: RoomDetailPageClientProps) {
+export default function RoomDetailPageClient({ roomId, initialRoom }: RoomDetailPageClientProps) {
   const { t, language } = useLanguage()
-  const [room, setRoom] = useState<Room | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
   const [selectedImageIndex, setSelectedImageIndex] = useState(0)
+  
+  // Use client-side hook for revalidation, but prefer initialRoom if available
+  // Cast initialRoom to HookRoom type since they're structurally compatible
+  const { data: roomData, isLoading: loading, error: queryError } = useRoom(roomId, {
+    initialData: initialRoom ? (initialRoom as unknown as HookRoom) : null,
+    enabled: !initialRoom, // Only fetch if we don't have initial data
+  })
 
-  useEffect(() => {
-    const fetchRoom = async () => {
-      try {
-        setLoading(true)
-        const roomData = await roomsAPI.getById(roomId)
-        setRoom(roomData)
-      } catch (err) {
-        console.error('Failed to fetch room:', err)
-        setError('Failed to load room')
-      } finally {
-        setLoading(false)
-      }
-    }
+  // Handle errors
+  const error = queryError ? (() => {
+    logger.error('Failed to fetch room', queryError as Error)
+    return 'Failed to load room'
+  })() : null
 
-    if (roomId) {
-      fetchRoom()
-    }
-  }, [roomId])
+  // Use initialRoom if available, otherwise use roomData from hook
+  const room = initialRoom || (roomData ? (roomData as unknown as Room) : null)
+  
+  // Only show loading if we don't have initial data and we're still loading
+  const isLoading = !initialRoom && loading
 
-  if (loading) {
+  if (isLoading) {
     return (
       <main className="bg-[#A9AEA2]/30 text-slate-800 pt-20 sm:pt-24 font-alegreya min-h-screen">
         <div className="container mx-auto container-mobile py-12 text-center">
@@ -69,10 +68,41 @@ export default function RoomDetailPageClient({ roomId }: RoomDetailPageClientPro
     )
   }
 
-  const displayName = room.nameKey ? t(room.nameKey) : room.name
-  const displayDescription = room.descriptionKey ? t(room.descriptionKey) : room.description
-  const displayFeatures = room.featureKeys ? room.featureKeys.map(key => t(key)) : (Array.isArray(room.features) ? room.features : [])
-  const images = room.images && room.images.length > 0 ? room.images : (room.image ? [room.image] : ["/placeholder.svg"])
+  const displayName = room?.nameKey ? t(room.nameKey) : room?.name || ''
+  const displayDescription = room?.descriptionKey ? t(room.descriptionKey) : room?.description || ''
+  const displayFeatures = room?.featureKeys ? room.featureKeys.map(key => t(key)) : (Array.isArray(room?.features) ? room.features : [])
+  // Replace external URLs with local paths (fallback for legacy data)
+  const replaceExternalUrl = (url: string): string => {
+    if (typeof url === 'string' && url.includes('i.imgur.com')) {
+      // Map known imgur URLs to local paths
+      const urlMappings: { [key: string]: string } = {
+        'VjuPC23': '/room-featured-2.png',
+        'SaAHqbC': '/room-featured-1.jpeg',
+        '2JTTkSc': '/room-featured-3.png',
+        'r1uVnhU': '/room-featured-4.png',
+        'X7AG1TW': '/room-featured-5.png',
+        'znGgwJY': '/favicon.png',
+        'xgXMnQz': '/admin-logo.png',
+        '3g12fLV': '/about-hero.jpeg',
+        'SerzvD0': '/about-location.jpeg',
+        'gdFTHDu': '/about-experiences.jpeg',
+        'TnCq8q1': '/about-for-whom.jpeg',
+        'KhgP0yg': '/about-amenities.jpeg',
+      };
+      
+      for (const [imgurId, localPath] of Object.entries(urlMappings)) {
+        if (url.includes(imgurId)) {
+          return localPath;
+        }
+      }
+    }
+    return url;
+  };
+  
+  // Get images array - handle both Room type and backend response format
+  const roomImages = (room as any)?.images || (room as any)?.image ? [(room as any).image] : []
+  const rawImages = roomImages && roomImages.length > 0 ? roomImages : ["/placeholder.svg"]
+  const images = rawImages.map((img: string) => replaceExternalUrl(img))
 
   return (
     <main className="bg-[#A9AEA2]/30 text-slate-800 pt-20 sm:pt-24 font-alegreya min-h-screen">

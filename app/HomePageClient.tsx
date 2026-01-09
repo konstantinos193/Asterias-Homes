@@ -1,5 +1,6 @@
 "use client"
 
+import { useMemo } from "react"
 import Hero from "@/components/hero"
 import WelcomeSection from "@/components/welcome-section"
 import FeaturesSection from "@/components/features-section"
@@ -10,19 +11,69 @@ import Link from "next/link"
 import { useLanguage } from "@/contexts/language-context"
 import RoomCard from "@/components/room-card"
 import { Room } from "@/types/booking"
+import { useRooms } from "@/hooks/api"
+import { logger } from "@/lib/logger"
 
-interface HomePageClientProps {
-  featuredRooms: Room[]
-}
-
-export default function HomePageClient({ featuredRooms }: HomePageClientProps) {
+export default function HomePageClient() {
   const { t, language } = useLanguage()
+  const { data: rooms = [], isLoading, error } = useRooms()
 
-  const apartmentsToDisplay = featuredRooms.map((roomType, index) => ({
-    ...roomType,
-    displayId: `${roomType.id}-featured-${index}`,
-    image: roomType.images[index % roomType.images.length],
-  }))
+  // Process featured rooms from fetched data
+  const featuredRooms = useMemo(() => {
+    if (!rooms || rooms.length === 0) return []
+    
+    const roomType = rooms[0] as any
+    const numberOfFeatured = 3
+    
+    return Array.from({ length: numberOfFeatured }, (_, index) => ({
+      ...roomType,
+      id: roomType.id || roomType._id,
+      displayId: `${roomType.id || roomType._id}-featured-${index}`,
+      image: (() => {
+        const imgUrl = (Array.isArray(roomType.images) && roomType.images.length > 0)
+          ? roomType.images[index % roomType.images.length]
+          : roomType.image || '/placeholder-room.jpg';
+        // Replace external URLs with local paths (fallback for legacy data)
+        if (typeof imgUrl === 'string' && imgUrl.includes('i.imgur.com')) {
+          const urlMappings: { [key: string]: string } = {
+            'VjuPC23': '/room-featured-2.png',
+            'SaAHqbC': '/room-featured-1.jpeg',
+            '2JTTkSc': '/room-featured-3.png',
+            'r1uVnhU': '/room-featured-4.png',
+            'X7AG1TW': '/room-featured-5.png',
+          };
+          
+          for (const [imgurId, localPath] of Object.entries(urlMappings)) {
+            if (imgUrl.includes(imgurId)) {
+              return localPath;
+            }
+          }
+        }
+        return imgUrl;
+      })(),
+      featureKeys: [
+        "rooms.feature.entirePlace",
+        "rooms.feature.freeParking",
+        "rooms.feature.breakfastIncluded",
+        "rooms.feature.balcony",
+        "rooms.feature.privateBathroom",
+        "rooms.feature.freeWifi",
+        "rooms.feature.shower",
+        "rooms.feature.airConditioning",
+        "rooms.feature.flatScreenTV",
+        "rooms.feature.kitchenette",
+        "rooms.feature.nonSmoking",
+        "rooms.feature.familyFriendly"
+      ]
+    })) as Room[]
+  }, [rooms])
+
+  // Log errors
+  if (error) {
+    logger.error('Error fetching rooms in HomePageClient', error as Error)
+  }
+
+  const apartmentsToDisplay = featuredRooms
 
   const translations = {
     subtitle: t("rooms.section.subtitle"),
@@ -61,22 +112,56 @@ export default function HomePageClient({ featuredRooms }: HomePageClientProps) {
               {translations.description}
             </p>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
-            {apartmentsToDisplay.map((apartment) => (
-              <RoomCard
-                key={apartment.displayId}
-                id={apartment.id}
-                name={apartment.name}
-                description={apartment.description}
-                image={apartment.image}
-                price={`${apartment.price}€`}
-                features={apartment.features}
-                nameKey={apartment.nameKey}
-                descriptionKey={apartment.descriptionKey}
-                featureKeys={apartment.featureKeys}
-              />
-            ))}
-          </div>
+          {isLoading ? (
+            <div className="text-center py-12">
+              <div className="text-slate-600 font-alegreya">{t("common.loading") || "Loading rooms..."}</div>
+            </div>
+          ) : error ? (
+            <div className="text-center py-12">
+              <div className="text-red-600 font-alegreya">{t("common.error") || "Error loading rooms. Please try again later."}</div>
+            </div>
+          ) : apartmentsToDisplay.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
+              {apartmentsToDisplay.map((apartment: any) => {
+                // Replace external URLs with local paths (fallback for legacy data)
+                let imageUrl = apartment.image || '/placeholder-room.jpg';
+                if (typeof imageUrl === 'string' && imageUrl.includes('i.imgur.com')) {
+                  const urlMappings: { [key: string]: string } = {
+                    'VjuPC23': '/room-featured-2.png',
+                    'SaAHqbC': '/room-featured-1.jpeg',
+                    '2JTTkSc': '/room-featured-3.png',
+                    'r1uVnhU': '/room-featured-4.png',
+                    'X7AG1TW': '/room-featured-5.png',
+                  };
+                  
+                  for (const [imgurId, localPath] of Object.entries(urlMappings)) {
+                    if (imageUrl.includes(imgurId)) {
+                      imageUrl = localPath;
+                      break;
+                    }
+                  }
+                }
+                return (
+                <RoomCard
+                  key={apartment.displayId}
+                  id={apartment.id || apartment._id}
+                  name={typeof apartment.name === 'string' ? apartment.name : ''}
+                  description={typeof apartment.description === 'string' ? apartment.description : ''}
+                  image={imageUrl}
+                  price={`${typeof apartment.price === 'number' ? apartment.price : 0}€`}
+                  features={Array.isArray(apartment.features) ? apartment.features : []}
+                  nameKey={typeof apartment.nameKey === 'string' ? apartment.nameKey : undefined}
+                  descriptionKey={typeof apartment.descriptionKey === 'string' ? apartment.descriptionKey : undefined}
+                  featureKeys={Array.isArray(apartment.featureKeys) ? apartment.featureKeys : undefined}
+                />
+                );
+              })}
+            </div>
+          ) : (
+            <div className="text-center py-12">
+              <div className="text-slate-600 font-alegreya">{t("rooms.noRoomsAvailable") || "No rooms available at the moment."}</div>
+            </div>
+          )}
           <div className="text-center mt-8 sm:mt-12">
             <Link
               href={`/${language}/rooms`}
@@ -106,7 +191,7 @@ export default function HomePageClient({ featuredRooms }: HomePageClientProps) {
       <section className="py-12 sm:py-16 md:py-20 relative">
         <div className="absolute inset-0 z-0">
           <Image
-            src="https://i.imgur.com/GEeXP4k.jpeg"
+            src="/discover-image.jpeg"
             alt={translations.discoverImageAlt}
             fill
             className="object-cover"

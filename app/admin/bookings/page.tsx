@@ -1,101 +1,25 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { CheckCircle, XCircle, Clock, AlertCircle, Search, Filter, Download, Calendar, User, MapPin, Euro, Phone, Mail } from "lucide-react"
-import { adminAPI } from "@/lib/api"
+import { CheckCircle, XCircle, Clock, AlertCircle, Search, Filter, Download, Calendar, User, MapPin, Euro, Phone, Mail, Trash2, CheckSquare, Square } from "lucide-react"
+import { useAdminBookings, useUpdateBookingStatus, Booking } from "@/hooks/api/use-bookings"
+import { useBulkDeleteBookings, useBulkUpdateBookingStatus } from "@/hooks/api/use-admin"
 import * as XLSX from 'xlsx'
-
-// Mock data - in a real app, this would come from your database
-const bookings = [
-  {
-    id: "AST-2024-001",
-    guest: "Μαρία Παπαδοπούλου",
-    email: "maria@example.com",
-    phone: "+30 694 123 4567",
-    room: "Standard Δωμάτιο",
-    checkIn: "2024-01-15",
-    checkOut: "2024-01-17",
-    status: "confirmed",
-    total: "135.60€",
-    created: "2024-01-05",
-  },
-  {
-    id: "AST-2024-002",
-    guest: "Γιάννης Κωνσταντίνου",
-    email: "giannis@example.com",
-    phone: "+30 697 765 4321",
-    room: "Οικογενειακό Δωμάτιο",
-    checkIn: "2024-01-16",
-    checkOut: "2024-01-20",
-    status: "pending",
-    total: "361.60€",
-    created: "2024-01-06",
-  },
-  {
-    id: "AST-2024-003",
-    guest: "Ελένη Μιχαηλίδου",
-    email: "eleni@example.com",
-    phone: "+30 698 222 3333",
-    room: "Ρομαντικό Δωμάτιο",
-    checkIn: "2024-01-18",
-    checkOut: "2024-01-21",
-    status: "confirmed",
-    total: "339.00€",
-    created: "2024-01-07",
-  },
-  {
-    id: "AST-2024-004",
-    guest: "Δημήτρης Αντωνίου",
-    email: "dimitris@example.com",
-    phone: "+30 691 444 5555",
-    room: "Standard Δωμάτιο",
-    checkIn: "2024-01-20",
-    checkOut: "2024-01-22",
-    status: "checked-in",
-    total: "135.60€",
-    created: "2024-01-08",
-  },
-  {
-    id: "AST-2024-005",
-    guest: "Σοφία Γεωργίου",
-    email: "sofia@example.com",
-    phone: "+30 693 666 7777",
-    room: "Ρομαντικό Δωμάτιο",
-    checkIn: "2024-01-22",
-    checkOut: "2024-01-25",
-    status: "pending",
-    total: "339.00€",
-    created: "2024-01-09",
-  },
-  {
-    id: "AST-2024-006",
-    guest: "Νίκος Παπαδάκης",
-    email: "nikos@example.com",
-    phone: "+30 695 888 9999",
-    room: "Οικογενειακό Δωμάτιο",
-    checkIn: "2024-01-25",
-    checkOut: "2024-01-30",
-    status: "cancelled",
-    total: "452.00€",
-    created: "2024-01-10",
-  },
-  {
-    id: "AST-2024-007",
-    guest: "Αναστασία Λάμπρου",
-    email: "anastasia@example.com",
-    phone: "+30 692 111 2222",
-    room: "Standard Δωμάτιο",
-    checkIn: "2024-01-28",
-    checkOut: "2024-01-31",
-    status: "confirmed",
-    total: "203.40€",
-    created: "2024-01-11",
-  },
-]
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
+import { useToast } from "@/hooks/use-toast"
 
 const getStatusIcon = (status: string) => {
   switch (status) {
@@ -168,32 +92,23 @@ const getStatusFilterText = (status: string) => {
 }
 
 export default function BookingsPage() {
-  const [bookings, setBookings] = useState<any[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState("")
+  const { data: bookings = [], isLoading, error } = useAdminBookings()
+  const updateBookingStatusMutation = useUpdateBookingStatus()
+  const bulkDeleteMutation = useBulkDeleteBookings()
+  const bulkUpdateStatusMutation = useBulkUpdateBookingStatus()
+  const { toast } = useToast()
   const [searchTerm, setSearchTerm] = useState("")
   const [statusFilter, setStatusFilter] = useState("all")
+  const [selectedBookings, setSelectedBookings] = useState<Set<string>>(new Set())
+  const [bulkDeleteDialogOpen, setBulkDeleteDialogOpen] = useState(false)
+  const [bulkStatusDialogOpen, setBulkStatusDialogOpen] = useState(false)
+  const [bulkStatus, setBulkStatus] = useState("")
 
-  useEffect(() => {
-    const fetchBookings = async () => {
-      try {
-        const response = await adminAPI.getAllBookings()
-        setBookings(response.bookings || [])
-      } catch (err: any) {
-        setError(err.message || "Failed to load bookings")
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    fetchBookings()
-  }, [])
-
-  const filteredBookings = bookings.filter((booking) => {
+  const filteredBookings = bookings.filter((booking: Booking) => {
     const matchesSearch =
-      booking.bookingNumber?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      `${booking.guestInfo?.firstName} ${booking.guestInfo?.lastName}`.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      booking.guestInfo?.email?.toLowerCase().includes(searchTerm.toLowerCase())
+      (booking.bookingNumber as string)?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      `${(booking.guestInfo as any)?.firstName} ${(booking.guestInfo as any)?.lastName}`.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (booking.guestInfo as any)?.email?.toLowerCase().includes(searchTerm.toLowerCase())
 
     const matchesStatus = statusFilter === "all" || booking.bookingStatus === statusFilter
 
@@ -202,45 +117,114 @@ export default function BookingsPage() {
 
   const handleStatusUpdate = async (bookingId: string, newStatus: string) => {
     try {
-      await adminAPI.updateBookingStatus(bookingId, newStatus)
-      // Refresh bookings after update
-      const response = await adminAPI.getAllBookings()
-      setBookings(response.bookings || [])
+      await updateBookingStatusMutation.mutateAsync({ bookingId, status: newStatus })
+      toast({
+        title: "Status updated",
+        description: "Booking status has been updated successfully.",
+      })
     } catch (err: any) {
-      setError(err.message || "Failed to update booking status")
+      toast({
+        title: "Update failed",
+        description: "Failed to update booking status. Please try again.",
+        variant: "destructive",
+      })
+    }
+  }
+
+  const handleSelectAll = () => {
+    if (selectedBookings.size === filteredBookings.length) {
+      setSelectedBookings(new Set())
+    } else {
+      setSelectedBookings(new Set(filteredBookings.map((b: Booking) => (b._id || b.id) as string)))
+    }
+  }
+
+  const handleSelectBooking = (bookingId: string) => {
+    const newSelected = new Set(selectedBookings)
+    if (newSelected.has(bookingId)) {
+      newSelected.delete(bookingId)
+    } else {
+      newSelected.add(bookingId)
+    }
+    setSelectedBookings(newSelected)
+  }
+
+  const handleBulkDelete = async () => {
+    if (selectedBookings.size === 0) return
+    try {
+      await bulkDeleteMutation.mutateAsync(Array.from(selectedBookings))
+      toast({
+        title: "Bookings deleted",
+        description: `Successfully deleted ${selectedBookings.size} booking(s).`,
+      })
+      setSelectedBookings(new Set())
+      setBulkDeleteDialogOpen(false)
+    } catch (err: any) {
+      toast({
+        title: "Delete failed",
+        description: "Failed to delete bookings. Please try again.",
+        variant: "destructive",
+      })
+    }
+  }
+
+  const handleBulkUpdateStatus = async () => {
+    if (selectedBookings.size === 0 || !bulkStatus) return
+    try {
+      await bulkUpdateStatusMutation.mutateAsync({
+        bookingIds: Array.from(selectedBookings),
+        status: bulkStatus,
+      })
+      toast({
+        title: "Status updated",
+        description: `Successfully updated ${selectedBookings.size} booking(s).`,
+      })
+      setSelectedBookings(new Set())
+      setBulkStatus("")
+      setBulkStatusDialogOpen(false)
+    } catch (err: any) {
+      toast({
+        title: "Update failed",
+        description: "Failed to update booking status. Please try again.",
+        variant: "destructive",
+      })
     }
   }
 
   const handleExport = () => {
     // Prepare data for Excel export
-    const excelData = filteredBookings.map(booking => ({
-      'Αριθμός Κράτησης': booking.bookingNumber || '',
-      'Επισκέπτης': `${booking.guestInfo?.firstName || ''} ${booking.guestInfo?.lastName || ''}`.trim(),
-      'Email': booking.guestInfo?.email || '',
-      'Τηλέφωνο': booking.guestInfo?.phone || '',
-      'Διαμέρισμα': booking.room?.name || '',
-      'Check-in': booking.checkIn ? new Date(booking.checkIn).toLocaleDateString('el-GR') : '',
-      'Check-out': booking.checkOut ? new Date(booking.checkOut).toLocaleDateString('el-GR') : '',
-      'Ενήλικες': booking.adults || 0,
-      'Παιδιά': booking.children || 0,
-      'Σύνολο (€)': booking.totalAmount || 0,
-      'Κατάσταση': booking.bookingStatus === 'CONFIRMED' ? 'Επιβεβαιωμένη' :
-                  booking.bookingStatus === 'PENDING' ? 'Εκκρεμής' :
-                  booking.bookingStatus === 'CANCELLED' ? 'Ακυρωμένη' :
-                  booking.bookingStatus === 'CHECKED_IN' ? 'Check-in' :
-                  booking.bookingStatus === 'CHECKED_OUT' ? 'Check-out' :
-                  booking.bookingStatus || '',
-      'Ημερομηνία Δημιουργίας': booking.createdAt ? new Date(booking.createdAt).toLocaleDateString('el-GR') : '',
-      'Ειδικές Απαιτήσεις': booking.guestInfo?.specialRequests || '',
-      'Μέθοδος Πληρωμής': booking.paymentMethod === 'CARD' ? 'Κάρτα' : 
-                          booking.paymentMethod === 'CASH' ? 'Μετρητά' : 
-                          booking.paymentMethod || '',
-      'Κατάσταση Πληρωμής': booking.paymentStatus === 'PAID' ? 'Πληρωμένο' :
-                           booking.paymentStatus === 'PENDING' ? 'Εκκρεμές' :
-                           booking.paymentStatus === 'FAILED' ? 'Αποτυχία' :
-                           booking.paymentStatus === 'REFUNDED' ? 'Επιστράφηκε' :
-                           booking.paymentStatus || ''
-    }))
+    const excelData = filteredBookings.map((booking: Booking) => {
+      const guestInfo = booking.guestInfo as any
+      const room = booking.room as any
+      return {
+        'Αριθμός Κράτησης': booking.bookingNumber || '',
+        'Επισκέπτης': `${guestInfo?.firstName || ''} ${guestInfo?.lastName || ''}`.trim(),
+        'Email': guestInfo?.email || '',
+        'Τηλέφωνο': guestInfo?.phone || '',
+        'Διαμέρισμα': room?.name || '',
+        'Check-in': booking.checkIn ? new Date(booking.checkIn).toLocaleDateString('el-GR') : '',
+        'Check-out': booking.checkOut ? new Date(booking.checkOut).toLocaleDateString('el-GR') : '',
+        'Ενήλικες': (booking as any).adults || 0,
+        'Παιδιά': (booking as any).children || 0,
+        'Σύνολο (€)': booking.totalAmount || 0,
+        'Κατάσταση': booking.bookingStatus === 'CONFIRMED' ? 'Επιβεβαιωμένη' :
+                    booking.bookingStatus === 'PENDING' ? 'Εκκρεμής' :
+                    booking.bookingStatus === 'CANCELLED' ? 'Ακυρωμένη' :
+                    booking.bookingStatus === 'CHECKED_IN' ? 'Check-in' :
+                    booking.bookingStatus === 'CHECKED_OUT' ? 'Check-out' :
+                    (booking.bookingStatus as string) || '',
+        'Ημερομηνία Δημιουργίας': (booking as any).createdAt ? new Date((booking as any).createdAt).toLocaleDateString('el-GR') : '',
+        'Ειδικές Απαιτήσεις': guestInfo?.specialRequests || '',
+        'Μέθοδος Πληρωμής': (booking as any).paymentMethod === 'CARD' ? 'Κάρτα' : 
+                            (booking as any).paymentMethod === 'CASH' ? 'Μετρητά' : 
+                            (booking as any).paymentMethod || '',
+        'Κατάσταση Πληρωμής': (booking as any).paymentStatus === 'PAID' ? 'Πληρωμένο' :
+                             (booking as any).paymentStatus === 'PENDING' ? 'Εκκρεμές' :
+                             (booking as any).paymentStatus === 'FAILED' ? 'Αποτυχία' :
+                             (booking as any).paymentStatus === 'REFUNDED' ? 'Επιστράφηκε' :
+                             (booking as any).paymentStatus || ''
+      }
+    })
 
     // Create workbook and worksheet
     const wb = XLSX.utils.book_new()
@@ -277,7 +261,7 @@ export default function BookingsPage() {
     XLSX.writeFile(wb, filename)
   }
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="flex items-center justify-center h-64">
         <div className="text-slate-600 font-alegreya">Φόρτωση κρατήσεων...</div>
@@ -288,7 +272,7 @@ export default function BookingsPage() {
   if (error) {
     return (
       <div className="p-4 bg-red-50 text-red-700 rounded-sm font-alegreya">
-        {error}
+        {error.message || "Αποτυχία φόρτωσης κρατήσεων"}
       </div>
     )
   }
@@ -301,15 +285,44 @@ export default function BookingsPage() {
           <h1 className="text-xl md:text-2xl font-cormorant font-light text-slate-800">Κρατήσεις</h1>
           <p className="text-sm md:text-base text-slate-600 font-alegreya">Διαχείριση όλων των κρατήσεων δωματίων</p>
         </div>
-        <div className="flex justify-end">
-          <Button 
-            onClick={handleExport}
-            className="bg-[#0A4A4A] hover:bg-[#083a3a] text-white font-alegreya text-sm"
-            size="sm"
-          >
-            <Download className="h-4 w-4 mr-2" />
-            Εξαγωγή
-          </Button>
+        <div className="flex justify-between items-center">
+          {selectedBookings.size > 0 && (
+            <div className="flex items-center gap-2">
+              <span className="text-sm font-alegreya text-slate-600">
+                {selectedBookings.size} επιλεγμένη/ες
+              </span>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setBulkStatusDialogOpen(true)}
+                disabled={bulkUpdateStatusMutation.isPending}
+                className="font-alegreya"
+              >
+                <CheckSquare className="h-4 w-4 mr-2" />
+                Αλλαγή Κατάστασης
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setBulkDeleteDialogOpen(true)}
+                disabled={bulkDeleteMutation.isPending}
+                className="text-red-600 hover:text-red-700 hover:bg-red-50 border-red-200 font-alegreya"
+              >
+                <Trash2 className="h-4 w-4 mr-2" />
+                Διαγραφή
+              </Button>
+            </div>
+          )}
+          <div className="flex gap-2 ml-auto">
+            <Button 
+              onClick={handleExport}
+              className="bg-[#0A4A4A] hover:bg-[#083a3a] text-white font-alegreya text-sm"
+              size="sm"
+            >
+              <Download className="h-4 w-4 mr-2" />
+              Εξαγωγή
+            </Button>
+          </div>
         </div>
       </div>
 
@@ -353,6 +366,14 @@ export default function BookingsPage() {
           <table className="min-w-full divide-y divide-slate-200">
             <thead className="bg-slate-50">
               <tr>
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider font-alegreya w-12">
+                  <input
+                    type="checkbox"
+                    checked={selectedBookings.size === filteredBookings.length && filteredBookings.length > 0}
+                    onChange={handleSelectAll}
+                    className="h-4 w-4 rounded border-slate-300 text-[#0A4A4A] focus:ring-[#0A4A4A]"
+                  />
+                </th>
                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider font-alegreya">
                   Αριθμός
                 </th>
@@ -377,52 +398,72 @@ export default function BookingsPage() {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-slate-200">
-              {filteredBookings.map((booking) => (
-                <tr key={booking._id} className="hover:bg-slate-50">
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-900 font-alegreya">
-                    <Link href={`/admin/bookings/${booking._id}`} className="hover:text-[#0A4A4A] hover:underline">
-                      {booking.bookingNumber}
-                    </Link>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-700 font-alegreya">
-                    <div>{booking.guestInfo?.firstName} {booking.guestInfo?.lastName}</div>
-                    <div className="text-xs text-slate-500">{booking.guestInfo?.email}</div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-700 font-alegreya">
-                    {booking.room?.name || 'N/A'}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-700 font-alegreya">
-                    <div>{new Date(booking.checkIn).toLocaleDateString()}</div>
-                    <div className="text-xs text-slate-500">έως {new Date(booking.checkOut).toLocaleDateString()}</div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-alegreya">
-                    <Select
-                      value={booking.bookingStatus}
-                      onValueChange={(value) => handleStatusUpdate(booking._id, value)}
-                    >
-                      <SelectTrigger className="w-32">
-                        <SelectValue>{getStatusText(booking.bookingStatus)}</SelectValue>
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="CONFIRMED">Επιβεβαιωμένη</SelectItem>
-                        <SelectItem value="PENDING">Εκκρεμής</SelectItem>
-                        <SelectItem value="CHECKED_IN">Check-in</SelectItem>
-                        <SelectItem value="CHECKED_OUT">Check-out</SelectItem>
-                        <SelectItem value="CANCELLED">Ακυρωμένη</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-700 font-alegreya">€{booking.totalAmount}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                    <Link
-                      href={`/admin/bookings/${booking._id}`}
-                      className="text-[#0A4A4A] hover:text-[#083a3a] font-alegreya"
-                    >
-                      Λεπτομέρειες
-                    </Link>
-                  </td>
-                </tr>
-              ))}
+              {filteredBookings.map((booking: Booking) => {
+                const bookingId = (booking._id || booking.id) as string
+                const guestInfo = booking.guestInfo as any
+                const room = booking.room as any
+                const isSelected = selectedBookings.has(bookingId)
+                return (
+                  <tr key={bookingId} className={`hover:bg-slate-50 ${isSelected ? 'bg-blue-50' : ''}`}>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <input
+                        type="checkbox"
+                        checked={isSelected}
+                        onChange={() => handleSelectBooking(bookingId)}
+                        className="h-4 w-4 rounded border-slate-300 text-[#0A4A4A] focus:ring-[#0A4A4A]"
+                      />
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-900 font-alegreya">
+                      <Link href={`/admin/bookings/${bookingId}`} className="hover:text-[#0A4A4A] hover:underline">
+                        {String(booking.bookingNumber || 'N/A')}
+                      </Link>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-700 font-alegreya">
+                      <div>{guestInfo?.firstName} {guestInfo?.lastName}</div>
+                      <div className="text-xs text-slate-500">{guestInfo?.email}</div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-700 font-alegreya">
+                      {room?.name || 'N/A'}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-700 font-alegreya">
+                      <div>{booking.checkIn ? new Date(booking.checkIn).toLocaleDateString() : 'N/A'}</div>
+                      <div className="text-xs text-slate-500">έως {booking.checkOut ? new Date(booking.checkOut).toLocaleDateString() : 'N/A'}</div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-alegreya">
+                      <Select
+                        value={booking.bookingStatus as string}
+                        onValueChange={(value) => {
+                          if (!updateBookingStatusMutation.isPending) {
+                            handleStatusUpdate(bookingId, value)
+                          }
+                        }}
+                      >
+                        <SelectTrigger 
+                          className={`w-32 ${updateBookingStatusMutation.isPending ? 'opacity-50 cursor-not-allowed' : ''}`}
+                        >
+                          <SelectValue>{getStatusText(booking.bookingStatus as string)}</SelectValue>
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="CONFIRMED">Επιβεβαιωμένη</SelectItem>
+                          <SelectItem value="PENDING">Εκκρεμής</SelectItem>
+                          <SelectItem value="CHECKED_IN">Check-in</SelectItem>
+                          <SelectItem value="CHECKED_OUT">Check-out</SelectItem>
+                          <SelectItem value="CANCELLED">Ακυρωμένη</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-700 font-alegreya">€{booking.totalAmount || 0}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                      <Link
+                        href={`/admin/bookings/${bookingId}`}
+                        className="text-[#0A4A4A] hover:text-[#083a3a] font-alegreya"
+                      >
+                        Λεπτομέρειες
+                      </Link>
+                    </td>
+                  </tr>
+                )
+              })}
             </tbody>
           </table>
         </div>
@@ -430,87 +471,108 @@ export default function BookingsPage() {
 
       {/* Mobile Card View */}
       <div className="lg:hidden space-y-4">
-        {filteredBookings.map((booking) => (
-          <div key={booking._id} className="bg-white rounded-lg border border-slate-200 p-4 shadow-sm">
-            {/* Header Row */}
-            <div className="flex items-start justify-between mb-3">
-              <div className="flex-1">
-                <Link href={`/admin/bookings/${booking._id}`} className="text-sm font-medium text-[#0A4A4A] hover:underline font-alegreya">
-                  {booking.bookingNumber}
-                </Link>
-                <div className="text-xs text-slate-500 mt-1 font-alegreya">
-                  {new Date(booking.createdAt).toLocaleDateString('el-GR')}
+        {filteredBookings.map((booking: Booking) => {
+          const bookingId = (booking._id || booking.id) as string
+          const guestInfo = booking.guestInfo as any
+          const room = booking.room as any
+          const createdAt = (booking as any).createdAt
+          const isSelected = selectedBookings.has(bookingId)
+          return (
+            <div key={bookingId} className={`bg-white rounded-lg border ${isSelected ? 'border-blue-500 bg-blue-50' : 'border-slate-200'} p-4 shadow-sm`}>
+              {/* Header Row */}
+              <div className="flex items-start justify-between mb-3">
+                <div className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    checked={isSelected}
+                    onChange={() => handleSelectBooking(bookingId)}
+                    className="h-4 w-4 rounded border-slate-300 text-[#0A4A4A] focus:ring-[#0A4A4A]"
+                  />
+                  <div className="flex-1">
+                    <Link href={`/admin/bookings/${bookingId}`} className="text-sm font-medium text-[#0A4A4A] hover:underline font-alegreya">
+                      {String(booking.bookingNumber || 'N/A')}
+                    </Link>
+                    <div className="text-xs text-slate-500 mt-1 font-alegreya">
+                      {createdAt ? new Date(createdAt).toLocaleDateString('el-GR') : 'N/A'}
+                    </div>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <div className="text-sm font-medium text-slate-900 font-alegreya">€{booking.totalAmount || 0}</div>
+                  <div className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium border mt-1 ${getStatusClass(booking.bookingStatus as string)}`}>
+                    {getStatusIcon(booking.bookingStatus as string)}
+                    <span className="ml-1">{getStatusText(booking.bookingStatus as string)}</span>
+                  </div>
                 </div>
               </div>
-              <div className="text-right">
-                <div className="text-sm font-medium text-slate-900 font-alegreya">€{booking.totalAmount}</div>
-                <div className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium border mt-1 ${getStatusClass(booking.bookingStatus)}`}>
-                  {getStatusIcon(booking.bookingStatus)}
-                  <span className="ml-1">{getStatusText(booking.bookingStatus)}</span>
-                </div>
-              </div>
-            </div>
 
-            {/* Guest Info */}
-            <div className="space-y-2 mb-3">
-              <div className="flex items-center text-sm text-slate-700 font-alegreya">
-                <User className="h-4 w-4 mr-2 text-slate-400" />
-                <span>{booking.guestInfo?.firstName} {booking.guestInfo?.lastName}</span>
-              </div>
-              <div className="flex items-center text-sm text-slate-700 font-alegreya">
-                <Mail className="h-4 w-4 mr-2 text-slate-400" />
-                <span className="truncate">{booking.guestInfo?.email}</span>
-              </div>
-              {booking.guestInfo?.phone && (
+              {/* Guest Info */}
+              <div className="space-y-2 mb-3">
                 <div className="flex items-center text-sm text-slate-700 font-alegreya">
-                  <Phone className="h-4 w-4 mr-2 text-slate-400" />
-                  <span>{booking.guestInfo?.phone}</span>
+                  <User className="h-4 w-4 mr-2 text-slate-400" />
+                  <span>{guestInfo?.firstName} {guestInfo?.lastName}</span>
                 </div>
-              )}
-            </div>
-
-            {/* Room & Dates */}
-            <div className="space-y-2 mb-4">
-              <div className="flex items-center text-sm text-slate-700 font-alegreya">
-                <MapPin className="h-4 w-4 mr-2 text-slate-400" />
-                <span>{booking.room?.name || 'N/A'}</span>
+                <div className="flex items-center text-sm text-slate-700 font-alegreya">
+                  <Mail className="h-4 w-4 mr-2 text-slate-400" />
+                  <span className="truncate">{guestInfo?.email}</span>
+                </div>
+                {guestInfo?.phone && (
+                  <div className="flex items-center text-sm text-slate-700 font-alegreya">
+                    <Phone className="h-4 w-4 mr-2 text-slate-400" />
+                    <span>{guestInfo.phone}</span>
+                  </div>
+                )}
               </div>
-              <div className="flex items-center text-sm text-slate-700 font-alegreya">
-                <Calendar className="h-4 w-4 mr-2 text-slate-400" />
-                <span>
-                  {new Date(booking.checkIn).toLocaleDateString('el-GR')} - {new Date(booking.checkOut).toLocaleDateString('el-GR')}
-                </span>
-              </div>
-            </div>
 
-            {/* Status Update & Action */}
-            <div className="flex items-center justify-between pt-3 border-t border-slate-100">
-              <div className="flex-1 mr-3">
-                <Select
-                  value={booking.bookingStatus}
-                  onValueChange={(value) => handleStatusUpdate(booking._id, value)}
+              {/* Room & Dates */}
+              <div className="space-y-2 mb-4">
+                <div className="flex items-center text-sm text-slate-700 font-alegreya">
+                  <MapPin className="h-4 w-4 mr-2 text-slate-400" />
+                  <span>{room?.name || 'N/A'}</span>
+                </div>
+                <div className="flex items-center text-sm text-slate-700 font-alegreya">
+                  <Calendar className="h-4 w-4 mr-2 text-slate-400" />
+                  <span>
+                    {booking.checkIn ? new Date(booking.checkIn).toLocaleDateString('el-GR') : 'N/A'} - {booking.checkOut ? new Date(booking.checkOut).toLocaleDateString('el-GR') : 'N/A'}
+                  </span>
+                </div>
+              </div>
+
+              {/* Status Update & Action */}
+              <div className="flex items-center justify-between pt-3 border-t border-slate-100">
+                <div className="flex-1 mr-3">
+                  <Select
+                    value={booking.bookingStatus as string}
+                    onValueChange={(value) => {
+                      if (!updateBookingStatusMutation.isPending) {
+                        handleStatusUpdate(bookingId, value)
+                      }
+                    }}
+                  >
+                    <SelectTrigger 
+                      className={`text-xs h-8 ${updateBookingStatusMutation.isPending ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    >
+                      <SelectValue>{getStatusText(booking.bookingStatus as string)}</SelectValue>
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="CONFIRMED">Επιβεβαιωμένη</SelectItem>
+                      <SelectItem value="PENDING">Εκκρεμής</SelectItem>
+                      <SelectItem value="CHECKED_IN">Check-in</SelectItem>
+                      <SelectItem value="CHECKED_OUT">Check-out</SelectItem>
+                      <SelectItem value="CANCELLED">Ακυρωμένη</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <Link
+                  href={`/admin/bookings/${bookingId}`}
+                  className="text-xs text-[#0A4A4A] hover:text-[#083a3a] font-alegreya font-medium"
                 >
-                  <SelectTrigger className="text-xs h-8">
-                    <SelectValue>{getStatusText(booking.bookingStatus)}</SelectValue>
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="CONFIRMED">Επιβεβαιωμένη</SelectItem>
-                    <SelectItem value="PENDING">Εκκρεμής</SelectItem>
-                    <SelectItem value="CHECKED_IN">Check-in</SelectItem>
-                    <SelectItem value="CHECKED_OUT">Check-out</SelectItem>
-                    <SelectItem value="CANCELLED">Ακυρωμένη</SelectItem>
-                  </SelectContent>
-                </Select>
+                  Λεπτομέρειες →
+                </Link>
               </div>
-              <Link
-                href={`/admin/bookings/${booking._id}`}
-                className="text-xs text-[#0A4A4A] hover:text-[#083a3a] font-alegreya font-medium"
-              >
-                Λεπτομέρειες →
-              </Link>
             </div>
-          </div>
-        ))}
+          )
+        })}
       </div>
 
       {/* No Results */}
@@ -519,6 +581,65 @@ export default function BookingsPage() {
           <p className="text-slate-500 font-alegreya">Δεν βρέθηκαν κρατήσεις με τα επιλεγμένα κριτήρια</p>
         </div>
       )}
+
+      {/* Bulk Delete Dialog */}
+      <AlertDialog open={bulkDeleteDialogOpen} onOpenChange={setBulkDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Διαγραφή Κρατήσεων</AlertDialogTitle>
+            <AlertDialogDescription className="font-alegreya">
+              Είστε σίγουροι ότι θέλετε να διαγράψετε {selectedBookings.size} κράτηση/σεις; Αυτή η ενέργεια δεν μπορεί να αναιρεθεί.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Άκυρο</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleBulkDelete}
+              className="bg-red-600 hover:bg-red-700"
+              disabled={bulkDeleteMutation.isPending}
+            >
+              {bulkDeleteMutation.isPending ? "Deleting..." : "Διαγραφή"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Bulk Status Update Dialog */}
+      <AlertDialog open={bulkStatusDialogOpen} onOpenChange={setBulkStatusDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Αλλαγή Κατάστασης</AlertDialogTitle>
+            <AlertDialogDescription className="font-alegreya space-y-4">
+              <p>Επιλέξτε την νέα κατάσταση για {selectedBookings.size} κράτηση/σεις:</p>
+              <Select value={bulkStatus} onValueChange={setBulkStatus}>
+                <SelectTrigger className="font-alegreya">
+                  <SelectValue placeholder="Επιλέξτε κατάσταση" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="PENDING">Εκκρεμής</SelectItem>
+                  <SelectItem value="CONFIRMED">Επιβεβαιωμένη</SelectItem>
+                  <SelectItem value="CHECKED_IN">Check-in</SelectItem>
+                  <SelectItem value="CHECKED_OUT">Check-out</SelectItem>
+                  <SelectItem value="CANCELLED">Ακυρωμένη</SelectItem>
+                </SelectContent>
+              </Select>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => {
+              setBulkStatusDialogOpen(false)
+              setBulkStatus("")
+            }}>Άκυρο</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleBulkUpdateStatus}
+              className="bg-[#0A4A4A] hover:bg-[#083a3a]"
+              disabled={bulkUpdateStatusMutation.isPending || !bulkStatus}
+            >
+              {bulkUpdateStatusMutation.isPending ? "Updating..." : "Ενημέρωση"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   )
 }

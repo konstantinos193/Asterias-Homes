@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -8,7 +8,9 @@ import { Textarea } from "@/components/ui/textarea"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useToast } from "@/components/ui/use-toast"
-import { adminAPI, offersAPI } from "@/lib/api"
+import { useAdminRooms } from "@/hooks/api/use-admin"
+import { useCreateOffer } from "@/hooks/api/use-offers"
+import { logger } from "@/lib/logger"
 import { ArrowLeft, Save, Percent, Calendar, Tag, MapPin } from "lucide-react"
 import Link from "next/link"
 
@@ -23,9 +25,15 @@ interface Room {
 export default function NewOfferPage() {
   const router = useRouter()
   const { toast } = useToast()
-  const [rooms, setRooms] = useState<Room[]>([])
-  const [loading, setLoading] = useState(true)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  
+  const { data: roomsData = [], isLoading: loading, error: roomsError } = useAdminRooms()
+  const createOfferMutation = useCreateOffer()
+
+  // Normalize rooms data - handle both array and { rooms: [] } formats
+  const rooms = Array.isArray(roomsData) 
+    ? (Array.isArray((roomsData as any).rooms) ? (roomsData as any).rooms : roomsData) as Room[]
+    : []
   
   const [formData, setFormData] = useState({
     name: "",
@@ -37,26 +45,15 @@ export default function NewOfferPage() {
     active: true
   })
 
-  // Fetch rooms on component mount
-  useEffect(() => {
-    const fetchRooms = async () => {
-      try {
-        const response = await adminAPI.getAllRooms()
-        setRooms(response.rooms || [])
-      } catch (error) {
-        console.error("Failed to fetch rooms", error)
-        toast({
-          title: "Σφάλμα",
-          description: "Αποτυχία φόρτωσης δωματίων",
-          variant: "destructive",
-        })
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    fetchRooms()
-  }, [])
+  // Handle errors
+  if (roomsError) {
+    logger.error('Error fetching rooms for new offer', roomsError as Error)
+    toast({
+      title: "Σφάλμα",
+      description: "Αποτυχία φόρτωσης δωματίων",
+      variant: "destructive",
+    })
+  }
 
   const handleInputChange = (field: string, value: string | boolean) => {
     setFormData(prev => ({
@@ -90,23 +87,24 @@ export default function NewOfferPage() {
 
     try {
       const offerData = {
-        name: formData.name,
+        title: formData.name,
         description: formData.description,
         discount: parseFloat(formData.discount),
         startDate: formData.startDate,
         endDate: formData.endDate,
-        roomIds: formData.selectedRooms,
+        applicableRooms: formData.selectedRooms,
         active: formData.active
       }
 
-      await offersAPI.create(offerData)
+      await createOfferMutation.mutateAsync(offerData)
+      logger.info('Offer created successfully', { offerData })
       toast({
         title: "Επιτυχία",
         description: "Η προσφορά δημιουργήθηκε επιτυχώς",
       })
       router.push("/admin/offers")
     } catch (error) {
-      console.error("Failed to create offer", error)
+      logger.error("Failed to create offer", error as Error)
       toast({
         title: "Σφάλμα",
         description: "Αποτυχία δημιουργίας προσφοράς",
@@ -351,11 +349,11 @@ export default function NewOfferPage() {
               </Link>
               <Button
                 type="submit"
-                disabled={isSubmitting || formData.selectedRooms.length === 0}
+                disabled={isSubmitting || createOfferMutation.isPending || formData.selectedRooms.length === 0}
                 className="w-full sm:w-auto bg-[#0A4A4A] hover:bg-[#083a3a] text-white font-alegreya h-12 px-8"
               >
                 <Save className="h-4 w-4 mr-2" />
-                {isSubmitting ? 'Δημιουργία...' : 'Δημιουργία Προσφοράς'}
+                {isSubmitting || createOfferMutation.isPending ? 'Δημιουργία...' : 'Δημιουργία Προσφοράς'}
               </Button>
             </div>
           </div>

@@ -1,47 +1,38 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useMemo } from "react"
 import { useLanguage } from "@/contexts/language-context"
-import { offersAPI } from "@/lib/api"
+import { useOffers } from "@/hooks/api"
 import { Offer } from "@/types/offers"
 import Image from "next/image"
 import Link from "next/link"
 import { Calendar, Star, Tag } from "lucide-react"
+import { logger } from "@/lib/logger"
 
 export default function OffersPageClient() {
   const { t, language } = useLanguage()
-  const [offers, setOffers] = useState<Offer[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  const { data: offersData, isLoading: loading, error: queryError } = useOffers()
 
-  useEffect(() => {
-    const fetchOffers = async () => {
-      try {
-        setLoading(true)
-        const response = await offersAPI.getAll()
-        if (response && response.offers) {
-          // Filter only active offers that are currently valid
-          const now = new Date()
-          const activeOffers = response.offers.filter(offer => 
-            offer.active && 
-            new Date(offer.startDate) <= now && 
-            new Date(offer.endDate) >= now
-          )
-          setOffers(activeOffers)
-        } else {
-          setOffers([])
-        }
-      } catch (err) {
-        console.error('Failed to fetch offers:', err)
-        setError('Failed to load offers')
-        setOffers([])
-      } finally {
-        setLoading(false)
-      }
-    }
+  // Process and filter active offers
+  const offers = useMemo(() => {
+    if (!offersData || !Array.isArray(offersData)) return []
+    
+    // Filter only active offers that are currently valid
+    // Cast to the expected Offer type from types/offers.ts
+    const allOffers = offersData as unknown as Offer[]
+    const now = new Date()
+    return allOffers.filter((offer: Offer) => {
+      return offer.active && 
+        new Date(offer.startDate || '') <= now && 
+        new Date(offer.endDate || '') >= now
+    })
+  }, [offersData])
 
-    fetchOffers()
-  }, [])
+  // Handle errors
+  const error = queryError ? (() => {
+    logger.error('Failed to fetch offers', queryError as Error)
+    return 'Failed to load offers'
+  })() : null
 
   return (
     <main className="bg-[#A9AEA2]/30 text-slate-800 pt-20 sm:pt-24 font-alegreya">

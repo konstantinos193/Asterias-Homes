@@ -8,7 +8,9 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { ArrowLeft, Plus, Trash2, Wifi, Coffee, Car, Sparkles, Bath, Bed, Eye, Snowflake, Save } from "lucide-react"
-import { adminAPI } from "@/lib/api"
+import { useAdminRoom } from "@/hooks/api/use-admin"
+import { api } from "@/lib/api-client"
+import { logger } from "@/lib/logger"
 import RoomImageEditor from "@/components/admin/room-image-editor"
 import { getBackendUrl } from "@/lib/backend-url"
 
@@ -53,7 +55,6 @@ export default function RoomEditPage() {
   const params = useParams()
   const roomId = params?.roomId as string
   
-  const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState("")
   const [room, setRoom] = useState<any>(null)
@@ -61,86 +62,83 @@ export default function RoomEditPage() {
   const [newFeature, setNewFeature] = useState("")
   const [newAmenity, setNewAmenity] = useState({ name: "", icon: "wifi" })
 
+  const { data: roomResponse, isLoading: loading, error: queryError } = useAdminRoom(roomId)
+
+  // Process room data when it's loaded
   useEffect(() => {
-    const fetchRoom = async () => {
-      if (!roomId) {
-        setError('Room ID not provided')
-        setLoading(false)
+    if (!roomResponse || loading) return
+    
+    try {
+      const roomData = (roomResponse as any).room || roomResponse
+      
+      if (!roomData) {
+        logger.error('Room data not found in response', undefined, { roomId, response: roomResponse })
+        setError('Room data not found in response')
         return
       }
       
-      try {
-        setLoading(true)
-        setError("")
-        console.log('Fetching room with ID:', roomId)
-        const response = await adminAPI.getRoomById(roomId)
-        console.log('Room response:', response)
-        const roomData = response.room || response
-        console.log('🔍 Room data amenities (raw from backend):', roomData.amenities)
-        console.log('🔍 Type of amenities:', typeof roomData.amenities)
-        
-        if (!roomData) {
-          throw new Error('Room data not found in response')
+      logger.info('Room loaded successfully', { roomId, amenitiesType: typeof roomData.amenities, roomData })
+      
+      // Convert room images to RoomImage format
+      const backendUrl = getBackendUrl()
+      const existingImages: RoomImage[] = (roomData.images || []).map((url: string, index: number) => ({
+        id: `existing-${index}-${url}`,
+        url: url.startsWith('http') ? url : `${backendUrl}${url}`,
+        isExisting: true as const
+      }))
+      
+      // Convert amenities from object to array format for editing
+      // Backend stores amenities as { wifi: true, ac: true, safe: true } (booleans)
+      // Frontend needs array format [{ name: 'wifi', icon: 'wifi' }, ...] for editing
+      let amenitiesArray = []
+      if (roomData.amenities) {
+        if (Array.isArray(roomData.amenities)) {
+          amenitiesArray = roomData.amenities
+        } else if (typeof roomData.amenities === 'object') {
+          // Convert object format { wifi: true, ac: true } to array format
+          // Only include amenities that are true
+          amenitiesArray = Object.entries(roomData.amenities)
+            .filter(([name, value]) => value === true) // Only include true values
+            .map(([name, value]) => {
+              // Map common amenity names to their icon names
+              const iconMap: Record<string, string> = {
+                wifi: 'wifi',
+                ac: 'snowflake',
+                tv: 'tv',
+                minibar: 'coffee',
+                balcony: 'eye',
+                seaView: 'eye',
+                roomService: 'sparkles',
+                safe: 'shield'
+              }
+              return { 
+                name, 
+                icon: iconMap[name.toLowerCase()] || name.toLowerCase() || 'wifi' 
+              }
+            })
         }
-        
-        // Convert room images to RoomImage format
-        const backendUrl = getBackendUrl()
-        const existingImages: RoomImage[] = (roomData.images || []).map((url: string, index: number) => ({
-          id: `existing-${index}-${url}`,
-          url: url.startsWith('http') ? url : `${backendUrl}${url}`,
-          isExisting: true as const
-        }))
-        
-        // Convert amenities from object to array format for editing
-        // Backend stores amenities as { wifi: true, ac: true, safe: true } (booleans)
-        // Frontend needs array format [{ name: 'wifi', icon: 'wifi' }, ...] for editing
-        let amenitiesArray = []
-        if (roomData.amenities) {
-          if (Array.isArray(roomData.amenities)) {
-            amenitiesArray = roomData.amenities
-          } else if (typeof roomData.amenities === 'object') {
-            // Convert object format { wifi: true, ac: true } to array format
-            // Only include amenities that are true
-            amenitiesArray = Object.entries(roomData.amenities)
-              .filter(([name, value]) => value === true) // Only include true values
-              .map(([name, value]) => {
-                // Map common amenity names to their icon names
-                const iconMap: Record<string, string> = {
-                  wifi: 'wifi',
-                  ac: 'snowflake',
-                  tv: 'tv',
-                  minibar: 'coffee',
-                  balcony: 'eye',
-                  seaView: 'eye',
-                  roomService: 'sparkles',
-                  safe: 'shield'
-                }
-                return { 
-                  name, 
-                  icon: iconMap[name.toLowerCase()] || name.toLowerCase() || 'wifi' 
-                }
-              })
-          }
-        }
-        
-        setRoom({
-          ...roomData,
-          amenities: amenitiesArray
-        })
-        setImages(existingImages)
-        console.log('Room loaded successfully')
-      } catch (err: any) {
-        console.error('Error fetching room:', err)
-        const errorMessage = err?.message || err?.error || 'Σφάλμα κατά τη φόρτωση του δωματίου'
-        setError(errorMessage)
-        setLoading(false)
-      } finally {
-        setLoading(false)
       }
+      
+      setRoom({
+        ...roomData,
+        amenities: amenitiesArray
+      })
+      setImages(existingImages)
+    } catch (err: any) {
+      logger.error('Error processing room data', err as Error, { roomId })
+      const errorMessage = err?.message || err?.error || 'Σφάλμα κατά τη φόρτωση του δωματίου'
+      setError(errorMessage)
     }
+  }, [roomResponse, loading, roomId])
 
-    fetchRoom()
-  }, [roomId])
+  // Handle query errors
+  useEffect(() => {
+    if (queryError) {
+      const err = queryError as Error
+      logger.error('Error fetching room', err, { roomId })
+      setError(err.message || 'Σφάλμα κατά τη φόρτωση του δωματίου')
+    }
+  }, [queryError, roomId])
 
   const handleInputChange = (field: string, value: string | number | boolean) => {
     setRoom((prev: any) => ({ ...prev, [field]: value }))
@@ -183,7 +181,7 @@ export default function RoomEditPage() {
   const handleDeleteExistingImage = (imageUrl: string) => {
     // Remove from images state (already handled by RoomImageEditor)
     // This callback is for any additional cleanup if needed
-    console.log('Deleting image:', imageUrl)
+    logger.info('Deleting image', { imageUrl, roomId })
   }
 
   const handleSave = async () => {
@@ -259,8 +257,12 @@ export default function RoomEditPage() {
       const definedAmenities = ['wifi', 'ac', 'tv', 'minibar', 'balcony', 'seaView', 'roomService', 'safe']
       let amenitiesObject: Record<string, boolean> = {}
       
-      console.log('🔍 Converting amenities for save. Current room.amenities:', room.amenities)
-      console.log('🔍 Type of room.amenities:', typeof room.amenities, Array.isArray(room.amenities))
+      logger.info('Converting amenities for save', { 
+        roomId, 
+        amenitiesType: typeof room.amenities, 
+        isArray: Array.isArray(room.amenities),
+        amenities: room.amenities
+      })
       
       if (Array.isArray(room.amenities)) {
         // Start with all amenities set to false
@@ -300,14 +302,15 @@ export default function RoomEditPage() {
         })
       }
       
-      console.log('✅ Converted amenities object:', amenitiesObject)
       // Verify all values are booleans
       Object.entries(amenitiesObject).forEach(([key, value]) => {
         if (typeof value !== 'boolean') {
-          console.error(`❌ ERROR: ${key} is not a boolean! Value:`, value, 'Type:', typeof value)
+          logger.error(`Amenity ${key} is not a boolean`, new Error('Invalid amenity type'), { key, value, type: typeof value })
           amenitiesObject[key] = Boolean(value)
         }
       })
+      
+      logger.info('Converted amenities object', { roomId, amenitiesObject })
 
       // Set the banner/featured image (first image in the array, or keep existing if no images)
       const bannerImage = imageUrls.length > 0 ? imageUrls[0] : room.image || null
@@ -327,12 +330,13 @@ export default function RoomEditPage() {
         available: room.available !== undefined ? room.available : true
       }
       
-      console.log('📤 Sending room data to backend:', JSON.stringify(roomData, null, 2))
+      logger.info('Sending room data to backend', { roomId, roomData })
 
-      await adminAPI.updateRoom(roomId, roomData)
+      await api.admin.updateRoom(roomId, roomData)
+      logger.info('Room saved successfully', { roomId })
       router.push("/admin/rooms")
     } catch (err: any) {
-      console.error('Error saving room:', err)
+      logger.error('Error saving room', err as Error, { roomId })
       setError(err.message || 'Σφάλμα κατά την αποθήκευση του δωματίου')
     } finally {
       setSaving(false)
@@ -698,9 +702,11 @@ export default function RoomEditPage() {
                   onClick={async () => {
                     if (confirm('Είστε σίγουροι ότι θέλετε να διαγράψετε αυτό το δωμάτιο;')) {
                       try {
-                        await adminAPI.deleteRoom(roomId)
+                        await api.admin.deleteRoom(roomId)
+                        logger.info('Room deleted successfully', { roomId })
                         router.push("/admin/rooms")
                       } catch (err: any) {
+                        logger.error('Error deleting room', err as Error, { roomId })
                         alert(err.message || 'Σφάλμα κατά τη διαγραφή')
                       }
                     }

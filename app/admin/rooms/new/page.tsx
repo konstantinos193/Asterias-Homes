@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { ArrowLeft, Save, Euro, Users, Bed, Building, CheckSquare, Image, Info } from 'lucide-react'
-import { adminAPI } from '@/lib/api'
+import { api } from '@/lib/api-client'
 import ImageUpload from '@/components/admin/image-upload'
 
 interface ImageFile {
@@ -90,7 +90,7 @@ export default function NewRoomPage() {
         images: images.filter(img => img.uploaded).map(img => img.url)
       }
 
-      await adminAPI.createRoom(roomData)
+      await api.admin.createRoom(roomData)
       router.push('/admin/rooms')
     } catch (err: any) {
       setError(err.message || 'Σφάλμα κατά τη δημιουργία του δωματίου')

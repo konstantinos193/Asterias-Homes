@@ -1,9 +1,25 @@
 "use client"
 import { useLanguage } from "@/contexts/language-context"
+import { useParams } from "next/navigation"
+import { useEffect } from "react"
 import { Mail, Phone, MapPin, Clock, Send } from "lucide-react"
+import ContactMap from "@/components/contact-map"
+import type { LanguageCode } from "@/contexts/language-context"
 
 export default function ContactPage() {
-  const { t } = useLanguage()
+  const params = useParams()
+  const urlLang = params?.lang as string
+  const { t, setLanguage, language } = useLanguage()
+
+  // Sync language from URL with context immediately and on mount
+  useEffect(() => {
+    if (urlLang && (urlLang === "el" || urlLang === "en" || urlLang === "de")) {
+      const langCode = urlLang as LanguageCode
+      // Force sync to ensure URL language always takes precedence
+      setLanguage(langCode)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [urlLang, setLanguage]) // Sync when URL changes
 
   return (
     <main className="bg-[#A9AEA2]/30 text-slate-800 pt-20 sm:pt-24 font-alegreya">
@@ -33,9 +49,12 @@ export default function ContactPage() {
                   </div>
                   <div>
                     <h3 className="font-semibold text-slate-800 mb-1">{t("contact.phone")}</h3>
-                    <p className="text-sm sm:text-base text-slate-600">+30 2680 123 456</p>
-                    <p className="text-sm sm:text-base text-slate-600">+30 6977 123 456</p>
-                    <p className="text-sm sm:text-base text-slate-600">017663304809</p>
+                    <a href="tel:+306972705881" className="text-sm sm:text-base text-slate-600 hover:text-[#8B4B5C] transition-colors block">
+                      {t("contact.phone1")}
+                    </a>
+                    <a href="tel:017663304809" className="text-sm sm:text-base text-slate-600 hover:text-[#8B4B5C] transition-colors block">
+                      {t("contact.phone2")}
+                    </a>
                   </div>
                 </div>
 
@@ -45,8 +64,12 @@ export default function ContactPage() {
                   </div>
                   <div>
                     <h3 className="font-semibold text-slate-800 mb-1">{t("contact.email")}</h3>
-                    <p className="text-sm sm:text-base text-slate-600">info@asteriashome.gr</p>
-                    <p className="text-sm sm:text-base text-slate-600">bookings@asteriashome.gr</p>
+                    <a
+                      href="mailto:asterias.apartmentskoronisia@gmail.com"
+                      className="text-sm sm:text-base text-slate-600 hover:text-[#8B4B5C] transition-colors block"
+                    >
+                      asterias.apartmentskoronisia@gmail.com
+                    </a>
                   </div>
                 </div>
 
@@ -175,12 +198,12 @@ export default function ContactPage() {
             </p>
           </div>
           
-          <div className="bg-slate-200 rounded-lg h-64 sm:h-80 md:h-96 flex items-center justify-center">
-            <div className="text-center text-slate-500">
-              <MapPin className="h-12 w-12 mx-auto mb-4 text-slate-400" />
-              <p className="text-sm sm:text-base">{t("contact.mapPlaceholder")}</p>
-            </div>
-          </div>
+          <ContactMap
+            latitude={39.01386581378042}
+            longitude={20.91891039697184}
+            zoom={15}
+            title={t("contact.mapMarker") || "Asterias Homes"}
+          />
         </div>
       </section>
     </main>

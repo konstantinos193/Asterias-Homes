@@ -14,7 +14,7 @@ export default function WelcomeSection() {
           <div className="relative order-2 lg:order-1">
             <div className="relative z-10">
               <Image
-                src="https://i.imgur.com/KNyJnbp.jpeg"
+                src="/welcome-image.jpeg"
                 alt="Asterias Homes welcome view"
                 width={500}
                 height={600}
@@ -25,7 +25,7 @@ export default function WelcomeSection() {
             {/* Decorative elements - hidden on mobile */}
             <div className="absolute -bottom-8 -right-8 z-0 hidden lg:block">
               <Image
-                src="https://i.imgur.com/KNyJnbp.jpeg"
+                src="/welcome-image.jpeg"
                 alt="Hotel exterior"
                 width={300}
                 height={400}

@@ -39,7 +39,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
               const profile = JSON.parse(text)
               setUser(profile.user)
             } catch (parseError) {
-              console.error('JSON parse error in profile check:', parseError)
+              // Silently handle parse errors - invalid JSON means no user
               setUser(null)
             }
           } else {
@@ -56,10 +56,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     checkAuth()
   }, [])
 
-  useEffect(() => {
-    console.log("[AUTH] user:", user)
-    console.log("[AUTH] loading:", loading)
-  }, [user, loading])
+  // Removed debug console.log statements - use logger if needed in development
 
   const login = async (username: string, password: string) => {
     const response = await fetch("/api/auth/login", {
@@ -75,7 +72,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         try {
           data = JSON.parse(text)
         } catch (parseError) {
-          console.error('JSON parse error in login response:', parseError)
+          // Silently handle parse errors - invalid JSON means generic error
         }
       }
       throw new Error((data as any).error || 'Login failed')
@@ -91,7 +88,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           const profile = JSON.parse(text)
           setUser(profile.user)
         } catch (parseError) {
-          console.error('JSON parse error in profile fetch:', parseError)
+          // Silently handle parse errors - invalid JSON means no user
           setUser(null)
         }
       } else {

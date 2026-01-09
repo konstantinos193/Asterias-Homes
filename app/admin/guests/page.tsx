@@ -1,12 +1,13 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Search, Filter, Mail, Phone, Calendar, User, Download, Building } from "lucide-react"
-import { adminAPI } from "@/lib/api"
+import { useAdminUsers } from "@/hooks/api/use-admin"
+import { logger } from "@/lib/logger"
 import * as XLSX from 'xlsx'
 
 const getStatusText = (status: boolean) => {
@@ -27,28 +28,21 @@ const getStatusFilterText = (status: string) => {
 }
 
 export default function GuestsPage() {
-  const [guests, setGuests] = useState<any[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState("")
+  const { data: guestsData = [], isLoading: loading, error: queryError } = useAdminUsers()
   const [searchTerm, setSearchTerm] = useState("")
   const [statusFilter, setStatusFilter] = useState("all")
 
-  useEffect(() => {
-    const fetchGuests = async () => {
-      try {
-        const response = await adminAPI.getAllUsers()
-        setGuests(response.users || [])
-      } catch (err: any) {
-        setError(err.message || "Failed to load guests")
-      } finally {
-        setLoading(false)
-      }
-    }
+  // Normalize guests data - handle both array and { users: [] } formats
+  const guests = Array.isArray(guestsData) ? guestsData : (guestsData && typeof guestsData === 'object' && 'users' in guestsData && Array.isArray((guestsData as any).users) ? (guestsData as any).users : [])
 
-    fetchGuests()
-  }, [])
+  // Handle errors
+  const error = queryError ? (() => {
+    const err = queryError as Error
+    logger.error('Error fetching guests', err)
+    return err.message || "Failed to load guests"
+  })() : null
 
-  const filteredGuests = guests.filter((guest) => {
+  const filteredGuests = guests.filter((guest: any) => {
     const matchesSearch =
       guest.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       guest.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -62,7 +56,7 @@ export default function GuestsPage() {
 
   const handleExport = () => {
     // Prepare data for Excel export
-    const excelData = filteredGuests.map(guest => ({
+    const excelData = filteredGuests.map((guest: any) => ({
       'Όνομα': guest.name || '',
       'ID': guest._id || '',
       'Email': guest.email || '',
@@ -204,7 +198,7 @@ export default function GuestsPage() {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-slate-200">
-              {filteredGuests.map((guest) => (
+              {filteredGuests.map((guest: any) => (
                 <tr key={guest._id} className="hover:bg-slate-50">
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center">
@@ -258,7 +252,7 @@ export default function GuestsPage() {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                     <Link
-                      href={`/admin/guests/${guest._id}`}
+                      href={`/admin/guests/${encodeURIComponent(guest.email || guest._id)}`}
                       className="text-[#0A4A4A] hover:text-[#083a3a] font-alegreya"
                     >
                       Λεπτομέρειες
@@ -273,7 +267,7 @@ export default function GuestsPage() {
 
       {/* Mobile Card View */}
       <div className="lg:hidden space-y-4">
-        {filteredGuests.map((guest) => (
+        {filteredGuests.map((guest: any) => (
           <div key={guest._id} className="bg-white rounded-lg border border-slate-200 p-4 shadow-sm">
             {/* Header Row */}
             <div className="flex items-start justify-between mb-3">
@@ -327,7 +321,7 @@ export default function GuestsPage() {
             {/* Action */}
             <div className="pt-3 border-t border-slate-100">
               <Link
-                href={`/admin/guests/${guest._id}`}
+                href={`/admin/guests/${encodeURIComponent(guest.email || guest._id)}`}
                 className="text-xs text-[#0A4A4A] hover:text-[#083a3a] font-alegreya font-medium"
               >
                 Λεπτομέρειες →

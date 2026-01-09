@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getBackendApiUrl } from '@/lib/backend-url'
+import { logger } from '@/lib/logger'
 
 const BACKEND_URL = getBackendApiUrl('/api/offers')
 
@@ -29,8 +30,7 @@ export async function GET(request: NextRequest) {
     try {
       data = JSON.parse(text)
     } catch (parseError) {
-      console.error('JSON parse error:', parseError)
-      console.error('Response text:', text)
+      logger.error('JSON parse error in offers route', parseError as Error, { responseText: text })
       return NextResponse.json(
         { error: 'Invalid JSON response from backend' },
         { status: 500 }
@@ -39,7 +39,7 @@ export async function GET(request: NextRequest) {
     
     return NextResponse.json(data, { status: response.status })
   } catch (error) {
-    console.error('Error fetching offers:', error)
+    logger.error('Error fetching offers', error as Error)
     return NextResponse.json(
       { error: 'Failed to fetch offers' },
       { status: 500 }

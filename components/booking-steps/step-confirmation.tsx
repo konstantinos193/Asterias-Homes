@@ -30,7 +30,7 @@ export default function StepConfirmation({ bookingData }: StepConfirmationProps)
 
   const getRoomName = (room: RoomData | undefined) => {
     if (!room) return t("bookingWizard.confirmation.roomNotFound") || "Room Not Found"
-    return t(room.nameKey) || room.id // Fallback to ID if translation missing
+    return t(room.nameKey) || room._id // Fallback to _id if translation missing (always a string)
   }
 
   const getRoomFeature = (featureKey: string) => {

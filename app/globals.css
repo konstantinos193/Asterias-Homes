@@ -1,6 +1,4 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
 :root {
   --font-cormorant: var(--font-cormorant);
@@ -9,7 +7,7 @@
 
 @layer base {
   body {
-    @apply bg-white text-slate-900 font-alegreya;
+    @apply bg-white text-slate-900 font-sans;
   }
   
   /* Mobile-first typography */

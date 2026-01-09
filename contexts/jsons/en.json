@@ -15,7 +15,11 @@
       "actions": "Actions",
       "createdAt": "Created At",
       "updatedAt": "Updated At",
-      "id": "ID"
+      "id": "ID",
+      "previous": "Previous",
+      "next": "Next",
+      "retry": "Retry",
+      "cancelling": "Cancelling..."
     },
     "nav": {
       "home": "Home",
@@ -24,6 +28,7 @@
         "bookings": "Bookings",
       "contact": "Contact",
       "book": "Book Now",
+      "myBookings": "My Bookings",
       "admin": "Admin"
     },
     "languageSelector": {
@@ -620,6 +625,57 @@
         "subtitle": "Our friendly team is here to help you plan your perfect stay. Contact us today!",
         "contactButton": "Contact Us",
         "callButton": "Call Us Now"
+      }
+    },
+    "myBookings": {
+      "title": "My Bookings",
+      "subtitle": "View and manage your apartment reservations",
+      "errorTitle": "Error loading bookings",
+      "errorDescription": "There was an error loading your bookings. Please try again later.",
+      "noBookingsTitle": "No Bookings Found",
+      "noBookingsDescription": "You don't have any bookings yet. Start by searching for available apartments.",
+      "totalBookings": "Total: {count} bookings",
+      "filterStatus": "Filter by status",
+      "bookingNumber": "Booking #{number}",
+      "unknownDate": "Date unknown",
+      "dates": "Dates",
+      "checkIn": "Check-in",
+      "checkOut": "Check-out",
+      "room": "Apartment",
+      "standardApartment": "Standard Apartment",
+      "guests": "Guests",
+      "total": "Total",
+      "guestInformation": "Guest Information",
+      "guestName": "Name",
+      "email": "Email",
+      "phone": "Phone",
+      "cancelBooking": "Cancel Booking",
+      "pageInfo": "Page {current} of {total}",
+      "cancelConfirmTitle": "Cancel Booking?",
+      "cancelConfirmDescription": "Are you sure you want to cancel this booking? This action cannot be undone. If you've already made a payment, a refund will be processed according to our cancellation policy.",
+      "confirmCancel": "Yes, Cancel Booking",
+      "cancelSuccess": "Booking cancelled successfully",
+      "cancelSuccessDescription": "Your booking has been cancelled.",
+      "cancelError": "Cancellation failed",
+      "cancelErrorDescription": "Failed to cancel booking. Please try again or contact support.",
+      "status": {
+        "all": "All Bookings",
+        "confirmed": "Confirmed",
+        "pending": "Pending",
+        "checked_in": "Checked In",
+        "checked_out": "Checked Out",
+        "cancelled": "Cancelled",
+        "unknown": "Unknown"
+      },
+      "paymentStatus": {
+        "pending": "Pending",
+        "paid": "Paid",
+        "failed": "Failed",
+        "refunded": "Refunded"
+      },
+      "paymentMethod": {
+        "card": "Card",
+        "cash": "Cash"
       },
       "roomsData": {
         "standard": {
@@ -813,6 +869,35 @@
         "bookingCreationFailed": "Booking creation failed. Please try again.",
         "unexpectedError": "An unexpected error occurred. Please try again."
       }
+    },
+    "contact": {
+      "heroTitle": "Contact Us",
+      "heroDescription": "Get in touch with Asterias Homes. We're here to help with any questions or booking inquiries.",
+      "contactInfo": "Contact Information",
+      "phone": "Phone",
+      "phone1": "+30 6972705881",
+      "phone2": "017663304809",
+      "email": "Email",
+      "address": "Address",
+      "addressDetails": "Koronisia, Arta, Greece",
+      "hours": "Opening Hours",
+      "receptionHours": "Reception: Mon - Sun | 10:00 - 21:00",
+      "checkInOut": "Check-in: 15:00 - 22:00 | Check-out: 08:00 - 11:00",
+      "sendMessage": "Send Us a Message",
+      "firstName": "First Name",
+      "firstNamePlaceholder": "Enter your first name",
+      "lastName": "Last Name",
+      "lastNamePlaceholder": "Enter your last name",
+      "emailPlaceholder": "Enter your email address",
+      "subject": "Subject",
+      "subjectPlaceholder": "Enter the subject",
+      "message": "Message",
+      "messagePlaceholder": "Enter your message here...",
+      "sendButton": "Send Message",
+      "findUs": "Find Us",
+      "mapDescription": "We're located in the heart of Koronisia. Use the map below to find us or contact us for directions.",
+      "mapPlaceholder": "Map will be displayed here",
+      "mapMarker": "Asterias Homes - Koronisia, Arta"
     },
     "contactPage": {
       "header": {
@@ -1186,5 +1271,195 @@
     },
     "loading": {
       "rooms": "Loading rooms from backend..."
+    },
+    "privacy": {
+      "title": "Privacy Policy",
+      "lastUpdated": "Last Updated: {date}",
+      "introduction": {
+        "title": "Introduction",
+        "content": "At Asterias Homes, we take your privacy seriously. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website and use our services. Please read this privacy policy carefully. If you do not agree with the terms of this privacy policy, please do not access the site."
+      },
+      "dataCollection": {
+        "title": "Information We Collect",
+        "content": "We collect information that you provide directly to us, including:",
+        "items": [
+          "Personal identification information (name, email address, phone number)",
+          "Booking information (check-in/check-out dates, number of guests)",
+          "Payment information (processed securely through Stripe)",
+          "Communication data when you contact us"
+        ]
+      },
+      "dataUsage": {
+        "title": "How We Use Your Information",
+        "content": "We use the information we collect to:",
+        "items": [
+          "Process and manage your bookings",
+          "Communicate with you about your reservation",
+          "Send you booking confirmations and updates",
+          "Improve our services and website",
+          "Comply with legal obligations"
+        ]
+      },
+      "dataSharing": {
+        "title": "Information Sharing and Disclosure",
+        "content": "We do not sell, trade, or rent your personal information. We may share your information only in the following circumstances:",
+        "items": [
+          "With payment processors (Stripe) to process payments",
+          "When required by law or legal process",
+          "To protect our rights and prevent fraud",
+          "With your explicit consent"
+        ]
+      },
+      "dataSecurity": {
+        "title": "Data Security",
+        "content": "We implement appropriate technical and organizational security measures to protect your personal information. However, no method of transmission over the internet is 100% secure."
+      },
+      "yourRights": {
+        "title": "Your Rights Under GDPR",
+        "content": "If you are a resident of the European Economic Area (EEA), you have certain data protection rights:",
+        "items": [
+          "The right to access your personal data",
+          "The right to rectification of inaccurate data",
+          "The right to erasure (\"right to be forgotten\")",
+          "The right to restrict processing",
+          "The right to data portability",
+          "The right to object to processing",
+          "The right to withdraw consent at any time"
+        ]
+      },
+      "cookies": {
+        "title": "Cookies and Tracking Technologies",
+        "content": "We use cookies and similar tracking technologies to track activity on our website and hold certain information. You can instruct your browser to refuse all cookies or to indicate when a cookie is being sent."
+      },
+      "retention": {
+        "title": "Data Retention",
+        "content": "We retain your personal information only for as long as necessary to fulfill the purposes outlined in this privacy policy, unless a longer retention period is required or permitted by law."
+      },
+      "children": {
+        "title": "Children's Privacy",
+        "content": "Our services are not directed to individuals under the age of 18. We do not knowingly collect personal information from children."
+      },
+      "changes": {
+        "title": "Changes to This Privacy Policy",
+        "content": "We may update our Privacy Policy from time to time. We will notify you of any changes by posting the new Privacy Policy on this page and updating the \"Last Updated\" date."
+      },
+      "contact": {
+        "title": "Contact Us",
+        "content": "If you have any questions about this Privacy Policy, please contact us:",
+        "email": "Email: asterias.apartmentskoronisia@gmail.com",
+        "phone": "Phone: +30 6972705881"
+      }
+    },
+    "terms": {
+      "title": "Terms of Service",
+      "lastUpdated": "Last Updated: {date}",
+      "introduction": {
+        "title": "Agreement to Terms",
+        "content": "By accessing and using the Asterias Homes website and booking services, you accept and agree to be bound by the terms and provision of this agreement. If you do not agree to abide by the above, please do not use this service."
+      },
+      "services": {
+        "title": "Description of Services",
+        "content": "Asterias Homes provides holiday apartment rental services in Koronisia, Arta, Greece. We offer 7 traditional apartments for short-term rental to guests seeking accommodation in the Amvrakikos Gulf area."
+      },
+      "bookings": {
+        "title": "Booking Terms",
+        "content": "When making a booking:",
+        "items": [
+          "All bookings are subject to availability",
+          "You must be at least 18 years old to make a booking",
+          "Booking confirmations will be sent via email",
+          "Prices are displayed in euros and include applicable taxes",
+          "Additional fees may apply for extra services"
+        ]
+      },
+      "payment": {
+        "title": "Payment Terms",
+        "content": "Payment terms:",
+        "items": [
+          "Payment can be made by credit card or cash on arrival",
+          "For credit card payments, we use secure Stripe payment processing",
+          "Full payment is required unless otherwise specified",
+          "All prices include applicable taxes (13%)",
+          "Currency exchange rates apply as per payment processor"
+        ]
+      },
+      "cancellation": {
+        "title": "Cancellation Policy",
+        "content": "Cancellation terms:",
+        "items": [
+          "Free cancellation up to 48 hours before check-in",
+          "Cancellations made less than 48 hours before check-in may be subject to charges",
+          "Refunds will be processed using the original payment method",
+          "Special offers may have different cancellation terms"
+        ]
+      },
+      "checkInOut": {
+        "title": "Check-in and Check-out",
+        "content": "Check-in and check-out procedures:",
+        "items": [
+          "Check-in time: 15:00 - 22:00",
+          "Check-out time: 08:00 - 11:00",
+          "Early check-in or late check-out may be available upon request (subject to availability)",
+          "Guests must provide valid identification upon check-in"
+        ]
+      },
+      "guestResponsibilities": {
+        "title": "Guest Responsibilities",
+        "content": "Guests agree to:",
+        "items": [
+          "Treat the property with care and respect",
+          "Follow house rules and respect other guests",
+          "Report any damages or issues immediately",
+          "Not exceed the maximum occupancy limit",
+          "Respect quiet hours and neighborhood regulations"
+        ]
+      },
+      "liability": {
+        "title": "Liability and Insurance",
+        "content": "Asterias Homes is not liable for:",
+        "items": [
+          "Loss or damage to personal belongings",
+          "Injuries sustained on the property",
+          "Travel arrangements or transportation issues",
+          "Weather-related disruptions"
+        ],
+        "recommendation": "We recommend guests obtain appropriate travel insurance."
+      },
+      "propertyRules": {
+        "title": "Property Rules",
+        "content": "To ensure a pleasant stay for all guests:",
+        "items": [
+          "Smoking is not permitted inside the apartments",
+          "Pets may be allowed upon prior arrangement",
+          "Parties or events require prior approval",
+          "Quiet hours must be observed (22:00 - 08:00)",
+          "Guests are responsible for maintaining cleanliness"
+        ]
+      },
+      "modifications": {
+        "title": "Modifications to Bookings",
+        "content": "Booking modifications:",
+        "items": [
+          "Changes to bookings are subject to availability",
+          "Modification requests should be made as early as possible",
+          "Price adjustments may apply for date or room changes",
+          "We will do our best to accommodate reasonable requests"
+        ]
+      },
+      "disputes": {
+        "title": "Disputes and Governing Law",
+        "content": "Any disputes arising from these terms or your use of our services shall be governed by and construed in accordance with Greek law. Any legal proceedings shall be subject to the exclusive jurisdiction of the courts of Arta, Greece."
+      },
+      "changes": {
+        "title": "Changes to Terms",
+        "content": "We reserve the right to modify these terms at any time. Changes will be effective immediately upon posting. Continued use of our services after changes constitutes acceptance of the modified terms."
+      },
+      "contact": {
+        "title": "Contact Information",
+        "content": "For questions about these Terms of Service:",
+        "email": "Email: asterias.apartmentskoronisia@gmail.com",
+        "phone": "Phone: +30 6972705881",
+        "address": "Address: Koronisia, Arta, Greece"
+      }
     }
   }
