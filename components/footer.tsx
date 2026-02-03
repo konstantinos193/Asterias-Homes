@@ -2,11 +2,21 @@
 
 import Link from "next/link"
 import Image from "next/image"
+import { usePathname } from "next/navigation"
 import { useLanguage } from "@/contexts/language-context"
 import { Facebook, Instagram, Mail, Phone, MapPin } from "lucide-react"
 
+const LANGUAGES = [
+  { code: "en" as const, label: "English" },
+  { code: "el" as const, label: "Ελληνικά" },
+  { code: "de" as const, label: "Deutsch" },
+]
+
 export default function Footer() {
   const { t, language } = useLanguage()
+  const pathname = usePathname()
+  // Build same-path URLs for each language so Googlebot can crawl /de, /el from any page
+  const pathWithoutLang = (pathname?.replace(/^\/(en|el|de)/, "") || "").replace(/^\//, "")
 
   const currentYear = new Date().getFullYear()
 
@@ -166,11 +176,24 @@ export default function Footer() {
 
         {/* Bottom Bar */}
         <div className="border-t border-slate-800 py-4 sm:py-6">
-          <div className="flex flex-col sm:flex-row items-center justify-between space-y-4 sm:space-y-0">
+          <div className="flex flex-col sm:flex-row items-center justify-between space-y-4 sm:space-y-0 gap-4">
             <p className="text-sm text-slate-400 text-center sm:text-left">
               © {currentYear} adinfinity. {t("footer.allRightsReserved")}
             </p>
-            <div className="flex space-x-6 text-sm text-slate-400">
+            <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm text-slate-400">
+              {/* Crawlable language links for SEO - helps Google discover /de, /el */}
+              <span className="sr-only">{t("footer.languages", "Languages")}: </span>
+              {LANGUAGES.map((lang) => (
+                <Link
+                  key={lang.code}
+                  href={`/${lang.code}${pathWithoutLang ? `/${pathWithoutLang}` : ""}`}
+                  className={`hover:text-white transition-colors ${language === lang.code ? "text-white font-medium" : ""}`}
+                  aria-current={language === lang.code ? "true" : undefined}
+                >
+                  {lang.code.toUpperCase()}
+                </Link>
+              ))}
+              <span className="text-slate-600">|</span>
               <Link
                 href={`/${language}/privacy`}
                 className="hover:text-white transition-colors"

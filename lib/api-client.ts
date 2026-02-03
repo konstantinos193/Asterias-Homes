@@ -29,6 +29,15 @@ class ApiClient {
   }
 
   /**
+   * Whether this endpoint should use the Next.js API proxy (same-origin) so the
+   * server can read the httpOnly auth cookie and add the Authorization header.
+   */
+  private useProxyForEndpoint(endpoint: string): boolean {
+    const path = endpoint.startsWith('/') ? endpoint : `/${endpoint}`
+    return path.startsWith('/api/admin') || path.startsWith('/api/auth')
+  }
+
+  /**
    * Build full URL from endpoint
    */
   private buildUrl(endpoint: string): string {
@@ -37,9 +46,16 @@ class ApiClient {
       return endpoint
     }
 
+    const cleanPath = endpoint.startsWith('/') ? endpoint : `/${endpoint}`
+
+    // Client-side: use Next.js API proxy for auth-required routes so the server
+    // can read the httpOnly authToken cookie and forward it to the backend
+    if (typeof window !== 'undefined' && this.useProxyForEndpoint(endpoint)) {
+      return cleanPath
+    }
+
     // Otherwise, construct from base URL
     const cleanBase = this.baseURL.replace(/\/$/, '')
-    const cleanPath = endpoint.startsWith('/') ? endpoint : `/${endpoint}`
     return `${cleanBase}${cleanPath}`
   }
 

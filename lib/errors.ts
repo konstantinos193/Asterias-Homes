@@ -31,6 +31,15 @@ export function parseErrorResponse(response: Response): Promise<ApiError> {
   return response
     .json()
     .then((data) => {
+      // Backend validation (e.g. express-validator) returns { errors: [{ msg, path }] }
+      const validationErrors = data?.errors
+      if (Array.isArray(validationErrors) && validationErrors.length > 0) {
+        const messages = validationErrors
+          .map((e: { msg?: string; message?: string }) => e?.msg ?? e?.message)
+          .filter(Boolean)
+        const message = messages.length > 0 ? messages.join('. ') : `HTTP error! status: ${response.status}`
+        return new ApiError(message, response.status, data)
+      }
       const message = data?.error || data?.message || `HTTP error! status: ${response.status}`
       return new ApiError(message, response.status, data)
     })

@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getBackendApiUrl } from '@/lib/backend-url'
 import { logger } from '@/lib/logger'
 
+export const dynamic = 'force-dynamic'
+
 const BACKEND_URL = getBackendApiUrl('/api/auth')
 
 export async function GET(
@@ -30,6 +32,7 @@ export async function GET(
     const response = await fetch(url, {
       method: 'GET',
       headers,
+      cache: 'no-store',
     })
     
     // Check if response has content before parsing JSON
@@ -82,6 +85,7 @@ export async function POST(
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(body),
+      cache: 'no-store',
     })
     
     // Check if response has content before parsing JSON
@@ -157,6 +161,7 @@ export async function PUT(
       method: 'PUT',
       headers,
       body: JSON.stringify(body),
+      cache: 'no-store',
     })
     
     // Check if response has content before parsing JSON

@@ -73,7 +73,13 @@ function AdminLayoutContent({
   children: React.ReactNode 
 }) {
   const { user } = useAuth()
-  
+  const [dropdownMounted, setDropdownMounted] = useState(false)
+
+  // Avoid Radix ID hydration mismatch: only render DropdownMenu after client mount
+  useEffect(() => {
+    setDropdownMounted(true)
+  }, [])
+
   // Close sidebar on route change for mobile
   useEffect(() => {
     if (isSidebarOpen) {
@@ -167,47 +173,56 @@ function AdminLayoutContent({
               <Button variant="ghost" size="icon" aria-label="Ειδοποιήσεις">
                 <Bell className="h-5 w-5 text-slate-600" />
               </Button>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="relative h-9 w-9 rounded-full">
-                    <Avatar className="h-9 w-9">
-                      <AvatarImage src="/placeholder.svg?height=36&width=36" alt="Avatar" />
-                      <AvatarFallback>AD</AvatarFallback>
-                    </Avatar>
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-56" align="end" forceMount>
-                  <DropdownMenuLabel className="font-normal">
-                    <div className="flex flex-col space-y-1">
-                      <p className="text-sm font-medium leading-none font-alegreya">{user?.name || 'Admin User'}</p>
-                      <p className="text-xs leading-none text-slate-500 font-alegreya">{user?.email || 'admin@example.com'}</p>
-                    </div>
-                  </DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem 
-                    className="font-alegreya"
-                    onClick={() => router.push('/admin/profile')}
-                  >
-                    <UsersIcon className="mr-2 h-4 w-4" />
-                    Προφίλ
-                  </DropdownMenuItem>
-                  <DropdownMenuItem 
-                    className="font-alegreya"
-                    onClick={() => router.push('/admin/settings')}
-                  >
-                    <SettingsIcon className="mr-2 h-4 w-4" />
-                    Ρυθμίσεις
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem
-                    className="font-alegreya"
-                    onClick={() => router.push('/admin/login')}
-                  >
-                    <LogOut className="mr-2 h-4 w-4" />
-                    Αποσύνδεση
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+              {dropdownMounted ? (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" className="relative h-9 w-9 rounded-full">
+                      <Avatar className="h-9 w-9">
+                        <AvatarImage src="/placeholder.svg?height=36&width=36" alt="Avatar" />
+                        <AvatarFallback>AD</AvatarFallback>
+                      </Avatar>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent className="w-56" align="end" forceMount>
+                    <DropdownMenuLabel className="font-normal">
+                      <div className="flex flex-col space-y-1">
+                        <p className="text-sm font-medium leading-none font-alegreya">{user?.name || 'Admin User'}</p>
+                        <p className="text-xs leading-none text-slate-500 font-alegreya">{user?.email || 'admin@example.com'}</p>
+                      </div>
+                    </DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem 
+                      className="font-alegreya"
+                      onClick={() => router.push('/admin/profile')}
+                    >
+                      <UsersIcon className="mr-2 h-4 w-4" />
+                      Προφίλ
+                    </DropdownMenuItem>
+                    <DropdownMenuItem 
+                      className="font-alegreya"
+                      onClick={() => router.push('/admin/settings')}
+                    >
+                      <SettingsIcon className="mr-2 h-4 w-4" />
+                      Ρυθμίσεις
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem
+                      className="font-alegreya"
+                      onClick={() => router.push('/admin/login')}
+                    >
+                      <LogOut className="mr-2 h-4 w-4" />
+                      Αποσύνδεση
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              ) : (
+                <Button variant="ghost" className="relative h-9 w-9 rounded-full" aria-label="Λογαριασμός">
+                  <Avatar className="h-9 w-9">
+                    <AvatarImage src="/placeholder.svg?height=36&width=36" alt="Avatar" />
+                    <AvatarFallback>AD</AvatarFallback>
+                  </Avatar>
+                </Button>
+              )}
             </div>
           </header>
 

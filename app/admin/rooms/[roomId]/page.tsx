@@ -187,8 +187,35 @@ export default function RoomEditPage() {
   const handleSave = async () => {
     if (!room) return
 
-    setSaving(true)
     setError("")
+
+    // Frontend validation (matches backend rules so user sees clear messages)
+    const nameTrim = String(room.name ?? "").trim()
+    if (nameTrim.length < 2) {
+      setError("Το όνομα δωματίου πρέπει να έχει τουλάχιστον 2 χαρακτήρες.")
+      return
+    }
+    const descTrim = String(room.description ?? "").trim()
+    if (descTrim.length < 10) {
+      setError("Η περιγραφή πρέπει να έχει τουλάχιστον 10 χαρακτήρες.")
+      return
+    }
+    const priceNum = Number(room.price)
+    if (Number.isNaN(priceNum) || priceNum < 0) {
+      setError("Η τιμή πρέπει να είναι έγκυρος αριθμός ≥ 0.")
+      return
+    }
+    const capacityNum = Number(room.capacity)
+    if (!Number.isInteger(capacityNum) || capacityNum < 1) {
+      setError("Η χωρητικότητα πρέπει να είναι ακέραιος αριθμός ≥ 1.")
+      return
+    }
+    if (!room.bedType?.trim()) {
+      setError("Παρακαλώ επιλέξτε τύπο κρεβατιού.")
+      return
+    }
+
+    setSaving(true)
 
     try {
       // First, upload any new images that haven't been uploaded yet

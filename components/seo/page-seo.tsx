@@ -122,7 +122,7 @@ export default function PageSEO({
       <link rel="alternate" hrefLang="en" href={`https://asteriashome.gr/en${url || ''}`} />
       <link rel="alternate" hrefLang="el" href={`https://asteriashome.gr/el${url || ''}`} />
       <link rel="alternate" hrefLang="de" href={`https://asteriashome.gr/de${url || ''}`} />
-      <link rel="alternate" hrefLang="x-default" href={`https://asteriashome.gr${url || ''}`} />
+      <link rel="alternate" hrefLang="x-default" href={`https://asteriashome.gr/en${url || ''}`} />
       
       {/* Structured Data */}
       {finalStructuredData.map((data, index) => (

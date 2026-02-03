@@ -15,7 +15,7 @@ export async function POST(request: Request) {
     
     // Initialize Stripe with your secret key - only when the route is called
     const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-      apiVersion: "2025-12-15.clover", // Use the latest API version
+      apiVersion: "2026-01-28.clover", // Use the latest API version
     })
 
     const { roomId, checkIn, checkOut, currency = "eur" } = await request.json()
