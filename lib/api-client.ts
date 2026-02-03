@@ -34,7 +34,7 @@ class ApiClient {
    */
   private useProxyForEndpoint(endpoint: string): boolean {
     const path = endpoint.startsWith('/') ? endpoint : `/${endpoint}`
-    return path.startsWith('/api/admin') || path.startsWith('/api/auth')
+    return path.startsWith('/api/admin') || path.startsWith('/api/auth') || path.startsWith('/api/contact')
   }
 
   /**
