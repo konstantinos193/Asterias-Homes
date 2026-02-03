@@ -34,8 +34,8 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
     keywords: string[]
   }> = {
     'el': {
-      title: "Αστεριας Κορωνησία - Asterias Homes | Διαμερίσματα & Ξενοδοχεία Άρτα | Κράτηση Online",
-      description: `${seasonalText} - Αστεριας Κορωνησία - Ανακάλυψε τα Asterias Homes στη Κορωνησία Άρτας, στον Αμβρακικό Κόλπο. 7 παραδοσιακά διαμερίσματα διακοπών με αυθεντική ελληνική φιλοξενία. ΔΙΑΜΟΝΗ ΚΟΡΩΝΗΣΙΑ - ΟΧΙ Κουφονήσια. Κράτηση online, άμεση επιβεβαίωση. Από €80/νύχτα.`,
+      title: "Αστεριας Κορωνησία - Asterias Apartments | Διαμερίσματα & Ξενοδοχεία Άρτα | Κράτηση Online",
+      description: `${seasonalText} - Αστεριας Κορωνησία (Asterias apartments, Asteria house) – διαμερίσματα διακοπών στη Κορωνησία Άρτας, Αμβρακικό Κόλπο. 7 παραδοσιακά διαμερίσματα, κορωνησια ξενοδοχεία/διαμονή. ΚΟΡΩΝΗΣΙΑ, ΆΡΤΑ – ΟΧΙ Κουφονήσια. Κράτηση online, άμεση επιβεβαίωση. Από €80/νύχτα.`,
       keywords: [
         // Successful query - works!
         "αστεριας κορωνησια",
@@ -68,8 +68,8 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
       ]
     },
     'en': {
-      title: "Holiday Apartments in Greece - Asterias Homes Koronisia, Arta | Book Online",
-      description: `${seasonalText} - Asterias Homes - Traditional Greek holiday apartments in Koronisia, Arta, Greece by the Amvrakikos Gulf. 7 well-maintained apartments with authentic Greek hospitality. Perfect for international travelers visiting Greece. KORONISIA, ARTA, GREECE - NOT Koufonisia. Online booking, instant confirmation. From €80/night.`,
+      title: "Asterias Apartments & Asteria House | Holiday Apartments Koronisia, Arta | Book Online",
+      description: `${seasonalText} - Asterias apartments (Asteria house) – traditional holiday apartments in Koronisia, Arta, Greece by the Amvrakikos Gulf. Asterias premium holiday apartments. 7 well-maintained apartments, authentic Greek hospitality. KORONISIA, ARTA – NOT Koufonisia. Online booking, instant confirmation. From €80/night.`,
       keywords: [
         // International appeal keywords
         "holiday apartments greece",

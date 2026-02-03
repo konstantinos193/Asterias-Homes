@@ -32,25 +32,25 @@ export default function PageSEO({
   canonical,
   structuredData = []
 }: PageSEOProps) {
-  const fullTitle = title ? `${title} | Asterias Homes` : 'Asterias Homes | Traditional Holiday Apartments in Koronisia, Arta'
-  const fullDescription = description || 'Traditional, classic apartments in Koronisia by the Amvrakikos Gulf. Quiet, nature and authentic hospitality.'
+  const fullTitle = title ? `${title} | Asterias Homes` : 'Asterias Apartments | Holiday Apartments Koronisia, Arta – Asterias Homes'
+  const fullDescription = description || 'Asterias apartments (Asteria house) – traditional holiday apartments in Koronisia, Arta by the Amvrakikos Gulf. Koronisia accommodation. Book online.'
   const fullUrl = url ? `https://asteriashome.gr${url}` : 'https://asteriashome.gr'
   const fullImage = image.startsWith('http') ? image : `https://asteriashome.gr${image}`
 
   const defaultKeywords = [
     'Asterias Homes',
-    'holiday apartments',
+    'asterias apartments',
+    'asteria house',
+    'asterias premium holiday apartments',
     'Koronisia',
+    'koronisia apartments',
     'Arta',
     'Greece',
     'Amvrakikos Gulf',
+    'holiday apartments Koronisia',
     'traditional accommodation',
     'apartment rentals',
-    'nature retreat',
-    'Greek islands',
-    'beachfront accommodation',
     'Greek vacation rentals',
-    'Amvrakikos accommodation',
     'Koronisia hotels',
     'Arta tourism',
     'Greek holiday homes'

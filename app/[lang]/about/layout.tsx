@@ -28,8 +28,8 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
       ]
     },
     'en': {
-      title: "About Us - Asterias Homes Koronisia | Our Story",
-      description: "Discover the story of Asterias Homes in Koronisia, Arta. Traditional holiday apartments by the Amvrakikos Gulf. Learn about us and our village. NOT Koufonisia - Koronisia, Arta.",
+      title: "About Asterias Apartments - Asterias Homes Koronisia, Arta | Our Story",
+      description: "Discover the story of Asterias apartments (Asteria house) in Koronisia, Arta. Traditional holiday apartments by the Amvrakikos Gulf. Learn about us and our village. Koronisia, Arta – NOT Koufonisia.",
       keywords: [
         "about asterias homes",
         "koronisia story",

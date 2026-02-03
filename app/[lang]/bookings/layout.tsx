@@ -28,8 +28,8 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
       ]
     },
     'en': {
-      title: "Book Online - Asterias Homes Koronisia | Holiday Apartments Arta",
-      description: "Book your holiday apartment in Koronisia, Arta. Asterias Homes - Online booking with instant confirmation. Check availability and book now! NOT Koufonisia - Koronisia, Arta.",
+      title: "Book Asterias Apartments - Online Booking Koronisia, Arta | Asterias Homes",
+      description: "Book Asterias apartments (Asteria house) in Koronisia, Arta. Online booking with instant confirmation. Check availability and book now. Koronisia, Arta – NOT Koufonisia.",
       keywords: [
         "book koronisia",
         "online booking koronisia arta",

@@ -6,8 +6,15 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
   const baseUrl = 'https://asteriashome.gr'
   
   return {
-    title: "Special Offers & Packages - Asterias Homes",
-    description: "Discover our special offers and vacation packages at Asterias Homes. From early bird discounts to seasonal packages, find the perfect deal for your Greek getaway.",
+    title: "Special Offers - Asterias Apartments Koronisia, Arta | Asterias Homes",
+    description: "Special offers and packages at Asterias apartments (Asteria house) in Koronisia, Arta. Early bird discounts, seasonal packages. Book your Greek getaway.",
+    keywords: [
+      "asterias apartments offers",
+      "koronisia special offers",
+      "asterias homes packages",
+      "koronisia arta deals",
+      "holiday packages koronisia"
+    ],
     alternates: {
       canonical: `${baseUrl}/${lang}/offers`,
       languages: {
@@ -18,8 +25,8 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
       },
     },
     openGraph: {
-      title: "Special Offers & Packages - Asterias Homes",
-      description: "Discover our special offers and vacation packages at Asterias Homes.",
+      title: "Special Offers - Asterias Apartments Koronisia, Arta | Asterias Homes",
+      description: "Special offers and packages at Asterias apartments in Koronisia, Arta. Early bird and seasonal deals.",
       url: `${baseUrl}/${lang}/offers`,
       type: "website",
     },

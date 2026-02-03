@@ -27,8 +27,8 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
       ]
     },
     'en': {
-      title: "Contact Us - Asterias Homes Koronisia | Get in Touch",
-      description: "Contact Asterias Homes in Koronisia, Arta. For bookings, inquiries or information. Phone, email and address. Send us a message! Koronisia, Arta - NOT Koufonisia.",
+      title: "Contact Asterias Apartments - Asterias Homes Koronisia, Arta | Get in Touch",
+      description: "Contact Asterias apartments (Asteria house) in Koronisia, Arta. Bookings, inquiries, phone, email. Send us a message. Koronisia, Arta – NOT Koufonisia.",
       keywords: [
         "contact asterias homes",
         "koronisia contact",

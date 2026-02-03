@@ -15,6 +15,10 @@ export function useAdminRooms(): UseQueryResult<unknown[], Error> {
     queryKey: ['admin', 'rooms'],
     queryFn: async () => {
       const data = await api.admin.getAllRooms()
+      // API returns { rooms: [], pagination: {} }
+      if (data && typeof data === 'object' && 'rooms' in data && Array.isArray((data as { rooms: unknown[] }).rooms)) {
+        return (data as { rooms: unknown[] }).rooms
+      }
       return Array.isArray(data) ? data : []
     },
     staleTime: 5 * 60 * 1000, // 5 minutes
