@@ -117,3 +117,7 @@ export const useLanguage = () => {
   }
   return context
 }
+
+export const getDictionary = async (lang: LanguageCode) => {
+  return translationsData[lang]
+}

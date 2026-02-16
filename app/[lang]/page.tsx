@@ -1,5 +1,6 @@
 import HomePageClient from "@/app/HomePageClient"
 import { Metadata } from "next"
+import { generateOrganizationSchema, generateHotelSchema, generatePlaceSchema, generateLocalBusinessSchema } from "@/components/seo/structured-data"
 
 export async function generateMetadata({ params }: { params: Promise<{ lang: string }> }): Promise<Metadata> {
   const { lang } = await params
@@ -34,7 +35,7 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
     keywords: string[]
   }> = {
     'el': {
-      title: "Αστεριας Κορωνησία - Asterias Apartments | Διαμερίσματα & Ξενοδοχεία Άρτα | Κράτηση Online",
+      title: "Αστεριας Κορωνησία | Διαμερίσματα Διακοπών & Ξενοδοχεία Άρτα | Κράτηση Online",
       description: `${seasonalText} - Αστεριας Κορωνησία (Asterias apartments, Asteria house) – διαμερίσματα διακοπών στη Κορωνησία Άρτας, Αμβρακικό Κόλπο. 7 παραδοσιακά διαμερίσματα, κορωνησια ξενοδοχεία/διαμονή. ΚΟΡΩΝΗΣΙΑ, ΆΡΤΑ – ΟΧΙ Κουφονήσια. Κράτηση online, άμεση επιβεβαίωση. Από €80/νύχτα.`,
       keywords: [
         // Successful query - works!
@@ -68,7 +69,7 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
       ]
     },
     'en': {
-      title: "Asterias Apartments & Asteria House | Holiday Apartments Koronisia, Arta | Book Online",
+      title: "Asterias Apartments Koronisia | Holiday Apartments Arta, Greece | Book Online",
       description: `${seasonalText} - Asterias apartments (Asteria house) – traditional holiday apartments in Koronisia, Arta, Greece by the Amvrakikos Gulf. Asterias premium holiday apartments. 7 well-maintained apartments, authentic Greek hospitality. KORONISIA, ARTA – NOT Koufonisia. Online booking, instant confirmation. From €80/night.`,
       keywords: [
         // International appeal keywords
@@ -105,7 +106,7 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
       ]
     },
     'de': {
-      title: "Asterias Homes Koronisia - Ferienwohnungen & Hotels in Arta, Griechenland | Online Buchen",
+      title: "Asterias Homes Koronisia | Ferienwohnungen Arta, Griechenland | Online Buchen",
       description: `${isSummer ? 'Sommerferien' : isWinter ? 'Winterflucht' : isAutumn ? 'Herbsturlaub' : 'Frühlingsausflug'} - Asterias Homes Koronisia Arta - Entdecken Sie 7 traditionelle Ferienwohnungen am Ambrakischen Golf. Authentische griechische Gastfreundschaft. KORONISIA, ARTA - NICHT Koufonisia. Online-Buchung mit sofortiger Bestätigung.`,
       keywords: [
         "koronisia apartements",

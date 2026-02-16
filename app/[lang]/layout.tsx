@@ -3,12 +3,14 @@ import Header from "@/components/header";
 import Footer from "@/components/footer";
 import { LanguageProvider, type LanguageCode } from "@/contexts/language-context";
 import PerformanceOptimizer from "@/components/seo/performance-optimizer";
+import SchemaInjection from "@/components/seo/schema-injection";
 
 export default async function LangLayout({ children, params }: { children: React.ReactNode, params: Promise<{ lang: string }> }) {
   const { lang } = await params;
   
   return (
     <LanguageProvider initialLanguage={lang as LanguageCode}>
+      <SchemaInjection lang={lang} />
       <PerformanceOptimizer
         preconnectDomains={["https://asteriashome.gr", "https://www.asteriashome.gr"]}
         dnsPrefetchDomains={["https://asteriashome.gr", "https://www.asteriashome.gr"]}

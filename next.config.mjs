@@ -32,6 +32,141 @@ const nextConfig = {
     // Enable Turbopack filesystem caching for faster development
     turbopackFileSystemCacheForDev: true,
   },
+  // Add redirects for SEO and URL consistency
+  async redirects() {
+    return [
+      // Handle old URLs and common variations
+      {
+        source: '/index.html',
+        destination: '/en',
+        permanent: true,
+      },
+      {
+        source: '/home',
+        destination: '/en',
+        permanent: true,
+      },
+      // Handle language redirects without trailing slashes
+      {
+        source: '/el/',
+        destination: '/el',
+        permanent: true,
+      },
+      {
+        source: '/en/',
+        destination: '/en',
+        permanent: true,
+      },
+      {
+        source: '/de/',
+        destination: '/de',
+        permanent: true,
+      },
+    ]
+  },
+  // Add headers for security and SEO
+  async headers() {
+    return [
+      {
+        source: '/(.*)',
+        headers: [
+          {
+            key: 'X-Frame-Options',
+            value: 'DENY',
+          },
+          {
+            key: 'X-Content-Type-Options',
+            value: 'nosniff',
+          },
+          {
+            key: 'Referrer-Policy',
+            value: 'strict-origin-when-cross-origin',
+          },
+        ],
+      },
+      {
+        source: '/api/(.*)',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'no-store, must-revalidate',
+          },
+        ],
+      },
+      {
+        source: '/(.*).png',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable',
+          },
+        ],
+      },
+      {
+        source: '/(.*).jpg',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable',
+          },
+        ],
+      },
+      {
+        source: '/(.*).jpeg',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable',
+          },
+        ],
+      },
+      {
+        source: '/(.*).gif',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable',
+          },
+        ],
+      },
+      {
+        source: '/(.*).ico',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable',
+          },
+        ],
+      },
+      {
+        source: '/(.*).svg',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable',
+          },
+        ],
+      },
+      {
+        source: '/(.*).webp',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable',
+          },
+        ],
+      },
+      {
+        source: '/(.*).avif',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable',
+          },
+        ],
+      },
+    ]
+  },
 }
 
 // Wrap Next.js config with Sentry

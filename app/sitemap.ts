@@ -4,11 +4,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = 'https://asteriashome.gr'
   const currentDate = new Date()
 
-  // Only include pages that actually exist - all pages are under [lang] route
-  // Root page redirects to language-specific pages
+  // Only include pages that actually exist
   const languages = ['en', 'el', 'de']
   
-  // Main language-specific pages
+  // Main language-specific pages that exist
   const languagePages = languages.flatMap(lang => [
     {
       url: `${baseUrl}/${lang}`,
@@ -52,17 +51,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: 'daily' as const,
       priority: 0.9,
     },
-    {
-      url: `${baseUrl}/${lang}/success`,
-      lastModified: currentDate,
-      changeFrequency: 'monthly' as const,
-      priority: 0.3,
-    },
   ])
 
-  // Room detail pages - only include language-specific routes
-  // Note: Room IDs will need to be fetched dynamically in production
-  // For now, using placeholder structure
+  // Room detail pages - only include if they exist
+  // For now, using placeholder structure based on rooms.ts data
   const languageRoomPages = languages.flatMap(lang =>
     Array.from({ length: 7 }, (_, i) => ({
       url: `${baseUrl}/${lang}/rooms/${i + 1}`,
@@ -72,10 +64,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
     }))
   )
 
-  // Offer detail pages - only include language-specific routes
-  const offerSlugs = [
+  // Only include offer pages that exist
+  const existingOfferSlugs = [
     'autumn-retreat',
-    'early-bird',
+    'early-bird', 
     'family-fun',
     'honeymoon-package',
     'last-minute',
@@ -86,7 +78,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   ]
   
   const languageOfferPages = languages.flatMap(lang =>
-    offerSlugs.map(offerSlug => ({
+    existingOfferSlugs.map(offerSlug => ({
       url: `${baseUrl}/${lang}/offers/${offerSlug}`,
       lastModified: currentDate,
       changeFrequency: 'weekly' as const,
@@ -95,7 +87,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   )
 
   return [
-    // Root page (will redirect to /en)
+    // Root page (redirects to /en)
     {
       url: baseUrl,
       lastModified: currentDate,

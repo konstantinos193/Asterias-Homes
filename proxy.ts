@@ -32,11 +32,31 @@ export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl
   const url = request.nextUrl.clone()
   const token = request.cookies.get('authToken')?.value
+  const hostname = request.headers.get('host') || ''
+  const searchParams = url.searchParams.toString()
 
   // Force HTTPS redirect (if not already HTTPS) - always redirect HTTP to HTTPS
   if (url.protocol === 'http:' && !url.hostname.includes('localhost')) {
     url.protocol = 'https:'
     return NextResponse.redirect(url, 301) // Permanent redirect
+  }
+
+  // Handle www to non-www redirect
+  if (hostname.startsWith('www.')) {
+    const nonWwwHostname = hostname.replace('www.', '')
+    const newUrl = new URL(url.href)
+    newUrl.hostname = nonWwwHostname
+    return NextResponse.redirect(newUrl, 301)
+  }
+
+  // Handle trailing slashes (remove them except for root)
+  if (pathname !== '/' && pathname.endsWith('/')) {
+    const newPath = pathname.slice(0, -1)
+    const newUrl = new URL(`https://${hostname}${newPath}`)
+    if (searchParams) {
+      newUrl.search = searchParams
+    }
+    return NextResponse.redirect(newUrl, 301)
   }
 
   // Fix broken URLs with encoded characters - redirect %26 (&) to proper path
@@ -224,7 +244,25 @@ export function proxy(request: NextRequest) {
     return NextResponse.redirect(new URL('/admin', request.url), 307)
   }
 
-  return NextResponse.next()
+  // Add security headers to response
+  const response = NextResponse.next()
+  
+  // Security headers
+  response.headers.set('X-Frame-Options', 'DENY')
+  response.headers.set('X-Content-Type-Options', 'nosniff')
+  response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin')
+  response.headers.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=()')
+  
+  // HSTS for HTTPS (only on production)
+  if (!url.hostname.includes('localhost')) {
+    response.headers.set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload')
+  }
+
+  // Set canonical URL in headers for debugging
+  const canonicalUrl = `https://${hostname}${pathname}`
+  response.headers.set('X-Canonical-URL', canonicalUrl)
+
+  return response
 }
 
 export const config = {

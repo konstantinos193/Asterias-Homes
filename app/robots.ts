@@ -16,6 +16,7 @@ export default function robots(): MetadataRoute.Robots {
           '/*.json$',
           '/site.webmanifest',
           '/manifest.json',
+          '/success',
         ],
       },
       {
@@ -28,10 +29,25 @@ export default function robots(): MetadataRoute.Robots {
           '/private/',
           '/site.webmanifest',
           '/manifest.json',
+          '/success',
         ],
+        crawlDelay: 1,
+      },
+      {
+        userAgent: 'Bingbot',
+        allow: '/',
+        disallow: [
+          '/admin/',
+          '/api/',
+          '/_next/',
+          '/private/',
+          '/success',
+        ],
+        crawlDelay: 1,
       },
     ],
     sitemap: `${baseUrl}/sitemap.xml`,
+    host: baseUrl,
   }
 }
 
