@@ -1,12 +1,13 @@
 "use client"
 
 import Image from "next/image"
-import { CheckCircle, CalendarDays, Users, BedDouble, CreditCard, Landmark } from "lucide-react"
+import { CheckCircle, CalendarDays, Users, BedDouble, CreditCard, Landmark, Download, FileText } from "lucide-react"
 import type { BookingData } from "@/types/booking"
 import { allRoomsData, type RoomData } from "@/data/rooms" // Corrected import
 import { useLanguage } from "@/contexts/language-context"
 import { format } from "date-fns"
 import { el, de } from "date-fns/locale"
+import { usePdfGenerator } from "@/hooks/use-pdf"
 
 interface StepConfirmationProps {
   bookingData: BookingData
@@ -14,6 +15,7 @@ interface StepConfirmationProps {
 
 export default function StepConfirmation({ bookingData }: StepConfirmationProps) {
   const { language, t } = useLanguage()
+  const { generateBookingConfirmation, isGenerating, error } = usePdfGenerator()
 
   const selectedRoom: RoomData | undefined = allRoomsData.find((room) => room._id === bookingData.roomId)
 
@@ -148,6 +150,55 @@ export default function StepConfirmation({ bookingData }: StepConfirmationProps)
             <p className="text-slate-700 font-medium font-alegreya">
               #{bookingData.bookingResult.booking.bookingNumber}
             </p>
+            
+            {/* PDF Download Button */}
+            <div className="mt-4">
+              <button
+                onClick={() => generateBookingConfirmation(bookingData.bookingResult.booking._id)}
+                disabled={isGenerating}
+                className="flex items-center gap-2 px-4 py-2 bg-[#0A4A4A] text-white rounded-lg hover:bg-[#0A5A5A] transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-alegreya"
+              >
+                {isGenerating ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    {t("bookingWizard.confirmation.generatingPdf") || "Generating PDF..."}
+                  </>
+                ) : (
+                  <>
+                    <FileText className="w-4 h-4" />
+                    <Download className="w-4 h-4" />
+                    {t("bookingWizard.confirmation.downloadPdf") || "Download PDF Confirmation"}
+                  </>
+                )}
+              </button>
+              {error && (
+                <p className="text-red-500 text-sm mt-2 font-alegreya">
+                  {t("bookingWizard.confirmation.pdfError") || "Failed to generate PDF"}
+                </p>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Fallback PDF button for demo/testing purposes */}
+        {!bookingData.bookingResult?.booking?.bookingNumber && (
+          <div className="border-t border-slate-200 pt-4">
+            <div className="mt-4">
+              <button
+                onClick={() => {
+                  // For demo purposes, create a mock PDF using room data
+                  const mockBookingId = bookingData.roomId;
+                  console.log('Demo PDF generation for room:', mockBookingId);
+                  // Show a message for now since we need a real booking ID
+                  alert(t("bookingWizard.confirmation.completeBookingFirst") || "Please complete your booking first to download the confirmation PDF.");
+                }}
+                className="flex items-center gap-2 px-4 py-2 bg-[#0A4A4A] text-white rounded-lg hover:bg-[#0A5A5A] transition-colors font-alegreya"
+              >
+                <FileText className="w-4 h-4" />
+                <Download className="w-4 h-4" />
+                {t("bookingWizard.confirmation.downloadPdf") || "Download PDF Confirmation"}
+              </button>
+            </div>
           </div>
         )}
 

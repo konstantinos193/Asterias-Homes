@@ -32,6 +32,16 @@ const nextConfig = {
     // Enable Turbopack filesystem caching for faster development
     turbopackFileSystemCacheForDev: true,
   },
+  // Add rewrites to proxy API requests to backend (auth routes will be handled by Next.js API routes)
+  async rewrites() {
+    return [
+      // Proxy all API requests to backend (Next.js API routes will naturally take precedence)
+      {
+        source: '/api/:path*',
+        destination: `${process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000'}/api/:path*`,
+      },
+    ]
+  },
   // Add redirects for SEO and URL consistency
   async redirects() {
     return [

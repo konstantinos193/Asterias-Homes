@@ -1,0 +1,14 @@
+User-agent: *
+Allow: /
+
+# Block admin and API routes
+Disallow: /api/
+Disallow: /admin/
+Disallow: /_next/
+Disallow: /static/
+
+# Sitemap location
+Sitemap: https://asteriashome.gr/sitemap.xml
+
+# Crawl delay (optional, adjust as needed)
+Crawl-delay: 1

@@ -34,6 +34,7 @@ import { useState, useEffect } from "react"
 import { cn } from "@/lib/utils"
 import { useRouter } from "next/navigation"
 import { useAuth, AuthProvider } from "@/hooks/use-auth"
+import AuthGuard from "./AuthGuard"
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
@@ -47,14 +48,16 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   return (
     <AuthProvider>
-      <AdminLayoutContent
-        pathname={pathname}
-        isSidebarOpen={isSidebarOpen}
-        setIsSidebarOpen={setIsSidebarOpen}
-        router={router}
-      >
-        {children}
-      </AdminLayoutContent>
+      <AuthGuard>
+        <AdminLayoutContent
+          pathname={pathname}
+          isSidebarOpen={isSidebarOpen}
+          setIsSidebarOpen={setIsSidebarOpen}
+          router={router}
+        >
+          {children}
+        </AdminLayoutContent>
+      </AuthGuard>
     </AuthProvider>
   )
 }
@@ -72,7 +75,7 @@ function AdminLayoutContent({
   router: any
   children: React.ReactNode 
 }) {
-  const { user } = useAuth()
+  const { user, logout } = useAuth()
   const [dropdownMounted, setDropdownMounted] = useState(false)
 
   // Avoid Radix ID hydration mismatch: only render DropdownMenu after client mount
@@ -112,7 +115,12 @@ function AdminLayoutContent({
         <div className="flex flex-col h-full">
           <div className="h-16 flex items-center px-6 border-b border-slate-200">
             <Link href="/admin" className="flex items-center gap-2">
-              <Image src="/admin-logo.png" alt="Logo" width={32} height={32} />
+              <Image 
+                src="/admin-logo.png" 
+                alt="Logo" 
+                width={32} 
+                height={32}
+              />
               <span className="font-cormorant text-xl font-semibold text-[#0A4A4A]">Πίνακας Διαχείρισης</span>
             </Link>
           </div>
@@ -143,7 +151,10 @@ function AdminLayoutContent({
               Προβολή Ιστοσελίδας
             </Link>
             <button
-              onClick={() => router.push('/admin/login')}
+              onClick={async () => {
+                await logout()
+                router.push('/admin/login')
+              }}
               className="w-full flex items-center px-3 py-2.5 rounded-md text-sm font-alegreya text-slate-700 hover:bg-[#c9c9bf] hover:text-slate-900 transition-colors"
             >
               <LogOut className="h-5 w-5 mr-3" />
@@ -208,7 +219,10 @@ function AdminLayoutContent({
                     <DropdownMenuSeparator />
                     <DropdownMenuItem
                       className="font-alegreya"
-                      onClick={() => router.push('/admin/login')}
+                      onClick={async () => {
+                        await logout()
+                        router.push('/admin/login')
+                      }}
                     >
                       <LogOut className="mr-2 h-4 w-4" />
                       Αποσύνδεση

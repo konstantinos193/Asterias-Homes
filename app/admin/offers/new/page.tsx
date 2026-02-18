@@ -62,6 +62,26 @@ export default function NewOfferPage() {
     }))
   }
 
+  // Validate dates before submission
+  const validateDates = () => {
+    if (!formData.startDate || !formData.endDate) return true
+    
+    const start = new Date(formData.startDate)
+    const end = new Date(formData.endDate)
+    
+    // Check if end date is before start date
+    if (end <= start) {
+      toast({
+        title: "Σφάλμα",
+        description: "Η ημερομηνία λήξης πρέπει να είναι μετά την ημερομηνία έναρξης",
+        variant: "destructive",
+      })
+      return false
+    }
+    
+    return true
+  }
+
   const handleRoomToggle = (roomId: string) => {
     setFormData(prev => ({
       ...prev,
@@ -74,6 +94,12 @@ export default function NewOfferPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsSubmitting(true)
+
+    // Validate dates first
+    if (!validateDates()) {
+      setIsSubmitting(false)
+      return
+    }
 
     if (formData.selectedRooms.length === 0) {
       toast({

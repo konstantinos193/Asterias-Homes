@@ -27,6 +27,17 @@ export default function RoomSelection({ onRoomSelect, guestCount, checkIn, check
   const [showImageModal, setShowImageModal] = useState(false)
   const [selectedImage, setSelectedImage] = useState<string>('')
   
+  // Debug: Log the actual rooms data
+  console.log('🔥 RoomSelection - rooms data:', rooms)
+  console.log('🔥 RoomSelection - first room:', rooms[0])
+  console.log('🔥 RoomSelection - room name/description:', {
+    name: rooms[0]?.name,
+    nameKey: rooms[0]?.nameKey,
+    description: rooms[0]?.description,
+    descriptionKey: rooms[0]?.descriptionKey,
+    price: rooms[0]?.price
+  })
+  
   // Calculate nights between check-in and check-out
   const calculateNights = () => {
     if (!checkIn || !checkOut) return 1
@@ -37,8 +48,45 @@ export default function RoomSelection({ onRoomSelect, guestCount, checkIn, check
   
   const nights = calculateNights()
   
-  // Single room type: Standard Apartment
-  const roomType = {
+  // Find the correct room - look for any room with actual data (not generic placeholder data)
+  const correctRoom = rooms.find(room => 
+    room.name && room.name.trim() !== '' && 
+    room.name !== 'Room 1' && 
+    room.description && room.description.trim() !== '' &&
+    room.description !== 'Description for room 1' &&
+    room.price && room.price > 0 // Also check for actual price
+  ) || rooms[0] // fallback to first room if no correct room found
+  
+  // Debug: Log the correct room data
+  console.log('🔥 RoomSelection - correctRoom:', correctRoom)
+  console.log('🔥 RoomSelection - correctRoom data:', {
+    name: correctRoom?.name,
+    nameKey: correctRoom?.nameKey,
+    description: correctRoom?.description,
+    descriptionKey: correctRoom?.descriptionKey,
+    price: correctRoom?.price
+  })
+  
+  // Use the correct room from the database, or fallback to hardcoded data if no rooms available
+  const roomType = correctRoom ? {
+    name: correctRoom.name && correctRoom.name.trim() !== '' ? correctRoom.name : (correctRoom.nameKey ? t(correctRoom.nameKey) : t('roomSelection.standardApartment')),
+    description: correctRoom.description && correctRoom.description.trim() !== '' ? correctRoom.description : (correctRoom.descriptionKey ? t(correctRoom.descriptionKey) : t('roomSelection.description')),
+    pricePerRoom: correctRoom.price || 85,
+    capacity: correctRoom.capacity || 4,
+    totalRooms: correctRoom.totalRooms || 7,
+    features: correctRoom.features || [
+      t('roomSelection.feature1'),
+      t('roomSelection.feature2'),
+      t('roomSelection.feature3')
+    ],
+    amenities: {
+      wifi: correctRoom.amenities?.wifi ?? true,
+      ac: correctRoom.amenities?.ac ?? true,
+      tv: correctRoom.amenities?.tv ?? true,
+      safe: correctRoom.amenities?.safe ?? true
+    }
+  } : {
+    // Fallback to hardcoded data if no rooms available
     name: t('roomSelection.standardApartment'),
     description: t('roomSelection.description'),
     pricePerRoom: 85, // Base price per room per night
@@ -81,7 +129,15 @@ export default function RoomSelection({ onRoomSelect, guestCount, checkIn, check
       price: totalPrice.toString(),
       guests: guestCount.toString(),
       checkIn: checkIn ? checkIn.toISOString().split('T')[0] : '',
-      checkOut: checkOut ? checkOut.toISOString().split('T')[0] : ''
+      checkOut: checkOut ? checkOut.toISOString().split('T')[0] : '',
+      // Pass actual room data with fallbacks
+      roomName: roomType.name || 'Standard Apartment',
+      roomDescription: roomType.description || 'Room description',
+      roomType: 'Standard Apartment',
+      pricePerRoom: (roomType.pricePerRoom || 85).toString(),
+      roomId: correctRoom?.id || correctRoom?._id || '',
+      // Pass room images with fallback
+      roomImages: JSON.stringify(correctRoom?.images || [])
     });
     
     // Get current language from URL or default to 'en'

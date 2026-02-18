@@ -926,7 +926,11 @@
         "contactUs": "kontaktieren Sie uns",
         "nextSteps": "Nächste Schritte",
         "emailSent": "Eine Bestätigungs-E-Mail wurde an {email} gesendet",
-        "contactInfo": "Bei Fragen kontaktieren Sie uns bitte"
+        "contactInfo": "Bei Fragen kontaktieren Sie uns bitte",
+        "downloadPdf": "PDF-Bestätigung herunterladen",
+        "generatingPdf": "PDF wird erstellt...",
+        "pdfError": "PDF-Erstellung fehlgeschlagen",
+        "completeBookingFirst": "Bitte schließen Sie Ihre Buchung zuerst ab, um die PDF-Bestätigung herunterzuladen."
       },
       "errors": {
         "stripeNotLoaded": "Das Zahlungssystem wird geladen. Bitte warten Sie einen Moment.",

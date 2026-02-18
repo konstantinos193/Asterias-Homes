@@ -1,12 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getBackendApiUrl } from '@/lib/backend-url'
 
-export async function GET(request: NextRequest) {
+export async function GET(
+  request: NextRequest,
+  { params }: { params: Promise<{ roomId: string }> }
+) {
   try {
-    console.log('🔥 Rooms API route called')
+    const resolvedParams = await params
+    const roomId = resolvedParams.roomId
     const BACKEND_URL = getBackendApiUrl('/api/rooms')
-    const url = `${BACKEND_URL}`
-    console.log('🔥 Fetching from backend:', url)
+    const url = `${BACKEND_URL}/${roomId}`
     
     const response = await fetch(url, {
       method: 'GET',
@@ -15,19 +18,16 @@ export async function GET(request: NextRequest) {
       },
     })
     
-    console.log('🔥 Backend response status:', response.status)
-    
     if (!response.ok) {
       throw new Error(`Backend request failed: ${response.status}`)
     }
     
     const data = await response.json()
-    console.log('🔥 Backend response data:', data)
     return NextResponse.json(data, { status: response.status })
   } catch (error) {
-    console.error('❌ Rooms API error:', error)
+    console.error('Room API error:', error)
     return NextResponse.json(
-      { error: 'Failed to fetch rooms' },
+      { error: 'Failed to fetch room' },
       { status: 500 }
     )
   }

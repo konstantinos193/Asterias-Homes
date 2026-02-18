@@ -41,7 +41,7 @@ export default function SuccessPageClient({ params }: { params: Promise<{ lang: 
       }
 
       const response = await fetch(
-        `https://asterias-backend.onrender.com/api/bookings/${bookingId}`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL || 'https://asterias-backend.onrender.com'}/api/bookings/${bookingId}`,
         { headers }
       )
       

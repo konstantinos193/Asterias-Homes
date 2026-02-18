@@ -30,8 +30,8 @@ export default function RoomCard({
 }: RoomCardProps) {
   const { t, language } = useLanguage() // Get t function and language
 
-  const displayName = (nameKey ? t(nameKey) : name) || "";
-  const displayDescription = descriptionKey ? t(descriptionKey) : description;
+  const displayName = (name && name.trim() !== "" ? name : nameKey ? t(nameKey) : "") || "";
+  const displayDescription = (description && description.trim() !== "" ? description : descriptionKey ? t(descriptionKey) : "");
   const displayFeatures = featureKeys ? featureKeys.map(key => t(key)) : (Array.isArray(features) ? features : []);
 
   // Ensure we have a valid room ID

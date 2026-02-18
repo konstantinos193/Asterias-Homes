@@ -37,5 +37,5 @@ export interface RoomData {
   updatedAt: string
 }
 
-// Export empty array - data will be fetched from backend
+// NO PLACEHOLDER DATA - only use backend data
 export const allRoomsData: RoomData[] = []

@@ -150,38 +150,38 @@ export default function AdminReportsPage() {
     // Booking Statistics Summary
     const summaryData = [{
       'Μετρική': 'Σύνολο Κρατήσεων',
-      'Αξία': analyticsData.bookingStatistics.totalBookings
+      'Αξία': analyticsData?.bookingStatistics?.totalBookings || 0
     }, {
       'Μετρική': 'Επιβεβαιωμένες Κρατήσεις',
-      'Αξία': analyticsData.bookingStatistics.confirmedBookings
+      'Αξία': analyticsData?.bookingStatistics?.confirmedBookings || 0
     }, {
       'Μετρική': 'Ακυρωμένες Κρατήσεις',
-      'Αξία': analyticsData.bookingStatistics.cancelledBookings
+      'Αξία': analyticsData?.bookingStatistics?.cancelledBookings || 0
     }, {
       'Μετρική': 'Ποσοστό Ακυρώσεων',
-      'Αξία': `${analyticsData.cancellationRate}%`
+      'Αξία': analyticsData?.cancellationRate ? `${analyticsData.cancellationRate}%` : '0%'
     }, {
       'Μετρική': 'Συνολικά Έσοδα',
-      'Αξία': formatCurrency(analyticsData.bookingStatistics.totalRevenue)
+      'Αξία': formatCurrency(analyticsData?.bookingStatistics?.totalRevenue || 0)
     }, {
       'Μετρική': 'Μέση Αξία Κράτησης',
-      'Αξία': formatCurrency(analyticsData.bookingStatistics.averageBookingValue)
+      'Αξία': formatCurrency(analyticsData?.bookingStatistics?.averageBookingValue || 0)
     }, {
       'Μετρική': 'Μέσος Ημερήσιος Τιμή (ADR)',
-      'Αξία': formatCurrency(analyticsData.averageDailyRate)
+      'Αξία': formatCurrency(analyticsData?.averageDailyRate || 0)
     }, {
       'Μετρική': 'Ποσοστό Πληρότητας',
       'Αξία': `${calculateOccupancyRate()}%`
     }, {
       'Μετρική': 'Συνολικοί Επισκέπτες',
-      'Αξία': analyticsData.bookingStatistics.totalGuests
+      'Αξία': analyticsData?.bookingStatistics?.totalGuests || 0
     }, {
       'Μετρική': 'Μέσος Χρόνος Προκράτησης (μέρες)',
-      'Αξία': Math.round(analyticsData.leadTimeAnalysis.averageLeadTime)
+      'Αξία': Math.round(analyticsData?.leadTimeAnalysis?.averageLeadTime || 0)
     }]
 
     // Room Performance
-    const roomPerformanceData = analyticsData.roomPerformance.map(room => ({
+    const roomPerformanceData = analyticsData?.roomPerformance?.map(room => ({
       'Δωμάτιο': room._id,
       'Κρατήσεις': room.bookings,
       'Έσοδα': formatCurrency(room.revenue),
@@ -192,17 +192,17 @@ export default function AdminReportsPage() {
     // Guest Demographics
     const demographicsData = [{
       'Τύπος Κράτησης': 'Μόνος/η',
-      'Αριθμός': analyticsData.guestDemographics.soloBookings
+      'Αριθμός': analyticsData?.guestDemographics?.soloBookings || 0
     }, {
       'Τύπος Κράτησης': 'Ζευγάρι',
-      'Αριθμός': analyticsData.guestDemographics.coupleBookings
+      'Αριθμός': analyticsData?.guestDemographics?.coupleBookings || 0
     }, {
       'Τύπος Κράτησης': 'Οικογένεια',
-      'Αριθμός': analyticsData.guestDemographics.familyBookings
+      'Αριθμός': analyticsData?.guestDemographics?.familyBookings || 0
     }]
 
     // Monthly Revenue
-    const monthlyRevenueData = revenueData.monthlyRevenue.map(month => ({
+    const monthlyRevenueData = revenueData?.monthlyRevenue?.map(month => ({
       'Μήνας': `${getMonthName(month._id.month)} ${month._id.year}`,
       'Έσοδα': formatCurrency(month.revenue),
       'Κρατήσεις': month.bookings,
@@ -355,7 +355,7 @@ export default function AdminReportsPage() {
             </CardHeader>
             <CardContent>
             <div className="text-2xl font-bold font-cormorant">
-              {formatPercentage(analyticsData.cancellationRate)}
+              {formatPercentage(analyticsData?.cancellationRate || 0)}
             </div>
                         <p className="text-xs text-slate-600 font-alegreya">
               {analyticsData.bookingStatistics?.cancelledBookings || 0} ακυρώσεις
@@ -379,7 +379,8 @@ export default function AdminReportsPage() {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {analyticsData.roomPerformance.slice(0, 5).map((room, index) => (
+              {analyticsData?.roomPerformance?.slice(0, 5).length > 0 ? (
+                analyticsData.roomPerformance.slice(0, 5).map((room, index) => (
                 <div key={room._id} className="flex items-center justify-between">
                   <div className="flex-1">
                     <div className="flex items-center justify-between">
@@ -392,7 +393,7 @@ export default function AdminReportsPage() {
                       <div 
                         className="bg-[#0A4A4A] h-2 rounded-full" 
                         style={{ 
-                          width: `${Math.min((room.revenue / analyticsData.roomPerformance[0]?.revenue) * 100, 100)}%` 
+                          width: `${Math.min((room.revenue / (analyticsData?.roomPerformance?.[0]?.revenue || 1)) * 100, 100)}%` 
                         }}
                       />
                     </div>
@@ -402,7 +403,12 @@ export default function AdminReportsPage() {
                     </div>
                   </div>
                 </div>
-              ))}
+              ))
+              ) : (
+                <div className="text-center py-8 text-slate-500 font-alegreya">
+                  Δεν υπάρχουν διαθέσιμα δεδομένα απόδοσης δωματίων
+                </div>
+              )}
             </div>
           </CardContent>
         </Card>
@@ -454,7 +460,7 @@ export default function AdminReportsPage() {
                 <div className="flex justify-between items-center">
                   <span className="text-sm font-alegreya">Μέσο μέγεθος ομάδας</span>
                   <span className="text-sm font-medium font-alegreya">
-                    {Math.round((analyticsData.guestDemographics?.averageGroupSize || 0) * 10) / 10}
+                    {Math.round((analyticsData?.guestDemographics?.averageGroupSize || 0) * 10) / 10}
                   </span>
                 </div>
               </div>
@@ -494,7 +500,7 @@ export default function AdminReportsPage() {
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            {revenueData.monthlyRevenue.slice(-6).map((month, index) => (
+            {revenueData?.monthlyRevenue?.slice(-6).map((month, index) => (
               <div key={`${month._id.year}-${month._id.month}`} className="flex items-center justify-between">
                 <div className="flex-1">
                   <div className="flex items-center justify-between">
@@ -509,7 +515,7 @@ export default function AdminReportsPage() {
                     <div 
                       className="bg-[#0A4A4A] h-2 rounded-full" 
                       style={{ 
-                        width: `${Math.min((month.revenue / Math.max(...revenueData.monthlyRevenue.map(m => m.revenue))) * 100, 100)}%` 
+                        width: `${Math.min((month.revenue / Math.max(...(revenueData?.monthlyRevenue?.map(m => m.revenue) || [1]))) * 100, 100)}%` 
                       }}
                     />
                   </div>
@@ -520,6 +526,11 @@ export default function AdminReportsPage() {
                 </div>
               </div>
             ))}
+            {(!revenueData?.monthlyRevenue || revenueData.monthlyRevenue.length === 0) && (
+              <div className="text-center py-8 text-slate-500 font-alegreya">
+                Δεν υπάρχουν διαθέσιμα δεδομένα εσόδων
+              </div>
+            )}
           </div>
         </CardContent>
       </Card>
@@ -538,19 +549,19 @@ export default function AdminReportsPage() {
               <div className="flex justify-between">
                 <span className="text-sm font-alegreya">Μέσος χρόνος</span>
                 <span className="text-sm font-medium font-alegreya">
-                  {Math.round(analyticsData.leadTimeAnalysis?.averageLeadTime || 0)} μέρες
+                  {Math.round(analyticsData?.leadTimeAnalysis?.averageLeadTime || 0)} μέρες
                 </span>
               </div>
               <div className="flex justify-between">
                 <span className="text-sm font-alegreya">Ελάχιστος</span>
                 <span className="text-sm font-medium font-alegreya">
-                  {Math.round(analyticsData.leadTimeAnalysis?.minLeadTime || 0)} μέρες
+                  {Math.round(analyticsData?.leadTimeAnalysis?.minLeadTime || 0)} μέρες
                 </span>
               </div>
               <div className="flex justify-between">
                 <span className="text-sm font-alegreya">Μέγιστος</span>
                 <span className="text-sm font-medium font-alegreya">
-                  {Math.round(analyticsData.leadTimeAnalysis?.maxLeadTime || 0)} μέρες
+                  {Math.round(analyticsData?.leadTimeAnalysis?.maxLeadTime || 0)} μέρες
                 </span>
               </div>
             </div>

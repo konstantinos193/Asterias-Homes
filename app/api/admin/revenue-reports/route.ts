@@ -7,13 +7,6 @@ export const dynamic = 'force-dynamic'
 
 export async function GET(request: NextRequest) {
   try {
-    // Get the session token from cookies
-    const authToken = request.cookies.get('authToken')?.value
-    
-    if (!authToken) {
-      return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
-    }
-
     // Extract query parameters from the request URL
     const { searchParams } = new URL(request.url)
     const period = searchParams.get('period')
@@ -29,7 +22,6 @@ export async function GET(request: NextRequest) {
     const response = await fetch(url, {
       method: 'GET',
       headers: {
-        'Authorization': `Bearer ${authToken}`,
         'Content-Type': 'application/json',
       },
     })

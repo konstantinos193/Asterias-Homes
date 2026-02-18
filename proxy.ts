@@ -59,10 +59,21 @@ export function proxy(request: NextRequest) {
     return NextResponse.redirect(newUrl, 301)
   }
 
-  // Fix broken URLs with encoded characters - redirect %26 (&) to proper path
-  if (pathname.includes('%26')) {
-    const fixedPathname = pathname.replace('%26', '/')
-    const redirectUrl = new URL(fixedPathname, request.url)
+  // Fix broken URLs with special characters that Google is trying to index
+  // Handle the specific URLs from your Google Search Console: /%, /8, etc.
+  if (pathname.includes('%26') || pathname.includes('%24') || pathname.includes('&') || pathname.includes('$') || 
+      pathname.includes('%') || pathname === '/%' || pathname === '/8' || pathname === '/$') {
+    // For single character invalid paths, redirect to home
+    if (pathname === '/%' || pathname === '/8' || pathname === '/$') {
+      const detectedLang = detectLanguage(request)
+      const redirectUrl = new URL(`/${detectedLang}`, request.url)
+      redirectUrl.protocol = 'https:'
+      return NextResponse.redirect(redirectUrl, 301)
+    }
+    
+    // For paths with special characters, clean them up
+    const fixedPathname = pathname.replace(/%26|&/g, '/').replace(/%24|\$/g, '').replace(/%/g, '')
+    const redirectUrl = new URL(fixedPathname || '/', request.url)
     redirectUrl.protocol = 'https:'
     return NextResponse.redirect(redirectUrl, 301)
   }
@@ -258,9 +269,12 @@ export function proxy(request: NextRequest) {
     response.headers.set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload')
   }
 
-  // Set canonical URL in headers for debugging
-  const canonicalUrl = `https://${hostname}${pathname}`
+  // Set canonical URL in headers for debugging and SEO
+  const canonicalUrl = `https://asteriashome.gr${pathname}`
   response.headers.set('X-Canonical-URL', canonicalUrl)
+  
+  // Add Link header for canonical URL (helps Google understand the preferred URL)
+  response.headers.set('Link', `<${canonicalUrl}>; rel="canonical"`)
 
   return response
 }

@@ -71,18 +71,29 @@ async function getRoom(roomId: string): Promise<Room | null> {
     let data
     try {
       data = JSON.parse(text)
+      console.log('🔍 Server-side API response:', { data, text: text.substring(0, 500) + '...' })
     } catch (parseError) {
       logger.error('JSON parse error in room detail page', parseError as Error, { roomId, responseText: text })
       return null
     }
 
-    // Normalize response structure
+    // Normalize response structure - Server-side API returns { data: { room: {...} } }
     let room: Room
-    if (data && typeof data === 'object' && 'room' in data) {
-      room = data.room
+    if (data && typeof data === 'object' && 'data' in data && data.data) {
+      // API returns wrapped format: { data: { room: {...} } }
+      room = data.data as Room
     } else {
-      room = data
+      // Fallback: direct room object
+      room = data as Room
     }
+    
+    console.log('🔍 Extracted room data:', { 
+      roomKeys: Object.keys(room || {}), 
+      hasImages: !!room.images, 
+      hasImage: !!room.image,
+      imagesLength: room.images?.length || 0,
+      imageValue: room.image
+    })
 
     // Ensure id is set
     room.id = room._id || room.id || roomId
@@ -97,6 +108,21 @@ async function getRoom(roomId: string): Promise<Room | null> {
 
 // Helper function to normalize room data to match BookingRoom type
 function normalizeRoomForClient(room: Room): BookingRoom {
+  // Handle both single image and images array
+  let roomImages: string[] = []
+  if (Array.isArray(room.images) && room.images.length > 0) {
+    roomImages = room.images
+  } else if (room.image) {
+    roomImages = [room.image]
+  }
+  
+  console.log('🔍 normalizeRoomForClient:', { 
+    roomImages: room.images, 
+    singleImage: room.image, 
+    finalImages: roomImages,
+    roomData: room
+  })
+  
   return {
     id: room.id || room._id || '',
     name: room.name || room.nameKey || '',
@@ -105,7 +131,7 @@ function normalizeRoomForClient(room: Room): BookingRoom {
     descriptionKey: room.descriptionKey || '',
     price: room.price || 0,
     maxGuests: room.maxGuests || room.capacity || 0,
-    images: Array.isArray(room.images) ? room.images : (room.image ? [room.image] : []),
+    images: roomImages,
     size: typeof room.size === 'number' ? room.size : (typeof room.size === 'string' ? parseFloat(room.size) || 0 : 0),
     bedType: room.bedType || '',
     view: room.view || '',

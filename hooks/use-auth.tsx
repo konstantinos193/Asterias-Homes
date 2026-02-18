@@ -37,18 +37,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           if (text) {
             try {
               const profile = JSON.parse(text)
-              setUser(profile.user)
+              console.log('Profile response:', profile)
+              setUser(profile.data || profile.user)
             } catch (parseError) {
-              // Silently handle parse errors - invalid JSON means no user
+              console.error('Profile parse error:', parseError)
               setUser(null)
             }
           } else {
+            console.log('Empty profile response')
             setUser(null)
           }
         } else {
+          console.log('Profile API failed:', res.status, res.statusText)
           setUser(null)
         }
-      } catch {
+      } catch (error) {
+        console.error('Profile API error:', error)
         setUser(null)
       }
       setLoading(false)
@@ -59,12 +63,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   // Removed debug console.log statements - use logger if needed in development
 
   const login = async (username: string, password: string) => {
+    console.log('🔐 Starting login for:', username)
     const response = await fetch("/api/auth/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username, password }),
+      body: JSON.stringify({ email: username, password }),
       credentials: "include",
     })
+    console.log('🔐 Login response status:', response.status)
+    
     if (!response.ok) {
       const text = await response.text()
       let data = {}
@@ -77,24 +84,32 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
       throw new Error((data as any).error || 'Login failed')
     }
+    
     // After login, fetch profile
+    console.log('🔐 Fetching profile after login...')
     const profileRes = await fetch("/api/auth/profile", {
       credentials: "include",
     })
+    console.log('🔐 Profile response status:', profileRes.status)
+    
     if (profileRes.ok) {
       const text = await profileRes.text()
+      console.log('🔐 Profile response text:', text)
       if (text) {
         try {
           const profile = JSON.parse(text)
-          setUser(profile.user)
+          console.log('🔐 Parsed profile:', profile)
+          setUser(profile.data)
         } catch (parseError) {
-          // Silently handle parse errors - invalid JSON means no user
+          console.error('🔐 Profile parse error:', parseError)
           setUser(null)
         }
       } else {
+        console.log('🔐 Empty profile response')
         setUser(null)
       }
     } else {
+      console.log('🔐 Profile fetch failed')
       setUser(null)
     }
   }

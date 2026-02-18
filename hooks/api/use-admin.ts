@@ -15,7 +15,14 @@ export function useAdminRooms(): UseQueryResult<unknown[], Error> {
     queryKey: ['admin', 'rooms'],
     queryFn: async () => {
       const data = await api.admin.getAllRooms()
-      // API returns { rooms: [], pagination: {} }
+      // API returns { data: { rooms: [], pagination: {} } }
+      if (data && typeof data === 'object' && 'data' in data && 
+          (data as { data: { rooms: unknown[] } }).data && 
+          'rooms' in (data as { data: { rooms: unknown[] } }).data &&
+          Array.isArray((data as { data: { rooms: unknown[] } }).data.rooms)) {
+        return (data as { data: { rooms: unknown[] } }).data.rooms
+      }
+      // Fallback for direct { rooms: [] } format
       if (data && typeof data === 'object' && 'rooms' in data && Array.isArray((data as { rooms: unknown[] }).rooms)) {
         return (data as { rooms: unknown[] }).rooms
       }
@@ -33,7 +40,10 @@ export function useAdminRoom(roomId: string | null | undefined): UseQueryResult<
       return api.admin.getRoomById(roomId)
     },
     enabled: !!roomId,
-    staleTime: 5 * 60 * 1000, // 5 minutes
+    staleTime: 0, // Disable caching to always get fresh data
+    gcTime: 0, // Don't cache data
+    refetchOnMount: true, // Always refetch when component mounts
+    refetchOnWindowFocus: true, // Refetch when window gains focus
   })
 }
 
@@ -58,7 +68,14 @@ export function useAdminUsers(): UseQueryResult<unknown[], Error> {
     queryKey: ['admin', 'users'],
     queryFn: async () => {
       const data = await api.admin.getAllUsers()
-      // Handle both { users: [] } and [] formats
+      // Handle the wrapped response format: { statusCode, message, data: { users: [], pagination: {} } }
+      if (data && typeof data === 'object' && 'data' in data && 
+          (data as { data: { users: unknown[] } }).data && 
+          'users' in (data as { data: { users: unknown[] } }).data &&
+          Array.isArray((data as { data: { users: unknown[] } }).data.users)) {
+        return (data as { data: { users: unknown[] } }).data.users
+      }
+      // Handle direct { users: [] } format
       if (data && typeof data === 'object' && 'users' in data && Array.isArray((data as any).users)) {
         return (data as any).users
       }
@@ -199,11 +216,20 @@ export function useAdminBooking(bookingId: string | null | undefined): UseQueryR
     queryFn: async () => {
       if (!bookingId) throw new Error('Booking ID is required')
       const data = await api.admin.getBookingById(bookingId)
-      // Handle response format: { booking: {} } or {}
-      if (data && typeof data === 'object' && 'booking' in data) {
-        return (data as { booking: unknown }).booking
+      // Handle response format: { data: { booking details } } or { booking: {} } or {}
+      if (data && typeof data === 'object') {
+        // Check for nested structure: { data: { booking details } }
+        if ('data' in data && (data as any).data && typeof (data as any).data === 'object') {
+          return (data as any).data
+        }
+        // Check for direct structure: { booking: {} }
+        if ('booking' in data) {
+          return (data as { booking: unknown }).booking
+        }
+        // Return the data directly if it's already the booking
+        return data
       }
-      return data
+      throw new Error('Invalid response format from booking endpoint')
     },
     enabled: !!bookingId,
     staleTime: 1 * 60 * 1000, // 1 minute

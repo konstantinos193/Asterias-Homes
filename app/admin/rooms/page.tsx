@@ -12,6 +12,37 @@ import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { api } from "@/lib/api-client"
 import { logger } from "@/lib/logger"
 
+const RoomImage = ({ room }: { room: any }) => {
+  const [imageError, setImageError] = useState(false);
+  const imageUrl = room.images && room.images.length > 0 ? room.images[0] : (room.image || null);
+
+  if (!imageUrl) {
+    return (
+      <div className="w-full h-full bg-slate-200 flex items-center justify-center">
+        <span className="text-slate-400 text-sm">No Image</span>
+      </div>
+    );
+  }
+
+  if (imageError) {
+    return (
+      <div className="w-full h-full bg-slate-200 flex items-center justify-center">
+        <span className="text-slate-400 text-sm">Image Error</span>
+      </div>
+    );
+  }
+
+  return (
+    <Image 
+      src={imageUrl} 
+      alt={room.name || 'Room'} 
+      fill 
+      className="object-cover"
+      onError={() => setImageError(true)}
+    />
+  );
+};
+
 const getStatusText = (status: string) => {
   switch (status) {
     case "available":
@@ -70,12 +101,23 @@ export default function RoomsPage() {
     logger.error('Error fetching admin rooms', roomsError as Error)
   }
 
+  // Debug: Log room data structure
+  console.log('🏠 Admin rooms data:', rooms.map((room: any) => ({
+    id: room._id,
+    name: room.name,
+    image: room.image,
+    images: room.images,
+    imageType: typeof room.image,
+    imagesType: typeof room.images,
+    imagesLength: Array.isArray(room.images) ? room.images.length : 'not array'
+  })))
+
   const filteredRooms = rooms.filter((room: any) => {
     const matchesSearch =
       room.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       room.description?.toLowerCase().includes(searchTerm.toLowerCase())
 
-    const matchesStatus = statusFilter === "all" || room.available === (statusFilter === "available")
+    const matchesStatus = statusFilter === "all" // Remove available field check since it doesn't exist
     const matchesType = typeFilter === "all" || room.name === typeFilter
 
     return matchesSearch && matchesStatus && matchesType
@@ -181,14 +223,14 @@ export default function RoomsPage() {
         {filteredRooms.map((room: any) => (
           <div key={room._id} className="bg-white rounded-sm border border-slate-200 overflow-hidden">
             <div className="relative h-48">
-              <Image src={room.image || "/placeholder.svg"} alt={room.name} fill className="object-cover" />
+              <RoomImage room={room} />
               <div className="absolute top-2 right-2">
                 <span
                   className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${getStatusClass(
-                    room.available ? "available" : "occupied",
+                    "available", // Default to available since we don't have availability data
                   )}`}
                 >
-                  {getStatusText(room.available ? "available" : "occupied")}
+                  {getStatusText("available")}
                 </span>
               </div>
             </div>

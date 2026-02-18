@@ -46,12 +46,19 @@ export function useAdminBookings(): UseQueryResult<Booking[], Error> {
     queryKey: ['admin', 'bookings'],
     queryFn: async () => {
       const data = await api.admin.getAllBookings()
-      // Handle response format: { bookings: [] } or []
+      // Handle response format: { data: { bookings: [] } } or { bookings: [] } or []
       if (Array.isArray(data)) {
         return data as Booking[]
       }
-      if (data && typeof data === 'object' && 'bookings' in data && Array.isArray((data as any).bookings)) {
-        return (data as any).bookings as Booking[]
+      if (data && typeof data === 'object') {
+        // Check for nested structure: { data: { bookings: [] } }
+        if ('data' in data && (data as any).data && typeof (data as any).data === 'object' && 'bookings' in (data as any).data && Array.isArray((data as any).data.bookings)) {
+          return (data as any).data.bookings as Booking[]
+        }
+        // Check for direct structure: { bookings: [] }
+        if ('bookings' in data && Array.isArray((data as any).bookings)) {
+          return (data as any).bookings as Booking[]
+        }
       }
       return []
     },

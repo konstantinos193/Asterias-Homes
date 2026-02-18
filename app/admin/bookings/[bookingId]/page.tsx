@@ -718,19 +718,21 @@ export default function BookingDetailPage() {
             <AlertDialogTitle>Επιστροφή Χρημάτων</AlertDialogTitle>
             <AlertDialogDescription className="font-alegreya">
               Είστε σίγουροι ότι θέλετε να επιστρέψετε τα χρήματα για αυτή την κράτηση;
-              <div className="mt-4 p-4 bg-slate-50 rounded-lg">
-                <div className="flex justify-between mb-2">
-                  <span>Σύνολο Κράτησης:</span>
-                  <span className="font-semibold">€{bookingData.totalAmount?.toFixed(2) || "0.00"}</span>
-                </div>
-                {bookingData.paymentMethod === "CARD" && bookingData.stripePaymentIntentId ? (
-                  <p className="text-sm text-slate-600">Η επιστροφή θα γίνει μέσω Stripe.</p>
-                ) : (
-                  <p className="text-sm text-yellow-600">Προσοχή: Αυτή είναι μια πληρωμή μετρητά. Θα χρειαστεί χειροκίνητη επεξεργασία.</p>
-                )}
-              </div>
             </AlertDialogDescription>
           </AlertDialogHeader>
+          <div className="space-y-4">
+            <div className="mt-4 p-4 bg-slate-50 rounded-lg">
+              <div className="flex justify-between mb-2">
+                <span>Σύνολο Κράτησης:</span>
+                <span className="font-semibold">€{bookingData.totalAmount?.toFixed(2) || "0.00"}</span>
+              </div>
+              {bookingData.paymentMethod === "CARD" && bookingData.stripePaymentIntentId ? (
+                <p className="text-sm text-slate-600">Η επιστροφή θα γίνει μέσω Stripe.</p>
+              ) : (
+                <p className="text-sm text-yellow-600">Προσοχή: Αυτή είναι μια πληρωμή μετρητά. Θα χρειαστεί χειροκίνητη επεξεργασία.</p>
+              )}
+            </div>
+          </div>
           <AlertDialogFooter>
             <AlertDialogCancel>Άκυρο</AlertDialogCancel>
             <AlertDialogAction
@@ -756,20 +758,23 @@ export default function BookingDetailPage() {
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Αποστολή Προσαρμοσμένου Email</AlertDialogTitle>
-            <AlertDialogDescription className="font-alegreya space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-slate-700 mb-2">Μήνυμα</label>
-                <Textarea
-                  placeholder="Εισάγετε το μήνυμα που θέλετε να στείλετε..."
-                  value={customMessage}
-                  onChange={(e) => setCustomMessage(e.target.value)}
-                  rows={6}
-                  className="font-alegreya"
-                />
-                <p className="text-xs text-slate-500 mt-1">Το email θα σταλεί στο: {guestInfo.email || "N/A"}</p>
-              </div>
+            <AlertDialogDescription className="font-alegreya">
+              Στείλτε ένα προσαρμοσμένο μήνυμα στον επισκέπτη.
             </AlertDialogDescription>
           </AlertDialogHeader>
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-2">Μήνυμα</label>
+              <Textarea
+                placeholder="Εισάγετε το μήνυμα που θέλετε να στείλετε..."
+                value={customMessage}
+                onChange={(e) => setCustomMessage(e.target.value)}
+                rows={6}
+                className="font-alegreya min-h-[120px]"
+              />
+              <p className="text-xs text-slate-500 mt-1">Το email θα σταλεί στο: {guestInfo.email || "N/A"}</p>
+            </div>
+          </div>
           <AlertDialogFooter>
             <AlertDialogCancel onClick={() => {
               setCustomEmailDialogOpen(false)

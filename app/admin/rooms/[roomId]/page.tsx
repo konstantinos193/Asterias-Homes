@@ -11,7 +11,7 @@ import { ArrowLeft, Plus, Trash2, Wifi, Coffee, Car, Sparkles, Bath, Bed, Eye, S
 import { useAdminRoom } from "@/hooks/api/use-admin"
 import { api } from "@/lib/api-client"
 import { logger } from "@/lib/logger"
-import RoomImageEditor from "@/components/admin/room-image-editor"
+import ModernRoomImageEditor from "@/components/admin/modern-room-image-editor"
 import { getBackendUrl } from "@/lib/backend-url"
 
 type RoomImage = {
@@ -69,7 +69,13 @@ export default function RoomEditPage() {
     if (!roomResponse || loading) return
     
     try {
-      const roomData = (roomResponse as any).room || roomResponse
+      // Handle the API response structure: { data: { room: {...} } }
+      let roomData: any = roomResponse
+      if (roomResponse && typeof roomResponse === 'object' && 'data' in roomResponse && (roomResponse as any).data && 'room' in (roomResponse as any).data) {
+        roomData = (roomResponse as any).data.room
+      } else if (roomResponse && typeof roomResponse === 'object' && 'room' in roomResponse) {
+        roomData = (roomResponse as any).room
+      }
       
       if (!roomData) {
         logger.error('Room data not found in response', undefined, { roomId, response: roomResponse })
@@ -121,6 +127,7 @@ export default function RoomEditPage() {
       
       setRoom({
         ...roomData,
+        available: roomData.available !== undefined ? roomData.available : true, // Add default value for missing field
         amenities: amenitiesArray
       })
       setImages(existingImages)
@@ -220,10 +227,12 @@ export default function RoomEditPage() {
     try {
       // First, upload any new images that haven't been uploaded yet
       const newImages = images.filter((img): img is Extract<RoomImage, { isExisting: false }> => 
-        !img.isExisting && 'file' in img && 'uploaded' in img && !img.uploaded && !!img.file
+        !img.isExisting && 'file' in img && !img.uploaded && !!img.file
       )
 
-      // Upload new images
+      // Upload new images (only those that haven't been uploaded by the image editor)
+      const uploadedImageUrls: string[] = []
+      
       for (const image of newImages) {
         if (!image.file) continue
 
@@ -236,20 +245,42 @@ export default function RoomEditPage() {
           credentials: 'include'
         })
 
+        logger.info('Upload response status', { status: response.status, ok: response.ok })
+
         if (!response.ok) {
-          throw new Error('Upload failed')
+          const errorText = await response.text()
+          logger.error('Upload failed with response', undefined, { status: response.status, errorText })
+          throw new Error(`Upload failed: ${response.status} ${errorText}`)
         }
 
         const result = await response.json()
-        const uploadedFile = result.files[0]
+        
+        // Debug: Log the result structure
+        logger.info('Upload response structure', { result, hasFiles: !!result.files, filesType: typeof result.files, filesLength: result.files?.length })
+        
+        // Cloudinary returns files inside result.data.files
+        const files = result.data?.files || result.files
+        
+        // Check if files exists and has at least one element
+        if (!files || !Array.isArray(files) || files.length === 0) {
+          throw new Error('Upload failed: No files returned from server')
+        }
+        
+        const uploadedFile = files[0]
         const backendUrl = getBackendUrl()
+        
+        // Store the URL immediately
+        const finalUrl = uploadedFile.url.startsWith('http') 
+          ? uploadedFile.url 
+          : `${backendUrl}${uploadedFile.url}`
+        uploadedImageUrls.push(finalUrl)
         
         // Update image URL in state
         const updatedImages = images.map(img => 
           img.id === image.id 
             ? { 
                 ...img, 
-                url: `${backendUrl}${uploadedFile.url}`,
+                url: finalUrl,
                 uploaded: true,
                 isExisting: false
               } as Extract<RoomImage, { isExisting: false }>
@@ -260,27 +291,42 @@ export default function RoomEditPage() {
 
       // Collect all image URLs (existing + newly uploaded)
       const backendUrl = getBackendUrl()
-      const imageUrls = images
-        .filter(img => img.isExisting || ('uploaded' in img && img.uploaded))
-        .map(img => {
-          // If it's an existing image, use the original URL
-          // If it's a new uploaded image, use the full URL
+      const imageUrls = [
+        // Existing images
+        ...images.filter(img => img.isExisting).map(img => {
           const url = img.url
-          // Extract the path from the full URL if it includes the backend URL
+          if (url.startsWith('https://res.cloudinary.com') || url.startsWith('http://res.cloudinary.com')) {
+            return url
+          }
+          if (url.startsWith('http://') || url.startsWith('https://')) {
+            return url
+          }
           if (url.includes(backendUrl)) {
             return url.replace(backendUrl, '')
           }
-          // If it already starts with /, return as is
           if (url.startsWith('/')) {
             return url
           }
-          // Otherwise return the full URL (might be external)
-          return url
-        })
+          return `/${url}`
+        }),
+        // Newly uploaded images
+        ...uploadedImageUrls
+      ]
+      
+      logger.info('Processed image URLs', { 
+        roomId, 
+        totalImages: images.length,
+        filteredImages: images.filter(img => img.isExisting || ('uploaded' in img && img.uploaded)).length,
+        imageUrls,
+        imagesState: images.map(img => ({ 
+          id: img.id, 
+          url: img.url, 
+          isExisting: img.isExisting, 
+          ...(img.isExisting === false && { uploaded: img.uploaded })
+        }))
+      })
 
       // Convert amenities from array back to object format for backend
-      // Backend expects { wifi: true, ac: true } (boolean values, not objects)
-      // Backend schema defines: wifi, ac, tv, minibar, balcony, seaView, roomService, safe
       const definedAmenities = ['wifi', 'ac', 'tv', 'minibar', 'balcony', 'seaView', 'roomService', 'safe']
       let amenitiesObject: Record<string, boolean> = {}
       
@@ -531,7 +577,7 @@ export default function RoomEditPage() {
               </p>
             </div>
             <div className="p-6">
-              <RoomImageEditor
+              <ModernRoomImageEditor
                 images={images}
                 onImagesChange={setImages}
                 maxImages={10}

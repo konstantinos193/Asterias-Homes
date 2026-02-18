@@ -26,7 +26,13 @@ export default function BookPage() {
     price: 0,
     guests: 0,
     checkIn: '',
-    checkOut: ''
+    checkOut: '',
+    roomName: '',
+    roomDescription: '',
+    roomType: '',
+    pricePerRoom: 0,
+    roomId: '',
+    roomImages: ''
   })
   const [roomData, setRoomData] = useState<RoomData | null>(null)
   const [roomError, setRoomError] = useState<string | null>(null)
@@ -42,125 +48,57 @@ export default function BookPage() {
     const guests = parseInt(searchParams.get('guests') || '0')
     const checkIn = searchParams.get('checkIn') || ''
     const checkOut = searchParams.get('checkOut') || ''
+    const roomName = searchParams.get('roomName') || ''
+    const roomDescription = searchParams.get('roomDescription') || ''
+    const roomType = searchParams.get('roomType') || ''
+    const pricePerRoom = parseInt(searchParams.get('pricePerRoom') || '0')
+    const roomId = searchParams.get('roomId') || ''
+    const roomImages = searchParams.get('roomImages') || ''
 
-    setBookingData({ rooms, price, guests, checkIn, checkOut })
+    setBookingData({ rooms, price, guests, checkIn, checkOut, roomName, roomDescription, roomType, pricePerRoom, roomId, roomImages })
   }, [searchParams])
   
   useEffect(() => {
     if (loadingRooms || !roomsData.length || !bookingData.checkIn || !bookingData.checkOut) return
     
-    // Get all standard rooms - check both name and nameKey for better compatibility
-    const standardRooms = (roomsData as unknown as RoomData[]).filter((room: RoomData) => {
-      const name = room.name?.toLowerCase() || ''
-      const nameKey = room.nameKey?.toLowerCase() || ''
-      return name.includes('standard') || nameKey.includes('standard') || name.includes('apartment')
-    })
+    // Use the room ID from URL parameters if available, otherwise fall back to filtering
+    let targetRoom = null
     
-    if (standardRooms.length === 0) {
-      // If no standard rooms found, use the first available room
-      const firstRoom = roomsData[0] as unknown as RoomData
-      if (firstRoom) {
-        setRoomData(firstRoom)
-        setAvailabilityWarning(null)
-        setRoomError(null)
-        logger.warn('No standard rooms found, using first available room', { roomId: firstRoom._id || firstRoom.id })
-      } else {
-        setRoomError('No rooms found in the system. Please contact us for assistance.')
-        setRoomData(null)
-      }
-      return
+    if (bookingData.roomId) {
+      // Find the room by ID from URL parameters
+      targetRoom = roomsData.find((room: any) => 
+        (room.id === bookingData.roomId || room._id === bookingData.roomId)
+      )
     }
-
-    // Check availability for each room and find an available one
-    const checkAvailability = async () => {
-      let availableRoom = null
-      let checkedRooms = 0
-      let failedChecks = 0
+    
+    // If no room found by ID, fall back to filtering by name
+    if (!targetRoom) {
+      const standardRooms = (roomsData as unknown as RoomData[]).filter((room: RoomData) => {
+        const name = room.name?.toLowerCase() || ''
+        const nameKey = room.nameKey?.toLowerCase() || ''
+        return name.includes('standard') || nameKey.includes('standard') || name.includes('apartment')
+      })
       
-      for (const room of standardRooms) {
-        try {
-          // Check if this specific room is available for the selected dates
-          const roomId = room._id || room.id
-          const url = getBackendApiUrl(`/api/rooms/${roomId}/availability?checkIn=${bookingData.checkIn}&checkOut=${bookingData.checkOut}`)
-          
-          const response = await fetch(url, {
-            method: 'GET',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-          })
-          
-          checkedRooms++
-          
-          if (response.ok) {
-            const availabilityData = await response.json()
-            if (availabilityData.isAvailable) {
-              availableRoom = room
-              logger.info('Found available room', { roomId, checkIn: bookingData.checkIn, checkOut: bookingData.checkOut })
-              break
-            } else {
-              logger.debug('Room not available', { roomId, checkIn: bookingData.checkIn, checkOut: bookingData.checkOut })
-            }
-          } else {
-            failedChecks++
-            const errorText = await response.text()
-            logger.warn('Availability check returned error', { 
-              roomId, 
-              status: response.status, 
-              error: errorText,
-              checkIn: bookingData.checkIn, 
-              checkOut: bookingData.checkOut 
-            })
-            // Continue to next room even if this one failed
-          }
-        } catch (err) {
-          failedChecks++
-          logger.error('Failed to check availability for room', err as Error, { 
-            roomId: room._id || room.id,
-            checkIn: bookingData.checkIn,
-            checkOut: bookingData.checkOut
-          })
-          // Continue to next room
-        }
-      }
-
-      // If we found an available room, use it
-      if (availableRoom) {
-        setRoomData(availableRoom)
-        setRoomError(null)
-        setAvailabilityWarning(null)
-      } else if (failedChecks === checkedRooms && checkedRooms > 0) {
-        // All checks failed - this is a technical issue, but we'll still allow booking
-        setRoomData(standardRooms[0])
-        setRoomError(null)
-        setAvailabilityWarning('Unable to verify room availability automatically. Please proceed with caution or contact us to confirm.')
-        logger.error('All availability checks failed', undefined, { 
-          checkedRooms, 
-          failedChecks,
-          checkIn: bookingData.checkIn,
-          checkOut: bookingData.checkOut
-        })
-      } else if (checkedRooms > 0) {
-        // We checked rooms but none were available - show warning but allow booking
-        setRoomData(standardRooms[0])
-        setRoomError(null)
-        setAvailabilityWarning('⚠️ All rooms appear to be booked for the selected dates. You can still proceed, but we recommend contacting us to confirm availability.')
-        logger.info('No available rooms found', { 
-          checkedRooms, 
-          checkIn: bookingData.checkIn,
-          checkOut: bookingData.checkOut
-        })
-      } else {
-        // Fallback: use first room if we couldn't check any
-        setRoomData(standardRooms[0])
-        setRoomError(null)
-        setAvailabilityWarning(null)
-        logger.warn('Could not check availability, using first standard room', { roomId: standardRooms[0]._id || standardRooms[0].id })
+      if (standardRooms.length > 0) {
+        targetRoom = standardRooms[0] as RoomData
       }
     }
     
-    checkAvailability()
-  }, [roomsData, loadingRooms, bookingData.checkIn, bookingData.checkOut])
+    // If still no room found, use the first available room
+    if (!targetRoom && roomsData.length > 0) {
+      targetRoom = roomsData[0] as unknown as RoomData
+    }
+    
+    if (targetRoom) {
+      setRoomData(targetRoom as RoomData)
+      setAvailabilityWarning(null)
+      setRoomError(null)
+      logger.info('Found target room', { roomId: targetRoom.id || targetRoom._id })
+    } else {
+      setRoomError('No rooms found in the system. Please contact us for assistance.')
+      setRoomData(null)
+    }
+  }, [roomsData, loadingRooms, bookingData.checkIn, bookingData.checkOut, bookingData.roomId])
   
   // Log errors if any
   if (roomsError) {
@@ -285,7 +223,13 @@ export default function BookPage() {
                   children: Math.floor(bookingData.guests / 2), // Estimate children from total guests
                   rooms: bookingData.rooms,
                   price: bookingData.price,
-                  guests: bookingData.guests
+                  guests: bookingData.guests,
+                  // Add the new URL parameters
+                  roomName: bookingData.roomName,
+                  roomDescription: bookingData.roomDescription,
+                  roomType: bookingData.roomType,
+                  pricePerRoom: bookingData.pricePerRoom,
+                  roomImages: bookingData.roomImages
                 }}
                 language={lang} // Pass the current language to preserve context
               />
@@ -376,7 +320,7 @@ export default function BookPage() {
                         </div>
                         <div className="flex items-center justify-between">
                           <span className="text-slate-600">{t('bookPage.roomType', 'Room Type')}</span>
-                          <span className="font-semibold text-slate-800">{t('bookPage.standardApartment', 'Standard Apartment')}</span>
+                          <span className="font-semibold text-slate-800">{bookingData.roomName || t('bookPage.standardApartment', 'Standard Apartment')}</span>
                         </div>
                       </div>
                     </div>
@@ -448,7 +392,7 @@ export default function BookPage() {
                       <div className="space-y-2 text-sm font-alegreya">
                         <div className="flex items-center justify-between">
                           <span className="text-slate-600">{t('bookPage.pricePerRoom', 'Price per room/night')}</span>
-                          <span className="text-slate-800">€85</span>
+                          <span className="text-slate-800">€{bookingData.pricePerRoom || 85}</span>
                         </div>
                         <div className="flex items-center justify-between">
                           <span className="text-slate-600">{t('bookPage.rooms', 'Rooms')} × {t('bookPage.nights', 'Nights')}</span>

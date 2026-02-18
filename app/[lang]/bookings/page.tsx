@@ -51,6 +51,8 @@ import RoomSelection from "@/components/room-selection"
 import { useRooms, useRoom } from "@/hooks/api"
 import { logger } from "@/lib/logger"
 import { normalizeImageUrl } from "@/lib/utils"
+import { apiCache, availabilityRateLimiter } from "@/lib/api-cache"
+import CacheMonitor from "@/components/cache-monitor"
 
 export default function BookingsPage() {
   const { t, language } = useLanguage()
@@ -107,7 +109,28 @@ export default function BookingsPage() {
     logger.error('Error fetching rooms in bookings page', roomsError as Error)
   }
 
+  // Debug: Log the actual rooms data
+  console.log('🔥 Bookings page - roomsData:', roomsData)
+  console.log('🔥 Bookings page - rooms:', rooms)
+  console.log('🔥 Bookings page - rooms length:', rooms?.length)
+  console.log('🔥 Bookings page - loadingRooms:', loadingRooms)
+  console.log('🔥 Bookings page - roomsError:', roomsError)
 
+  // Debug: Log each room's structure
+  if (rooms && rooms.length > 0) {
+    rooms.forEach((room, index) => {
+      console.log(`🔥 Room ${index}:`, {
+        id: room._id || room.id,
+        name: room.name,
+        hasName: !!room.name,
+        nameType: typeof room.name,
+        description: room.description,
+        price: room.price,
+        image: room.image,
+        images: room.images
+      })
+    })
+  }
 
   // Handle room selection from RoomSelection component
   const handleRoomSelect = (quantity: number, totalPrice: number) => {
@@ -136,33 +159,15 @@ export default function BookingsPage() {
         : null;
       return {
       ...room,
-              name: t("bookingsPage.roomList.standardApartment"),
-      description: t("bookingsPage.roomList.roomDescription"),
-      amenities: roomAmenitiesObj ? Object.keys(roomAmenitiesObj).filter(key => roomAmenitiesObj[key]) : [
-        'WiFi',
-        'Air Conditioning', 
-        'TV',
-        'Private Bathroom',
-        'Balcony',
-        'Safe'
-      ],
-      features: room.features || [
-        'Entire Place',
-        'Free Parking',
-        'Breakfast Included',
-        'Private Bathroom',
-        'Free Wifi',
-        'Shower',
-        'Air Conditioning',
-        'Flat-screen TV',
-        'Kitchenette',
-        'Non-smoking'
-      ],
-      bedType: t("bookingsPage.roomList.bedConfiguration"),
-      view: 'Garden or Sea View',
-      bathroom: 'Private Bathroom with Shower',
+      name: room.name || `Room ${room.id}`,
+      description: room.description || 'Room description',
+      amenities: roomAmenitiesObj ? Object.keys(roomAmenitiesObj).filter(key => roomAmenitiesObj[key]) : [],
+      features: room.features || [],
+      bedType: room.bedType || 'Standard',
+      view: room.view || 'Room View',
+      bathroom: room.bathroom || 'Private Bathroom',
       image: (() => {
-        const imgUrl = room.image || (room.images && room.images[0]) || "/placeholder.svg";
+        const imgUrl = room.image || (Array.isArray(room.images) && room.images.length > 0 ? room.images[0] : undefined) || "/placeholder.svg";
         // Ensure imgUrl is always a string
         const imgString = typeof imgUrl === 'string' ? imgUrl : "/placeholder.svg";
         // Normalize the image URL using the shared utility
@@ -170,40 +175,40 @@ export default function BookingsPage() {
       })(),
       // Pass full images array for RoomSelection component
       images: (() => {
-        const roomImages = room.images || (room.image ? [room.image] : []);
+        const roomImages = Array.isArray(room.images) ? room.images : (room.image ? [room.image] : []);
         // Filter out empty/null/undefined images and normalize URLs
         return roomImages
           .filter((img: string) => img && typeof img === 'string' && img.trim() !== '')
           .map((img: string) => normalizeImageUrl(img));
       })(),
-      totalRooms: typeof room.totalRooms === 'number' ? room.totalRooms : 7, // We have 7 identical rooms
-      rating: typeof room.rating === 'number' ? room.rating : 4.8,
-      reviews: typeof room.reviewCount === 'number' ? room.reviewCount : 25,
-      price: typeof room.price === 'number' ? room.price : 85,
-      originalPrice: typeof room.originalPrice === 'number' ? room.originalPrice : (typeof room.price === 'number' ? room.price : 85),
+      totalRooms: typeof room.totalRooms === 'number' ? room.totalRooms : 1,
+      rating: typeof room.rating === 'number' ? room.rating : 0,
+      reviews: typeof room.reviewCount === 'number' ? room.reviewCount : 0,
+      price: typeof room.price === 'number' ? room.price : 0,
+      originalPrice: typeof room.originalPrice === 'number' ? room.originalPrice : (typeof room.price === 'number' ? room.price : 0),
       size: typeof room.size === 'number' ? room.size : (typeof room.size === 'string' ? parseInt(room.size) || 35 : 35),
       id: room._id || room.id || '',
-      // Proper room configuration for 7 identical standard rooms
-      maxGuests: 4, // Each room can accommodate 4 guests (1 double + 2 single beds)
+      // Room configuration based on actual data
+      maxGuests: room.capacity || 2,
       available: true, // All rooms are available by default
       availableCount: typeof room.availableCount === 'number' ? room.availableCount : 0, // Add availableCount to the room object
       // Add properties for comparison modal
-      wifi: roomAmenitiesObj?.wifi ?? true,
-      airConditioning: roomAmenitiesObj?.ac ?? true,
-      tv: roomAmenitiesObj?.tv ?? true,
+      wifi: roomAmenitiesObj?.wifi ?? false,
+      airConditioning: roomAmenitiesObj?.ac ?? false,
+      tv: roomAmenitiesObj?.tv ?? false,
       minibar: roomAmenitiesObj?.minibar ?? false,
       breakfast: false,
       parking: true,
-      balcony: roomAmenitiesObj?.balcony ?? true
+      balcony: roomAmenitiesObj?.balcony ?? false
       };
     });
   }, [rooms, t]); // Only recalculate when rooms or t function changes
 
-  // Fetch availability for list view when search is performed - only when needed
+  // Fetch availability for list view when search is performed - debounced and optimized
   useEffect(() => {
     if (!checkIn || !checkOut || !showResults || !availableRooms.length) return;
     
-    async function fetchAvailabilities() {
+    const timeoutId = setTimeout(async () => {
       // Type guard: ensure checkIn and checkOut are defined
       if (!checkIn || !checkOut) return;
       
@@ -216,19 +221,22 @@ export default function BookingsPage() {
         await Promise.all(
           availableRooms.map(async (room) => {
             try {
+              // Check rate limit first
+              if (!availabilityRateLimiter.canMakeRequest(room.id)) {
+                logger.warn(`Rate limit exceeded for room ${room.id}, skipping request`);
+                newAvailabilities[room.id] = typeof room.totalRooms === 'number' ? room.totalRooms : 1;
+                return;
+              }
+
               const headers: Record<string, string> = {};
               if (apiKey) {
                 headers['x-api-key'] = apiKey;
               }
-              const res = await fetch(
-                `https://asterias-backend.onrender.com/api/bookings/availability?roomId=${room.id}&checkIn=${checkInStr}&checkOut=${checkOutStr}`,
-                {
-                  headers,
-                },
-              );
-              const data = await res.json();
-              newAvailabilities[room.id] = data.available;
-              logger.info('Fetched availability for room', { roomId: room.id, availability: data.available });
+              
+              const url = `${process.env.NEXT_PUBLIC_BACKEND_URL || 'https://asterias-backend.onrender.com'}/api/bookings/availability?roomId=${room.id}&checkIn=${checkInStr}&checkOut=${checkOutStr}`;
+              const res = await apiCache.get(url, { headers }, 30000); // 30 seconds cache
+              newAvailabilities[room.id] = res.available;
+              logger.info('Fetched availability for room', { roomId: room.id, availability: res.available });
             } catch (error) {
               logger.error(`Error fetching availability for room ${room.id}`, error as Error);
               // Fallback to default availability
@@ -246,14 +254,16 @@ export default function BookingsPage() {
         });
         setRoomAvailabilities(newAvailabilities);
       }
-    }
+    }, 500); // 500ms debounce
     
-    fetchAvailabilities();
-  }, [checkIn, checkOut, showResults, availableRooms.length]); // Only depend on actual values, not objects
+    return () => clearTimeout(timeoutId);
+  }, [checkIn, checkOut, showResults, JSON.stringify(availableRooms.map(r => r.id))]); // Use stable dependencies
 
-  // Fetch calendar availability for all rooms - optimized
+  // Fetch calendar availability for all rooms - optimized with stable dependencies
   useEffect(() => {
     if (!availableRooms.length) return;
+    
+    const roomIds = availableRooms.map(r => r.id).sort().join(',');
     
     async function fetchCalendarAvailability() {
       const currentDate = new Date();
@@ -278,7 +288,7 @@ export default function BookingsPage() {
     const interval = setInterval(fetchCalendarAvailability, 10 * 60 * 1000);
     
     return () => clearInterval(interval);
-  }, [availableRooms.length]); // Only depend on length, not the array itself
+  }, [JSON.stringify(availableRooms.map(r => r.id))]); // Use stable room IDs instead of array length
 
   const nights = checkIn && checkOut
     ? differenceInDays(startOfDay(checkOut), startOfDay(checkIn))
@@ -312,12 +322,12 @@ export default function BookingsPage() {
   // No filtering needed since all rooms are identical
   const filteredRooms = availableRooms; // Show all rooms directly
 
-  // Automatically show results when roomId is present
+  // Automatically show results when roomId is present - with proper dependencies
   useEffect(() => {
     if (roomIdParam && rooms.length > 0 && !showResults) {
       setShowResults(true)
     }
-  }, [roomIdParam, rooms.length, showResults])
+  }, [roomIdParam, rooms.length, showResults, JSON.stringify(rooms.map(r => r.id))]) // Use stable room IDs
 
   const ComparisonModal = () => {
     const roomsToCompare = availableRooms.filter((room) => compareRooms.includes(room.id))
@@ -771,7 +781,9 @@ export default function BookingsPage() {
             </div>
           </div>
         </section>
+      
+      {/* Development-only cache monitor */}
+      <CacheMonitor />
       </>
     )
   }
-         

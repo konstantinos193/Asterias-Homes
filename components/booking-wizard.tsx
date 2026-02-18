@@ -31,6 +31,12 @@ interface BookingWizardProps {
     rooms?: number
     price?: number
     guests?: number
+    // Add new room detail fields
+    roomName?: string
+    roomDescription?: string
+    roomType?: string
+    pricePerRoom?: number
+    roomImages?: string
   }
   language?: string // Add language prop to preserve context
 }
@@ -65,6 +71,12 @@ export default function BookingWizard({ initialRoomId, preFilledData, language }
     nights: preFilledData?.checkIn && preFilledData?.checkOut 
       ? Math.ceil((new Date(preFilledData.checkOut).getTime() - new Date(preFilledData.checkIn).getTime()) / (1000 * 60 * 60 * 24))
       : 1,
+    // Add the new room detail fields
+    roomName: preFilledData?.roomName,
+    roomDescription: preFilledData?.roomDescription,
+    roomType: preFilledData?.roomType,
+    pricePerRoom: preFilledData?.pricePerRoom,
+    roomImages: preFilledData?.roomImages,
     guestInfo: {
       firstName: "",
       lastName: "",

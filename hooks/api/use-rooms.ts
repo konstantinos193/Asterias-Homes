@@ -41,7 +41,10 @@ export function useRooms(): UseQueryResult<Room[], Error> {
   return useQuery({
     queryKey: ['rooms'],
     queryFn: () => api.rooms.getAll(),
-    staleTime: 5 * 60 * 1000, // 5 minutes
+    staleTime: 0, // Force fresh data
+    gcTime: 0, // Don't cache (renamed from cacheTime)
+    refetchOnWindowFocus: true, // Refetch on focus
+    refetchOnMount: true, // Refetch on mount
   })
 }
 

@@ -12,11 +12,19 @@ export default function RoomsPage() {
   const { t, language } = useLanguage()
   const { data: rooms = [], isLoading, error } = useRooms()
   const [searchTerm, setSearchTerm] = useState("")
-  const [priceRange, setPriceRange] = useState([0, 500])
+  const [priceRange, setPriceRange] = useState([0, 100000000])
   const [selectedFeatures, setSelectedFeatures] = useState<string[]>([])
 
   // Filter rooms based on search and filters (using useMemo for performance)
   const filteredRooms = useMemo(() => {
+    console.log('🔍 Rooms filtering debug:', { 
+      totalRooms: rooms.length, 
+      searchTerm, 
+      priceRange, 
+      selectedFeatures,
+      rooms: rooms.map(r => ({ id: r._id, name: r.name, price: r.price, features: r.features }))
+    })
+    
     return rooms.filter((room: any) => {
       const roomName = typeof room.name === 'string' ? room.name : ''
       const roomDescription = typeof room.description === 'string' ? room.description : ''
@@ -29,6 +37,15 @@ export default function RoomsPage() {
       const roomFeatures = Array.isArray(room.features) ? room.features : []
       const matchesFeatures = selectedFeatures.length === 0 || 
                             selectedFeatures.some(feature => roomFeatures.includes(feature))
+      
+      console.log(`🏠 Room ${room._id}:`, { 
+        name: room.name, 
+        price: roomPrice, 
+        matchesSearch, 
+        matchesPrice, 
+        matchesFeatures,
+        features: roomFeatures
+      })
       
       return matchesSearch && matchesPrice && matchesFeatures
     })
@@ -102,13 +119,14 @@ export default function RoomsPage() {
               {/* Price Range */}
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-2">
-                  {t("rooms.priceRange")}: €{priceRange[0]} - €{priceRange[1]}
+                  {t("rooms.priceRange")}: €{priceRange[0].toLocaleString()} - €{priceRange[1].toLocaleString()}
                 </label>
                 <div className="flex items-center space-x-3">
                   <input
                     type="range"
                     min="0"
-                    max="500"
+                    max="100000000"
+                    step="1000000"
                     value={priceRange[0]}
                     onChange={(e) => setPriceRange([parseInt(e.target.value), priceRange[1]])}
                     className="flex-1 h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer slider"
@@ -116,7 +134,8 @@ export default function RoomsPage() {
                   <input
                     type="range"
                     min="0"
-                    max="500"
+                    max="100000000"
+                    step="1000000"
                     value={priceRange[1]}
                     onChange={(e) => setPriceRange([priceRange[0], parseInt(e.target.value)])}
                     className="flex-1 h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer slider"
@@ -153,11 +172,11 @@ export default function RoomsPage() {
               </div>
 
               {/* Clear Filters */}
-              {(searchTerm || priceRange[0] > 0 || priceRange[1] < 500 || selectedFeatures.length > 0) && (
+              {(searchTerm || priceRange[0] > 0 || priceRange[1] < 100000000 || selectedFeatures.length > 0) && (
                 <button
                   onClick={() => {
                     setSearchTerm("")
-                    setPriceRange([0, 500])
+                    setPriceRange([0, 100000000])
                     setSelectedFeatures([])
                   }}
                   className="text-sm text-[#8B4B5C] hover:text-[#7A4251] transition-colors underline"
@@ -222,7 +241,7 @@ export default function RoomsPage() {
               <button
                 onClick={() => {
                   setSearchTerm("")
-                  setPriceRange([0, 500])
+                  setPriceRange([0, 100000000])
                   setSelectedFeatures([])
                 }}
                 className="bg-[#8B4B5C] text-white px-6 py-3 rounded-md hover:bg-[#7A4251] transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center text-sm sm:text-base"

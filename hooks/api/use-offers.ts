@@ -8,7 +8,10 @@ export type { Offer }
 
 // Helper function to normalize offer data from backend
 function normalizeOffer(data: any): Offer | null {
+  console.log('🔧 normalizeOffer: Input data:', data)
+  
   if (!data) {
+    console.log('🔧 normalizeOffer: No data provided')
     return null
   }
   
@@ -20,15 +23,21 @@ function normalizeOffer(data: any): Offer | null {
     offer = data
   }
   
+  console.log('🔧 normalizeOffer: Extracted offer:', offer)
+  
   if (!offer || typeof offer !== 'object') {
+    console.log('🔧 normalizeOffer: Invalid offer object')
     return null
   }
   
   // Ensure id is set from _id
-  return {
+  const normalized = {
     ...offer,
     id: offer.id || offer._id,
   }
+  
+  console.log('🔧 normalizeOffer: Normalized result:', normalized)
+  return normalized
 }
 
 export function useOffers(): UseQueryResult<Offer[], Error> {
@@ -81,19 +90,46 @@ export function useAdminOffers(): UseQueryResult<Offer[], Error> {
   return useQuery<Offer[], Error>({
     queryKey: ['admin', 'offers'],
     queryFn: async () => {
-      const data = await api.offers.getAllAdmin()
-      // Handle response format: { offers: [] } or []
+      console.log('🔧 useAdminOffers: Fetching offers from /api/admin/offers')
+      const response = await api.offers.getAllAdmin()
+      console.log('🔧 useAdminOffers: Raw response:', response)
+      
+      // Handle nested response structure: { data: { offers: [] } }
       let offersArray: any[]
-      if (Array.isArray(data)) {
-        offersArray = data
-      } else if (data && typeof data === 'object' && 'offers' in data && Array.isArray((data as any).offers)) {
-        offersArray = (data as any).offers
+      if (response && 
+          typeof response === 'object' && 
+          'data' in response && 
+          response.data && 
+          typeof response.data === 'object' && 
+          'offers' in response.data &&
+          Array.isArray((response.data as any).offers)) {
+        offersArray = (response.data as any).offers
+        console.log('🔧 useAdminOffers: Found offers in response.data.offers')
+      } else if (Array.isArray(response)) {
+        offersArray = response
+        console.log('🔧 useAdminOffers: Found offers as direct array')
+      } else if (response && typeof response === 'object' && 'offers' in response && Array.isArray(response.offers)) {
+        offersArray = response.offers
+        console.log('🔧 useAdminOffers: Found offers in response.offers')
       } else {
+        console.log('🔧 useAdminOffers: No offers found in response, returning empty array')
+        console.log('🔧 useAdminOffers: Response structure:', {
+          hasData: response && typeof response === 'object' && 'data' in response,
+          dataType: response && typeof response === 'object' && 'data' in response ? typeof (response as any).data : 'undefined',
+          hasOffersInData: response && typeof response === 'object' && 'data' in response && (response as any).data && 'offers' in (response as any).data,
+          offersType: response && typeof response === 'object' && 'data' in response && (response as any).data ? typeof (response as any).data.offers : 'undefined',
+          isArray: response && typeof response === 'object' && 'data' in response && (response as any).data ? Array.isArray((response as any).data?.offers) : false
+        })
         return []
       }
       
+      console.log('🔧 useAdminOffers: Offers array:', offersArray)
+      
       // Normalize each offer and filter out nulls
-      return offersArray.map(normalizeOffer).filter((offer): offer is Offer => offer !== null)
+      const normalizedOffers = offersArray.map(normalizeOffer).filter((offer): offer is Offer => offer !== null)
+      console.log('🔧 useAdminOffers: Normalized offers:', normalizedOffers)
+      
+      return normalizedOffers
     },
     staleTime: 2 * 60 * 1000, // 2 minutes
   })

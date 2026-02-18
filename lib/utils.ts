@@ -78,9 +78,13 @@ export function normalizeImageUrl(url: string): string {
     return '/placeholder.svg';
   }
   
-  // If it's an external http/https URL that's not imgur or backend, return placeholder
-  // Next.js Image component requires external domains to be configured
+  // If it's an external http/https URL that's not imgur or backend, check if it's Cloudinary
   if (url.startsWith('http://') || url.startsWith('https://')) {
+    // Allow Cloudinary URLs since they're configured in next.config.mjs
+    if (url.includes('res.cloudinary.com')) {
+      return url;
+    }
+    // For other external URLs, return placeholder
     return '/placeholder.svg';
   }
   

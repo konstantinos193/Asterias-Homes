@@ -869,7 +869,11 @@
         "contactUs": "contact us",
         "nextSteps": "Next Steps",
         "emailSent": "A confirmation email has been sent to {email}",
-        "contactInfo": "If you have any questions, please contact us"
+        "contactInfo": "If you have any questions, please contact us",
+        "downloadPdf": "Download PDF Confirmation",
+        "generatingPdf": "Generating PDF...",
+        "pdfError": "Failed to generate PDF",
+        "completeBookingFirst": "Please complete your booking first to download the confirmation PDF."
       },
       "errors": {
         "stripeNotLoaded": "Payment system is loading. Please wait a moment.",

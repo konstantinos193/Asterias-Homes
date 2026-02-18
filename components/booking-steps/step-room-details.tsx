@@ -32,15 +32,48 @@ export default function StepRoomDetails({ bookingData, updateBookingData }: Step
 
   const error = roomError ? 'Failed to load room information' : (!selectedRoom && !isLoading ? 'Selected room not found' : null)
 
-  // Helper function to get translated room name
+  // Helper function to get room name - prioritize URL parameters over API data
   const getRoomName = (room: typeof selectedRoom) => {
-    if (!room) return ''
-    // Use the normalized room name to ensure all identical rooms show the same name
-    const normalizedName = normalizeRoomName(room.name || 'Standard Apartment')
-    
-    // Return translated room name based on language
-    return t("rooms.standard.name", normalizedName)
+    // First try URL parameters, then API data, then fallback
+    if (bookingData.roomName) return bookingData.roomName
+    if (!room) return 'Standard Apartment'
+    return room.name || 'Standard Apartment'
   }
+
+  // Helper function to get room description - prioritize URL parameters over API data
+  const getRoomDescription = (room: typeof selectedRoom) => {
+    // First try URL parameters, then API data, then fallback
+    if (bookingData.roomDescription) return bookingData.roomDescription
+    if (!room) return t("bookingWizard.roomDetails.description", "A beautifully furnished apartment with modern amenities, perfect for a relaxing getaway in Koronisia. All our apartments are identical in style and layout, offering consistent comfort and quality.")
+    return room.description || t("bookingWizard.roomDetails.description", "A beautifully furnished apartment with modern amenities, perfect for a relaxing getaway in Koronisia. All our apartments are identical in style and layout, offering consistent comfort and quality.")
+  }
+
+  // Helper function to get room images - prioritize URL parameters over API data
+  const getRoomImages = (room: typeof selectedRoom) => {
+    // First try URL parameters (as JSON string), then API data, then fallback
+    if (bookingData.roomImages) {
+      try {
+        const parsedImages = JSON.parse(bookingData.roomImages)
+        if (Array.isArray(parsedImages) && parsedImages.length > 0) {
+          return parsedImages
+        }
+      } catch (e) {
+        console.warn('Failed to parse room images from URL parameters:', e)
+      }
+    }
+    if (!room) return ["/room-1.png"]
+    return room.images || [room.image] || ["/room-1.png"]
+  }
+
+  // Helper function to get room price - prioritize URL parameters over API data
+  const getRoomPrice = (room: typeof selectedRoom) => {
+    // First try URL parameters, then API data, then fallback
+    if (bookingData.pricePerRoom) return bookingData.pricePerRoom
+    if (!room) return 85
+    return room.price || 85
+  }
+
+  // Force recompilation
 
   if (isLoading) {
     return (
@@ -107,7 +140,7 @@ export default function StepRoomDetails({ bookingData, updateBookingData }: Step
         <div className="flex flex-col lg:flex-row gap-6">
           <div className="relative w-full lg:w-80 h-64 lg:h-auto rounded-lg overflow-hidden flex-shrink-0">
             <Image
-              src={((selectedRoom?.images && selectedRoom.images[0]) || selectedRoom?.image || "/room-1.png") as string}
+              src={getRoomImages(selectedRoom)[0] || "/room-1.png"}
               alt={getRoomName(selectedRoom)}
               fill
               className="object-cover"
@@ -126,7 +159,7 @@ export default function StepRoomDetails({ bookingData, updateBookingData }: Step
                 </div>
               )}
               <p className="text-slate-600 font-alegreya text-lg">
-                {t("bookingWizard.roomDetails.description", "A beautifully furnished apartment with modern amenities, perfect for a relaxing getaway in Koronisia. All our apartments are identical in style and layout, offering consistent comfort and quality.")}
+                {getRoomDescription(selectedRoom)}
               </p>
             </div>
 
@@ -183,7 +216,7 @@ export default function StepRoomDetails({ bookingData, updateBookingData }: Step
                   {t("bookingWizard.roomDetails.pricePerNight", "Price per night")}
                 </span>
                 <span className="text-3xl font-cormorant font-semibold text-[#0A4A4A]">
-                  €{selectedRoom.price || 85}
+                  €{getRoomPrice(selectedRoom)}
                 </span>
               </div>
             </div>

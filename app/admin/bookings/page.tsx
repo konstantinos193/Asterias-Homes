@@ -195,7 +195,7 @@ export default function BookingsPage() {
     // Prepare data for Excel export
     const excelData = filteredBookings.map((booking: Booking) => {
       const guestInfo = booking.guestInfo as any
-      const room = booking.room as any
+      const room = (booking as any).roomId // API returns room data under roomId
       return {
         'Αριθμός Κράτησης': booking.bookingNumber || '',
         'Επισκέπτης': `${guestInfo?.firstName || ''} ${guestInfo?.lastName || ''}`.trim(),
@@ -401,7 +401,7 @@ export default function BookingsPage() {
               {filteredBookings.map((booking: Booking) => {
                 const bookingId = (booking._id || booking.id) as string
                 const guestInfo = booking.guestInfo as any
-                const room = booking.room as any
+                const room = (booking as any).roomId // API returns room data under roomId
                 const isSelected = selectedBookings.has(bookingId)
                 return (
                   <tr key={bookingId} className={`hover:bg-slate-50 ${isSelected ? 'bg-blue-50' : ''}`}>
@@ -474,7 +474,7 @@ export default function BookingsPage() {
         {filteredBookings.map((booking: Booking) => {
           const bookingId = (booking._id || booking.id) as string
           const guestInfo = booking.guestInfo as any
-          const room = booking.room as any
+          const room = (booking as any).roomId // API returns room data under roomId
           const createdAt = (booking as any).createdAt
           const isSelected = selectedBookings.has(bookingId)
           return (

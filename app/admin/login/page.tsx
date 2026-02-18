@@ -8,7 +8,7 @@ export default function AdminLogin() {
   const router = useRouter()
   const { login } = useAuth()
   const [formData, setFormData] = useState({
-    username: "",
+    email: "",
     password: "",
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -24,7 +24,7 @@ export default function AdminLogin() {
     setIsSubmitting(true)
     setError("")
     try {
-      await login(formData.username, formData.password)
+      await login(formData.email, formData.password)
       router.push("/admin")
     } catch (err: any) {
       setError(err.message || "Login failed")
@@ -45,16 +45,16 @@ export default function AdminLogin() {
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <div className="space-y-4">
             <div>
-              <label htmlFor="username" className="block text-sm font-medium text-slate-700">
-                Username
+              <label htmlFor="email" className="block text-sm font-medium text-slate-700">
+                Email
               </label>
               <input
-                id="username"
-                name="username"
-                type="text"
-                autoComplete="username"
+                id="email"
+                name="email"
+                type="email"
+                autoComplete="email"
                 required
-                value={formData.username}
+                value={formData.email}
                 onChange={handleChange}
                 className="mt-1 block w-full px-3 py-2 border border-slate-300 rounded-sm focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
               />

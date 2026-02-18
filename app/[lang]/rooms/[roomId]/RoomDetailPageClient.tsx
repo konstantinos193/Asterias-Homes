@@ -70,25 +70,31 @@ export default function RoomDetailPageClient({ roomId, initialRoom }: RoomDetail
     )
   }
 
-  const displayName = room?.nameKey ? t(room.nameKey) : room?.name || ''
-  const displayDescription = room?.descriptionKey ? t(room.descriptionKey) : room?.description || ''
+  const displayName = (room?.name && room.name.trim() !== "" ? room.name : room?.nameKey ? t(room.nameKey) : "") || ""
+  const displayDescription = (room?.description && room.description.trim() !== "" ? room.description : room?.descriptionKey ? t(room.descriptionKey) : "") || ""
   const displayFeatures = room?.featureKeys ? room.featureKeys.map(key => t(key)) : (Array.isArray(room?.features) ? room.features : [])
   
   // Get images array - handle both Room type and backend response format
-  const roomImages = (room as any)?.images || (room as any)?.image ? [(room as any).image] : []
+  console.log('🔍 Room data structure:', { room, images: room?.images, image: (room as any)?.image })
+  const roomImages = Array.isArray(room?.images) ? room.images : ((room as any)?.image ? [(room as any).image] : [])
   // Filter out empty/null/undefined images and normalize URLs
   const rawImages = roomImages && roomImages.length > 0 
     ? roomImages.filter((img: string) => img && typeof img === 'string' && img.trim() !== '')
     : []
+  console.log('🔍 Raw images:', { roomImages, rawImages, count: rawImages.length })
   const images = rawImages.length > 0 
-    ? rawImages.map((img: string) => normalizeImageUrl(img))
-    : ["/room-featured-1.jpeg"] // Fallback to a default image
+    ? rawImages.map((img: string) => {
+      const normalized = normalizeImageUrl(img)
+      console.log('🔍 Normalized image:', { original: img, normalized })
+      return normalized
+    })
+    : [] // Remove fallback - let it show empty state if no images
 
   return (
     <main className="bg-[#A9AEA2]/30 text-slate-800 pt-20 sm:pt-24 font-alegreya min-h-screen">
       {/* Hero Image */}
       <section className="relative h-64 sm:h-80 md:h-96 overflow-hidden">
-        {images[selectedImageIndex] && !imageErrors.has(selectedImageIndex) && (
+        {images.length > 0 && images[selectedImageIndex] && !imageErrors.has(selectedImageIndex) ? (
           <Image
             src={images[selectedImageIndex]}
             alt={displayName}
@@ -100,10 +106,9 @@ export default function RoomDetailPageClient({ roomId, initialRoom }: RoomDetail
               logger.error('Failed to load room image', undefined, { imageUrl: images[selectedImageIndex], roomId })
             }}
           />
-        )}
-        {(!images[selectedImageIndex] || imageErrors.has(selectedImageIndex)) && (
+        ) : (
           <div className="w-full h-full bg-slate-200 flex items-center justify-center">
-            <span className="text-slate-400 text-sm">Image not available</span>
+            <span className="text-slate-400 text-sm">No images available</span>
           </div>
         )}
         <div className="absolute inset-0 bg-slate-900/20"></div>

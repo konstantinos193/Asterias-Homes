@@ -8,6 +8,7 @@ import { Toaster } from "@/components/ui/sonner"
 import { AuthProvider } from '@/hooks/use-auth'
 import { MemoryMonitorInit } from "@/components/memory-monitor-init"
 import { QueryProvider } from "@/lib/query-client"
+import "@/lib/wallet-provider-guard" // Initialize wallet provider guard
 
 const cormorant = Cormorant({
   subsets: ["latin", "latin-ext"],
@@ -151,9 +152,7 @@ export const metadata: Metadata = {
     "apple-mobile-web-app-title": "Asterias Homes",
   },
   verification: {
-    google: "your-google-verification-code",
-    yandex: "your-yandex-verification-code",
-    yahoo: "your-yahoo-verification-code",
+    // DNS verification is already configured - no HTML meta tag needed
   },
   generator: 'Next.js'
 }

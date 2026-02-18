@@ -29,6 +29,13 @@ class ApiClient {
   }
 
   /**
+   * Public method to build URL for external use
+   */
+  public buildPublicUrl(endpoint: string): string {
+    return this.buildUrl(endpoint)
+  }
+
+  /**
    * Whether this endpoint should use the Next.js API proxy (same-origin) so the
    * server can read the httpOnly auth cookie and add the Authorization header.
    */
@@ -96,7 +103,7 @@ class ApiClient {
       })
 
       // Handle empty responses (e.g., 204 No Content)
-      if (response.status === 204 || response.status === 201) {
+      if (response.status === 204) {
         return undefined as T
       }
 
@@ -188,10 +195,12 @@ export const api = {
   // Rooms
   rooms: {
     getAll: () => {
-      return apiClient.get<{ rooms?: unknown[]; pagination?: unknown } | unknown[]>('/api/rooms').then((data) => {
+      return apiClient.get<{ rooms?: unknown[]; data?: unknown[]; pagination?: unknown } | unknown[]>('api/rooms').then((data) => {
         // Normalize response structure
         let roomsArray: unknown[]
-        if (data && typeof data === 'object' && 'rooms' in data && Array.isArray(data.rooms)) {
+        if (data && typeof data === 'object' && 'data' in data && Array.isArray(data.data)) {
+          roomsArray = data.data
+        } else if (data && typeof data === 'object' && 'rooms' in data && Array.isArray(data.rooms)) {
           roomsArray = data.rooms
         } else if (Array.isArray(data)) {
           roomsArray = data
@@ -207,7 +216,7 @@ export const api = {
       })
     },
     getById: (roomId: string) => {
-      return apiClient.get<{ room?: unknown } | unknown>(`/api/rooms/${roomId}`).then((data) => {
+      return apiClient.get<{ room?: unknown } | unknown>(`api/rooms/${roomId}`).then((data) => {
         // Normalize response structure
         if (data && typeof data === 'object' && 'room' in data) {
           const room = (data as { room: any }).room
@@ -334,7 +343,7 @@ export const api = {
     updateRoom: (roomId: string, roomData: unknown) =>
       apiClient.put(`/api/admin/rooms/${roomId}`, roomData),
     deleteRoom: (roomId: string) => apiClient.delete(`/api/admin/rooms/${roomId}`),
-    getBookingById: (bookingId: string) => apiClient.get(`/api/bookings/${bookingId}`),
+    getBookingById: (bookingId: string) => apiClient.get(`/api/admin/bookings/${bookingId}`),
     updateBookingStatus: (bookingId: string, status: string, adminNotes?: string) =>
       apiClient.put(`/api/admin/bookings/${bookingId}/status`, { status, adminNotes }),
     cancelBooking: (bookingId: string, data: { cancellationReason?: string; refundAmount?: number; adminNotes?: string }) =>
@@ -394,6 +403,25 @@ export const api = {
     getAvailabilityOverview: () => apiClient.get('/api/availability/overview'),
     getRoomAvailability: (roomId: string, startDate: string, endDate: string) =>
       apiClient.get(`/api/availability/room/${roomId}?date=${startDate}`),
+  },
+
+  // PDF
+  pdf: {
+    generateBookingConfirmation: (bookingId: string) => {
+      const url = apiClient.buildPublicUrl(`/api/pdf/booking-confirmation/${bookingId}`)
+      return fetch(url, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+      }).then(response => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`)
+        }
+        return response.blob()
+      })
+    },
   },
 }
 

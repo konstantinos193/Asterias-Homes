@@ -7,6 +7,12 @@ export interface BookingData {
   roomQuantity?: number
   roomPrice?: number
   nights?: number
+  // New fields for room details from URL parameters
+  roomName?: string
+  roomDescription?: string
+  roomType?: string
+  pricePerRoom?: number
+  roomImages?: string
   guestInfo: {
     firstName: string
     lastName: string

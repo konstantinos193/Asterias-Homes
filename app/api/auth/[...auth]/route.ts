@@ -109,17 +109,36 @@ export async function POST(
       )
     }
     
-    // If login is successful and backend returns a token, set it as a cookie
-    if (response.ok && authPath === 'login' && data.token) {
+    console.log('Login response check:', {
+      responseOk: response.ok,
+      authPath: authPath,
+      dataKeys: Object.keys(data),
+      hasData: !!data,
+      hasDataData: !!(data && data.data),
+      dataDataKeys: data && data.data ? Object.keys(data.data) : [],
+      hasToken: !!(data && data.data && (data.data.token || data.data.access_token)),
+      tokenField: data && data.data ? (data.data.token ? 'token' : (data.data.access_token ? 'access_token' : 'none')) : 'no data'
+    });
+    
+    // Set cookie for login if response is successful
+    if (response.ok && authPath === 'login' && data && data.data && (data.data.token || data.data.access_token)) {
+      const token = data.data.token || data.data.access_token;
+      console.log('Setting cookie for login, token:', token.substring(0, 50) + '...');
       const nextResponse = NextResponse.json(data, { status: response.status })
-      nextResponse.cookies.set('authToken', data.token, {
+      
+      // Set cookie with proper attributes for localhost
+      nextResponse.cookies.set('authToken', token, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax',
         path: '/',
-        maxAge: 7 * 24 * 60 * 60, // 1 week in seconds
+        maxAge: 7 * 24 * 60 * 60, // 7 days
+        sameSite: 'lax',
+        secure: false // Important for localhost
       })
+      
+      console.log('Cookie set successfully');
       return nextResponse
+    } else {
+      console.log('Cookie setting condition not met - will not set cookie');
     }
     
     return NextResponse.json(data, { status: response.status })

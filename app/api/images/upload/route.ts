@@ -2,31 +2,30 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getBackendApiUrl } from '@/lib/backend-url'
 import { logger } from '@/lib/logger'
 
-const BACKEND_URL = getBackendApiUrl('/api/images')
+const BACKEND_URL = getBackendApiUrl('/api/images/upload')
 
 export async function POST(request: NextRequest) {
   try {
-    // Get the authToken from cookies
-    const authToken = request.cookies.get('authToken')?.value
-    
-    if (!authToken) {
-      return NextResponse.json(
-        { error: 'Authentication required' },
-        { status: 401 }
-      )
-    }
-
     // Get the form data from the request
     const formData = await request.formData()
     
+    // Forward authentication headers to the backend
+    const authHeader = request.headers.get('authorization')
+    const cookieHeader = request.headers.get('cookie')
+    
+    const headers: HeadersInit = {}
+    if (authHeader) {
+      headers.Authorization = authHeader
+    }
+    if (cookieHeader) {
+      headers.Cookie = cookieHeader
+    }
+    
     // Forward the request to the backend
-    const response = await fetch(`${BACKEND_URL}/upload`, {
+    const response = await fetch(BACKEND_URL, {
       method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${authToken}`
-        // Don't set Content-Type, let fetch handle it for FormData
-      },
-      body: formData
+      body: formData,
+      headers
     })
     
     const data = await response.json()
@@ -40,4 +39,4 @@ export async function POST(request: NextRequest) {
       { status: 500 }
     )
   }
-} 
+}
