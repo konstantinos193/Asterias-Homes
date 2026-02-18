@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Input } from "@/components/ui/input"
+import { toast } from "sonner"
 import { 
   BarChart3, 
   LineChart, 
@@ -145,7 +146,13 @@ export default function AdminReportsPage() {
   }
 
   const exportAnalyticsReport = () => {
-    if (!analyticsData || !revenueData) return
+    if (!analyticsData || !revenueData) {
+      console.error('Missing data for export:', { analyticsData, revenueData })
+      toast.error('Δεν υπάρχουν διαθέσιμα δεδομένα για εξαγωγή')
+      return
+    }
+
+    try {
 
     // Booking Statistics Summary
     const summaryData = [{
@@ -182,12 +189,12 @@ export default function AdminReportsPage() {
 
     // Room Performance
     const roomPerformanceData = analyticsData?.roomPerformance?.map(room => ({
-      'Δωμάτιο': room._id,
-      'Κρατήσεις': room.bookings,
-      'Έσοδα': formatCurrency(room.revenue),
-      'Μέση Τιμή': formatCurrency(room.averageRate),
-      'Σύνολο Νυχτών': Math.round(room.totalNights)
-    }))
+      'Δωμάτιο': room._id || 'Άγνωστο',
+      'Κρατήσεις': room.bookings || 0,
+      'Έσοδα': formatCurrency(room.revenue || 0),
+      'Μέση Τιμή': formatCurrency(room.averageRate || 0),
+      'Σύνολο Νυχτών': Math.round(room.totalNights || 0)
+    })) || []
 
     // Guest Demographics
     const demographicsData = [{
@@ -203,11 +210,11 @@ export default function AdminReportsPage() {
 
     // Monthly Revenue
     const monthlyRevenueData = revenueData?.monthlyRevenue?.map(month => ({
-      'Μήνας': `${getMonthName(month._id.month)} ${month._id.year}`,
-      'Έσοδα': formatCurrency(month.revenue),
-      'Κρατήσεις': month.bookings,
-      'Μέση Αξία Κράτησης': formatCurrency(month.averageBookingValue)
-    }))
+      'Μήνας': `${getMonthName(month._id.month || 1)} ${month._id.year || new Date().getFullYear()}`,
+      'Έσοδα': formatCurrency(month.revenue || 0),
+      'Κρατήσεις': month.bookings || 0,
+      'Μέση Αξία Κράτησης': formatCurrency(month.averageBookingValue || 0)
+    })) || []
 
     // Create workbook
     const wb = XLSX.utils.book_new()
@@ -228,6 +235,12 @@ export default function AdminReportsPage() {
     const filename = `Αναφορές_Asterias_${today}.xlsx`
     
     XLSX.writeFile(wb, filename)
+      toast.success('Η αναφορά εξάχθηκε με επιτυχία')
+    } catch (error) {
+      console.error('Error exporting report:', error)
+      logger.error('Failed to export analytics report', error as Error)
+      toast.error('Αποτυχία εξαγωγής αναφοράς. Παρακαλώ δοκιμάστε ξανά.')
+    }
   }
 
   if (loading) {
