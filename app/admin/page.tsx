@@ -87,34 +87,34 @@ export default function AdminDashboard() {
 
   // Use real data from backend or fallback to mock data
   const dashboard = dashboardData as any
-  const statsData = dashboard?.stats ? [
+  const statsData = dashboard?.data?.stats ? [
     {
       nameKey: "admin.dashboard.stats.todayArrivals",
-      value: dashboard.stats.todayArrivals?.value?.toString() || dashboard.stats.todayArrivals?.toString() || "0",
+      value: dashboard.data.stats.todayArrivals?.value?.toString() || dashboard.data.stats.todayArrivals?.toString() || "0",
       icon: Calendar,
-      change: dashboard.stats.todayArrivals?.change,
-      changeType: dashboard.stats.todayArrivals?.changeType,
+      change: dashboard.data.stats.todayArrivals?.change,
+      changeType: dashboard.data.stats.todayArrivals?.changeType,
     },
     {
       nameKey: "admin.dashboard.stats.availableRooms", 
-      value: dashboard.stats.availableRooms?.value?.toString() || dashboard.stats.availableRooms?.toString() || "0",
+      value: dashboard.data.stats.availableRooms?.value?.toString() || dashboard.data.stats.availableRooms?.toString() || "0",
       icon: Bed,
-      change: dashboard.stats.availableRooms?.change,
-      changeType: dashboard.stats.availableRooms?.changeType,
+      change: dashboard.data.stats.availableRooms?.change,
+      changeType: dashboard.data.stats.availableRooms?.changeType,
     },
     {
       nameKey: "admin.dashboard.stats.totalGuests",
-      value: dashboard.stats.totalGuests?.value?.toString() || dashboard.stats.totalGuests?.toString() || "0", 
+      value: dashboard.data.stats.totalGuests?.value?.toString() || dashboard.data.stats.totalGuests?.toString() || "0", 
       icon: Users,
-      change: dashboard.stats.totalGuests?.change,
-      changeType: dashboard.stats.totalGuests?.changeType,
+      change: dashboard.data.stats.totalGuests?.change,
+      changeType: dashboard.data.stats.totalGuests?.changeType,
     },
     {
       nameKey: "admin.dashboard.stats.occupancy",
-      value: dashboard.stats.occupancyRate?.value || dashboard.stats.occupancyRate || "0%",
+      value: dashboard.data.stats.occupancyRate?.value || dashboard.data.stats.occupancyRate || "0%",
       icon: TrendingUp,
-      change: dashboard.stats.occupancyRate?.change,
-      changeType: dashboard.stats.occupancyRate?.changeType,
+      change: dashboard.data.stats.occupancyRate?.change,
+      changeType: dashboard.data.stats.occupancyRate?.changeType,
     },
   ] : mockStatsData
 
@@ -191,8 +191,8 @@ export default function AdminDashboard() {
             </h2>
           </div>
           <div className="divide-y divide-slate-200">
-            {dashboard?.recentBookings && dashboard.recentBookings.length > 0 ? (
-              dashboard.recentBookings.map((booking: any, index: number) => (
+            {dashboard?.data?.recentBookings && dashboard.data.recentBookings.length > 0 ? (
+              dashboard.data.recentBookings.map((booking: any, index: number) => (
               <div key={booking._id || booking.id || index} className="px-6 py-4">
                 <div className="flex items-center justify-between">
                   <div className="flex-1 min-w-0">
@@ -244,21 +244,21 @@ export default function AdminDashboard() {
             <h2 className="text-lg font-cormorant font-semibold text-slate-800">
               Μη αναγνωσμένα Μηνύματα
             </h2>
-            {dashboard?.unreadContacts && dashboard.unreadContacts > 0 && (
+            {dashboard?.data?.unreadContacts && dashboard.data.unreadContacts > 0 && (
               <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 font-alegreya">
-                {dashboard.unreadContacts}
+                {dashboard.data.unreadContacts}
               </span>
             )}
           </div>
           <div className="px-6 py-8 text-center">
-            {dashboard?.unreadContacts && dashboard.unreadContacts > 0 ? (
+            {dashboard?.data?.unreadContacts && dashboard.data.unreadContacts > 0 ? (
               <>
                 <MessageSquare className="h-12 w-12 text-[#0A4A4A] mx-auto mb-4" />
                 <p className="text-lg font-semibold text-slate-900 font-cormorant mb-1">
-                  {dashboard.unreadContacts}
+                  {dashboard.data.unreadContacts}
                 </p>
                 <p className="text-sm text-slate-600 font-alegreya mb-4">
-                  {dashboard.unreadContacts === 1 ? "Μη αναγνωσμένο μήνυμα" : "Μη αναγνωσμένα μηνύματα"}
+                  {dashboard.data.unreadContacts === 1 ? "Μη αναγνωσμένο μήνυμα" : "Μη αναγνωσμένα μηνύματα"}
                 </p>
                 <Link href="/admin/contacts?status=UNREAD">
                   <Button className="bg-[#0A4A4A] hover:bg-[#083a3a] text-white font-alegreya w-full">
@@ -291,8 +291,8 @@ export default function AdminDashboard() {
           </h2>
         </div>
         <div className="divide-y divide-slate-200">
-          {dashboard?.todayArrivals && dashboard.todayArrivals.length > 0 ? (
-            dashboard.todayArrivals.map((arrival: any, index: number) => (
+          {dashboard?.data?.todayArrivals && dashboard.data.todayArrivals.length > 0 ? (
+            dashboard.data.todayArrivals.map((arrival: any, index: number) => (
               <div key={arrival._id || index} className="px-6 py-4">
                 <div className="flex items-center justify-between">
                   <div className="flex-1 min-w-0">
