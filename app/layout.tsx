@@ -25,27 +25,29 @@ const alegreya = Alegreya({
 
 export const metadata: Metadata = {
   title: {
-    default: "Asterias Apartments | Holiday Apartments Koronisia, Arta – Asterias Homes",
-    template: "%s | Asterias Homes",
+    default: "Αστεριας Κορωνησια | Asterias Homes Koronisia Arta Greece",
+    template: "%s | Αστεριας Κορωνησια",
   },
   description:
-    "Asterias apartments (Asteria house) – traditional holiday apartments in Koronisia, Arta. 7 cozy apartments with authentic charm by the Amvrakikos Gulf. Asterias premium holiday apartments. Koronisia accommodation. Book online.",
+    "Αστεριας Κορωνησια - Traditional holiday apartments in Koronisia, Arta, Greece by the Amvrakikos Gulf. 7 cozy apartments with authentic Greek hospitality. Book online with instant confirmation. From €80/night.",
   keywords: [
-    "Asterias Homes",
+    "αστεριας κορωνησια",
+    "Αστεριας Κορωνησια",
+    "asterias homes",
     "asterias apartments",
     "asteria house",
-    "asterias premium holiday apartments",
-    "Koronisia",
-    "koronisia apartments",
+    "κορωνησια διαμονη",
     "κορωνησια ξενοδοχεια",
+    "koronisia apartments",
+    "Koronisia",
     "Arta",
     "Greece",
     "Amvrakikos Gulf",
     "traditional apartments",
     "holiday apartments Koronisia",
-    "classic accommodation",
+    "Greek accommodation",
     "authentic Greek apartments",
-    "apartment rentals",
+    "apartment rentals Greece",
     "nature retreat",
     "7 apartments",
     "beachfront accommodation",
@@ -74,12 +76,12 @@ export const metadata: Metadata = {
   },
   openGraph: {
     type: "website",
-    locale: "en_US",
+    locale: "el_GR",
     url: "https://asteriashome.gr",
-    title: "Asterias Apartments | Holiday Apartments Koronisia, Arta – Asterias Homes",
+    title: "Αστεριας Κορωνησια | Asterias Homes Koronisia Arta Greece",
     description:
-      "Asterias apartments (Asteria house) – traditional holiday apartments in Koronisia, Arta. Koronisia accommodation by the Amvrakikos Gulf. Book online.",
-    siteName: "Asterias Homes",
+      "Αστεριας Κορωνησια - Traditional holiday apartments in Koronisia, Arta, Greece by the Amvrakikos Gulf. Book online with instant confirmation.",
+    siteName: "Αστεριας Κορωνησια",
     images: [
       {
         url: "/welcome-new.jpg",
@@ -97,9 +99,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Asterias Apartments | Holiday Apartments Koronisia, Arta – Asterias Homes",
+    title: "Αστεριας Κορωνησια | Asterias Homes Koronisia Arta Greece",
     description:
-      "Asterias apartments (Asteria house) – traditional holiday apartments in Koronisia, Arta. Koronisia accommodation. Book online.",
+      "Αστεριας Κορωνησια - Traditional holiday apartments in Koronisia, Arta, Greece by the Amvrakikos Gulf. Book online with instant confirmation.",
     images: ["/welcome-new.jpg"],
     creator: "@asterias_homes",
     site: "@asterias_homes",

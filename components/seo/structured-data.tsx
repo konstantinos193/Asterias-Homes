@@ -1,11 +1,11 @@
 export const generateOrganizationSchema = () => ({
   "@context": "https://schema.org",
   "@type": "Organization",
-  "name": "Asterias Homes",
-  "alternateName": ["Asteria House Koronisia", "Αστεριας Κορωνησία", "Asterias Koronisia Arta"],
+  "name": "Αστεριας Κορωνησια",
+  "alternateName": ["Asterias Homes", "Asteria House Koronisia", "Αστεριας Κορωνησία", "Asterias Koronisia Arta"],
   "url": "https://asteriashome.gr",
   "logo": "https://asteriashome.gr/logo.png",
-  "description": "Asterias Homes (Αστεριας Κορωνησία) - Traditional holiday apartments in Koronisia, Arta, Greece by the Amvrakikos Gulf. Located in KORONISIA, ARTA - NOT Koufonisia, NOT Kefalonia. Book online with instant confirmation.",
+  "description": "Αστεριας Κορωνησια - Traditional holiday apartments in Koronisia, Arta, Greece by the Amvrakikos Gulf. Located in KORONISIA, ARTA - NOT Koufonisia, NOT Kefalonia. Book online with instant confirmation.",
   "address": {
     "@type": "PostalAddress",
     "addressLocality": "Koronisia",
@@ -23,7 +23,8 @@ export const generateOrganizationSchema = () => ({
   "sameAs": [
     "https://www.facebook.com/asteriashomes",
     "https://www.instagram.com/asteriashomes"
-  ]
+  ],
+  "keywords": "αστεριας κορωνησια, κορωνησια διαμονη, asterias homes, koronisia apartments, holiday apartments greece"
 })
 
 export const generatePlaceSchema = () => ({
@@ -67,8 +68,9 @@ export const generatePlaceSchema = () => ({
 export const generateHotelSchema = () => ({
   "@context": "https://schema.org",
   "@type": "Hotel",
-  "name": "Asterias Homes",
+  "name": "Αστεριας Κορωνησια",
   "alternateName": [
+    "Asterias Homes", 
     "Asteria House Koronisia", 
     "Asterias Premium Holiday Apartments",
     "Αστεριας Κορωνησία",
@@ -76,7 +78,7 @@ export const generateHotelSchema = () => ({
     "Koronisia Apartments Greece",
     "Greek Holiday Apartments Koronisia"
   ],
-  "description": "Asterias Homes (Αστεριας Κορωνησία) - Traditional Greek holiday apartments in Koronisia, Arta, Greece by the Amvrakikos Gulf. Perfect for international travelers visiting Greece. KORONISIA, ARTA, GREECE - NOT Koufonisia, NOT Kefalonia. 7 traditional apartments with authentic Greek hospitality. Online booking with instant confirmation. From €80/night.",
+  "description": "Αστεριας Κορωνησια (Asterias Homes) - Traditional Greek holiday apartments in Koronisia, Arta, Greece by the Amvrakikos Gulf. Perfect for international travelers visiting Greece. KORONISIA, ARTA, GREECE - NOT Koufonisia, NOT Kefalonia. 7 traditional apartments with authentic Greek hospitality. Online booking with instant confirmation. From €80/night.",
   "url": "https://asteriashome.gr",
   "telephone": "+30 6972705881",
   "email": "asterias.apartmentskoronisia@gmail.com",
@@ -126,7 +128,8 @@ export const generateHotelSchema = () => ({
     "ratingValue": "4.5"
   },
   "priceRange": "€€",
-  "currenciesAccepted": "EUR"
+  "currenciesAccepted": "EUR",
+  "keywords": "αστεριας κορωνησια, κορωνησια διαμονη, asterias homes, koronisia apartments, holiday apartments greece"
 })
 
 export const generateApartmentSchema = (roomData: any) => ({

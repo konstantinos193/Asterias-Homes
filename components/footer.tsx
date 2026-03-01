@@ -178,7 +178,7 @@ export default function Footer() {
         <div className="border-t border-slate-800 py-4 sm:py-6">
           <div className="flex flex-col sm:flex-row items-center justify-between space-y-4 sm:space-y-0 gap-4">
             <p className="text-sm text-slate-400 text-center sm:text-left">
-              © {currentYear} adinfinity. {t("footer.allRightsReserved")}
+              © {currentYear} <a href="https://adinfinity.gr/" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">adinfinity</a>. {t("footer.allRightsReserved")}
             </p>
             <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm text-slate-400">
               {/* Crawlable language links for SEO - helps Google discover /de, /el */}
