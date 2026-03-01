@@ -22,94 +22,28 @@ export async function GET(request: NextRequest) {
     
     logger.debug('Profile API GET request', { url: `${BACKEND_URL}/profile`, method: 'GET' })
     
-    // Add retry logic for backend wake-up
-    let lastError: Error | null = null
-    let response: Response | null = null
+    // Direct proxy to backend with minimal timeout
+    const response = await fetch(`${BACKEND_URL}/profile`, {
+      method: 'GET',
+      headers,
+      cache: 'no-store',
+      signal: AbortSignal.timeout(5000), // 5 second timeout
+    })
     
-    for (let attempt = 1; attempt <= 3; attempt++) {
-      try {
-        response = await fetch(`${BACKEND_URL}/profile`, {
-          method: 'GET',
-          headers,
-          cache: 'no-store',
-          signal: AbortSignal.timeout(10000), // 10 second timeout
-        })
-        
-        // If we get a successful response, break out of retry loop
-        if (response.ok) {
-          break
-        }
-        
-        // If it's a 502/503/504, the backend might be waking up
-        if (response.status >= 502 && response.status <= 504 && attempt < 3) {
-          logger.warn(`Backend waking up (attempt ${attempt}/3), retrying...`, { status: response.status })
-          await new Promise(resolve => setTimeout(resolve, 2000 * attempt)) // Exponential backoff
-          continue
-        }
-        
-        // For other errors, don't retry
-        break
-        
-      } catch (error) {
-        lastError = error instanceof Error ? error : new Error(String(error))
-        
-        // If it's a timeout or network error and we have retries left, try again
-        if (attempt < 3 && (lastError.name === 'AbortError' || lastError.name === 'TypeError')) {
-          logger.warn(`Network error (attempt ${attempt}/3), retrying...`, { error: lastError.message })
-          await new Promise(resolve => setTimeout(resolve, 2000 * attempt))
-          continue
-        }
-        
-        break
-      }
-    }
-    
-    if (!response) {
-      throw lastError || new Error('Failed to get response from backend')
-    }
-    
-    // Check if response has content before parsing JSON
-    const text = await response.text()
-    if (!text) {
+    if (!response.ok) {
+      logger.error('Backend profile request failed', new Error(`Status: ${response.status}`))
       return NextResponse.json(
-        { error: 'Empty response from backend' },
-        { status: 500 }
+        { error: 'Backend request failed' },
+        { status: response.status }
       )
     }
     
-    // Check if response is HTML (error page) instead of JSON
-    if (text.trim().startsWith('<!DOCTYPE html>') || text.trim().startsWith('<html')) {
-      logger.error('Backend returned HTML instead of JSON', new Error('HTML response'), { responseText: text.substring(0, 200) })
-      return NextResponse.json(
-        { error: 'Backend unavailable - returned HTML error page' },
-        { status: 503 }
-      )
-    }
-    
-    let data
-    try {
-      data = JSON.parse(text)
-    } catch (parseError) {
-      const error = parseError instanceof Error ? parseError : new Error(String(parseError))
-      logger.error('JSON parse error in profile API', error, { responseText: text.substring(0, 200) })
-      return NextResponse.json(
-        { error: 'Invalid JSON response from backend' },
-        { status: 500 }
-      )
-    }
-    
+    const data = await response.json()
     return NextResponse.json(data, { status: response.status })
+    
   } catch (error) {
     const err = error instanceof Error ? error : new Error(String(error))
     logger.error('Profile API GET request failed', err)
-    
-    // Return a more specific error message for timeout/network issues
-    if (err.name === 'AbortError') {
-      return NextResponse.json(
-        { error: 'Backend request timeout - service may be waking up' },
-        { status: 504 }
-      )
-    }
     
     return NextResponse.json(
       { error: 'Backend request failed' },

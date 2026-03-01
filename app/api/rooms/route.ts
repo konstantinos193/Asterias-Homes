@@ -3,29 +3,25 @@ import { getBackendApiUrl } from '@/lib/backend-url'
 
 export async function GET(request: NextRequest) {
   try {
-    console.log('🔥 Rooms API route called')
     const BACKEND_URL = getBackendApiUrl('/api/rooms')
-    const url = `${BACKEND_URL}`
-    console.log('🔥 Fetching from backend:', url)
     
-    const response = await fetch(url, {
+    const response = await fetch(BACKEND_URL, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
       },
+      signal: AbortSignal.timeout(5000)
     })
-    
-    console.log('🔥 Backend response status:', response.status)
     
     if (!response.ok) {
       throw new Error(`Backend request failed: ${response.status}`)
     }
     
     const data = await response.json()
-    console.log('🔥 Backend response data:', data)
     return NextResponse.json(data, { status: response.status })
+    
   } catch (error) {
-    console.error('❌ Rooms API error:', error)
+    console.error('Rooms API error:', error)
     return NextResponse.json(
       { error: 'Failed to fetch rooms' },
       { status: 500 }
