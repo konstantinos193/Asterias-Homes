@@ -10,7 +10,8 @@ export async function GET(request: NextRequest) {
       headers: {
         'Content-Type': 'application/json',
       },
-      signal: AbortSignal.timeout(5000)
+      next: { revalidate: 300 },
+      signal: AbortSignal.timeout(30000),
     })
     
     if (!response.ok) {
