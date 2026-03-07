@@ -37,7 +37,7 @@ export function proxy(request: NextRequest) {
   const protocol = request.headers.get('x-forwarded-proto') || 'http'
 
   // Force HTTPS in production
-  if (process.env.NODE_ENV === 'production' && protocol === 'http') {
+  if (process.env.NODE_ENV === 'production' && protocol === 'http' && !hostname.includes('localhost')) {
     url.protocol = 'https'
     return NextResponse.redirect(url)
   }

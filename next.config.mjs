@@ -74,22 +74,6 @@ const nextConfig = {
         destination: '/en',
         permanent: true,
       },
-      // Handle language redirects without trailing slashes
-      {
-        source: '/el/',
-        destination: '/el',
-        permanent: true,
-      },
-      {
-        source: '/en/',
-        destination: '/en',
-        permanent: true,
-      },
-      {
-        source: '/de/',
-        destination: '/de',
-        permanent: true,
-      },
       // Handle invalid URL patterns that Google is trying to index
       {
         source: '/&',
@@ -99,12 +83,6 @@ const nextConfig = {
       {
         source: '/$',
         destination: '/en',
-        permanent: true,
-      },
-      // Handle trailing slash inconsistencies
-      {
-        source: '/:path*/',
-        destination: '/:path*',
         permanent: true,
       },
     ]
