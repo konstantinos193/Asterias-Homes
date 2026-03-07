@@ -45,12 +45,6 @@ const nextConfig = {
   // Add redirects for SEO and URL consistency
   async redirects() {
     return [
-      // Force HTTPS and handle root redirect
-      {
-        source: '/',
-        destination: '/en',
-        permanent: true,
-      },
       // Handle HTTP to HTTPS redirects
       {
         source: '/:path((?!_next|api|static).*)',

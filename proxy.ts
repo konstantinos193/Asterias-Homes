@@ -50,8 +50,19 @@ export function proxy(request: NextRequest) {
     return NextResponse.redirect(newUrl, 301)
   }
 
-  // Handle trailing slashes (remove them except for root)
+  // Handle trailing slashes (remove them except for root and language codes)
   if (pathname !== '/' && pathname.endsWith('/')) {
+    // Don't remove trailing slash from language codes like /en/, /el/, /de/
+    const pathWithoutTrailingSlash = pathname.slice(0, -1)
+    const pathSegments = pathWithoutTrailingSlash.split('/').filter(Boolean)
+    const firstSegment = pathSegments[0]
+    
+    // If it's a language code, keep the trailing slash
+    if (firstSegment && SUPPORTED_LANGUAGES.includes(firstSegment)) {
+      return NextResponse.next()
+    }
+    
+    // Otherwise, remove the trailing slash
     const newPath = pathname.slice(0, -1)
     const newUrl = new URL(`https://${hostname}${newPath}`)
     if (searchParams) {
