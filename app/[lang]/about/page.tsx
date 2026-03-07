@@ -18,31 +18,46 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
     keywords: string[]
   }> = {
     'el': {
-      title: "Σχετικά με την Αστεριας Κορωνησια | Παραδοσιακά Διαμερίσματα Άρτα",
-      description: "Μάθετε για την Αστεριας Κορωνησια - 7 παραδοσιακά διαμερίσματα διακοπών στην Κορωνησία Άρτας, Αμβρακικός Κόλπος. Ιστορία, τοποθεσία, παροχές. ΚΟΡΩΝΗΣΙΑ, ΑΡΤΑ – ΟΧΙ Κουφονήσια.",
+      title: "Σχετικά με την Αστεριας Κορωνησία | 7 Διαμερίσματα Αμβρακικός Κόλπος Άρτα",
+      description: "Αστεριας Κορωνησία: 7 παραδοσιακά διαμερίσματα διακοπών στην Κορωνησία Άρτας, Αμβρακικός Κόλπος. Ιστορία, τοποθεσία, παροχές. ΚΟΡΩΝΗΣΙΑ, ΑΡΤΑ – ΟΧΙ Κουφονήσια. Από €80/νύχτα.",
       keywords: [
+        "αστεριας κορωνησια",
         "αστεριας κορωνησια πληροφοριες",
-        "αστεριας κορωνησια ιστορια",
-        "κορωνησια διαμονη παροχες",
-        "koronisia arta about",
-        "αμβρακικος κολπος πληροφοριες",
+        "κορωνησια διαμονη",
+        "κορωνησια ξενοδοχεια",
+        "αμβρακικος κολπος διαμονη",
+        "αρτα διαμονη",
+        "asterias apartments",
+        "asteria house",
+        "koronisia apartments",
         "παραδοσιακα διαμερισματα αρτα",
+        "κορωνησια παροχες",
+        "αμβρακικος κολπος πληροφοριες",
+        "koronisia arta",
         "asterias homes about",
-        "κορωνησια ξενοδοχεια πληροφοριες"
+        "κορωνησια ΟΧΙ κουφονήσια",
+        "κορωνησια αρτα"
       ]
     },
     'en': {
-      title: "About Asterias Homes | Traditional Apartments Koronisia Arta Greece",
-      description: "Discover Asterias Homes - 7 traditional holiday apartments in Koronisia, Arta, Greece by the Amvrakikos Gulf. Learn about our history, location, and amenities. KORONISIA, ARTA – NOT Koufonisia.",
+      title: "About Asterias Homes | 7 Traditional Apartments Amvrakikos Gulf Arta Greece",
+      description: "Asterias Homes: 7 traditional holiday apartments in Koronisia, Arta, Greece by the Amvrakikos Gulf. History, location, amenities. KORONISIA, ARTA – NOT Koufonisia. From €80/night.",
       keywords: [
+        "asterias homes",
+        "asterias apartments",
+        "asteria house",
+        "koronisia apartments",
+        "koronisia greece",
+        "koronisia accommodation",
+        "amvrakikos gulf apartments",
+        "arta greece accommodation",
+        "traditional greek apartments",
+        "holiday apartments greece",
+        "koronisia arta greece",
         "about asterias homes",
-        "asterias koronisia history",
-        "koronisia greece information",
-        "amvrakikos gulf location",
-        "traditional apartments greece",
-        "koronisia arta about",
-        "asteria house koronisia",
-        "greek accommodation information"
+        "koronisia NOT koufonisia",
+        "greek holiday homes arta",
+        "amvrakikos gulf location"
       ]
     },
     'de': {

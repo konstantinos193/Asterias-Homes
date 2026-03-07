@@ -67,11 +67,11 @@ export const metadata: Metadata = {
   },
   metadataBase: new URL("https://asteriashome.gr"),
   alternates: {
-    canonical: "/",
+    canonical: "https://asteriashome.gr",
     languages: {
-      "en-US": "/en",
-      "el-GR": "/el",
-      "de-DE": "/de",
+      "en-US": "https://asteriashome.gr/en",
+      "el-GR": "https://asteriashome.gr/el", 
+      "de-DE": "https://asteriashome.gr/de",
     },
   },
   openGraph: {
@@ -154,7 +154,8 @@ export const metadata: Metadata = {
     "apple-mobile-web-app-title": "Asterias Homes",
   },
   verification: {
-    // DNS verification is already configured - no HTML meta tag needed
+    // Add Google Search Console verification if needed
+    // google: 'your-verification-code-here',
   },
   generator: 'Next.js'
 }

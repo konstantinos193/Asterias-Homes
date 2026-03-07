@@ -3,8 +3,8 @@
 ![Next.js](https://img.shields.io/badge/Next.js-16.1.6-000000?style=for-the-badge&logo=next.js&logoColor=white)
 ![React](https://img.shields.io/badge/React-19.2.4-61DAFB?style=for-the-badge&logo=react&logoColor=black)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.9.3-3178C6?style=for-the-badge&logo=typescript&logoColor=white)
-![Tailwind CSS](https://img.shields.io/badge/Tailwind%20CSS-4.1.18-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
-![Stripe](https://img.shields.io/badge/Stripe-20.3.0-635BFF?style=for-the-badge&logo=stripe&logoColor=white)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind%20CSS-4.2.1-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
+![Stripe](https://img.shields.io/badge/Stripe-20.4.1-635BFF?style=for-the-badge&logo=stripe&logoColor=white)
 
 ## Overview
 
@@ -19,17 +19,17 @@ Built with love, TypeScript strict mode, and questionable state management decis
 - **Framework**: Next.js 16.1.6 with App Router (because pages are old news)
 - **React**: 19.2.4 (because React 18 is for peasants)
 - **TypeScript**: 5.9.3 (because JavaScript is too forgiving)
-- **Styling**: Tailwind CSS 4.1.18 (utility-first, because writing CSS is 2010)
+- **Styling**: Tailwind CSS 4.2.1 (utility-first, because writing CSS is 2010)
 - **UI Components**: Radix UI primitives (because accessible components shouldn't be optional)
-- **Form Management**: React Hook Form 7.71.1 with Zod 4.3.6 validation
-- **State Management**: TanStack Query 5.90.20 (because Redux is dead)
-- **Payment**: Stripe React 5.6.0 and Stripe.js 8.7.0
-- **Icons**: Lucide React 0.563.0 (because icons matter)
-- **Date Handling**: date-fns 4.1.0 and react-day-picker 9.13.0
+- **Form Management**: React Hook Form 7.71.2 with Zod 4.3.6 validation
+- **State Management**: TanStack Query 5.90.21 (because Redux is dead)
+- **Payment**: Stripe React 5.6.1 and Stripe.js 8.9.0
+- **Icons**: Lucide React 0.577.0 (because icons matter)
+- **Date Handling**: date-fns 4.1.0 and react-day-picker 9.14.0
 - **Maps**: Leaflet 1.9.4 and React Leaflet 5.0.0
 - **Theming**: next-themes 0.4.6 (dark mode support)
 - **Backend**: Express.js backend with MongoDB (all database operations via API)
-- **Charts**: Recharts 3.7.0 (because data visualization shouldn't be painful)
+- **Charts**: Recharts 3.8.0 (because data visualization shouldn't be painful)
 - **Excel Export**: xlsx 0.18.5 (for when you need to export data to Excel, for some reason)
 - **Toast Notifications**: Sonner 2.0.7 (because users need feedback)
 - **Authentication**: Jose 6.1.3 (JWT handling, because tokens are trendy)

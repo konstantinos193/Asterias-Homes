@@ -45,7 +45,26 @@ const nextConfig = {
   // Add redirects for SEO and URL consistency
   async redirects() {
     return [
-      // Handle old URLs and common variations
+      // Force HTTPS and handle root redirect
+      {
+        source: '/',
+        destination: '/en',
+        permanent: true,
+      },
+      // Handle HTTP to HTTPS redirects
+      {
+        source: '/:path((?!_next|api|static).*)',
+        has: [
+          {
+            type: 'header',
+            key: 'x-forwarded-proto',
+            value: 'http',
+          },
+        ],
+        destination: 'https://asteriashome.gr/:path*',
+        permanent: true,
+      },
+      // Handle common URL variations that cause issues
       {
         source: '/index.html',
         destination: '/en',
@@ -53,6 +72,11 @@ const nextConfig = {
       },
       {
         source: '/home',
+        destination: '/en',
+        permanent: true,
+      },
+      {
+        source: '/default.html',
         destination: '/en',
         permanent: true,
       },
@@ -70,6 +94,23 @@ const nextConfig = {
       {
         source: '/de/',
         destination: '/de',
+        permanent: true,
+      },
+      // Handle invalid URL patterns that Google is trying to index
+      {
+        source: '/&',
+        destination: '/en',
+        permanent: true,
+      },
+      {
+        source: '/$',
+        destination: '/en',
+        permanent: true,
+      },
+      // Handle trailing slash inconsistencies
+      {
+        source: '/:path*/',
+        destination: '/:path*',
         permanent: true,
       },
     ]

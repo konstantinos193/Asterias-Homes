@@ -34,11 +34,12 @@ export function proxy(request: NextRequest) {
   const token = request.cookies.get('authToken')?.value
   const hostname = request.headers.get('host') || ''
   const searchParams = url.searchParams.toString()
+  const protocol = request.headers.get('x-forwarded-proto') || 'http'
 
-  // Force HTTPS redirect (if not already HTTPS) - always redirect HTTP to HTTPS
-  if (url.protocol === 'http:' && !url.hostname.includes('localhost')) {
-    url.protocol = 'https:'
-    return NextResponse.redirect(url, 301) // Permanent redirect
+  // Force HTTPS in production
+  if (process.env.NODE_ENV === 'production' && protocol === 'http') {
+    url.protocol = 'https'
+    return NextResponse.redirect(url)
   }
 
   // Handle www to non-www redirect
@@ -271,7 +272,7 @@ export function proxy(request: NextRequest) {
 
   // Set canonical URL in headers for debugging and SEO
   const canonicalUrl = `https://asteriashome.gr${pathname}`
-  response.headers.set('X-Canonical-URL', canonicalUrl)
+  response.headers.set('x-canonical-url', canonicalUrl)
   
   // Add Link header for canonical URL (helps Google understand the preferred URL)
   response.headers.set('Link', `<${canonicalUrl}>; rel="canonical"`)
